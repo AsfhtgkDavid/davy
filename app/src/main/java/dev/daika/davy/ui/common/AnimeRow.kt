@@ -7,6 +7,7 @@ import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,6 +68,7 @@ fun AnimeRow(
             label = ""
         ) { animeState ->
             LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
                 modifier = Modifier
                     .focusRequester(lazyRow)
                     .focusRestorer(firstItem),

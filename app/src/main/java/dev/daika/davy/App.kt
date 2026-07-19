@@ -1,13 +1,15 @@
 package dev.daika.davy
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import dev.daika.davy.ui.screens.Screens
+import androidx.navigation.toRoute
+import dev.daika.davy.domain.model.Anime
+import dev.daika.davy.ui.screens.anime.AnimeDetailsScreen
+import dev.daika.davy.ui.screens.anime.AnimeDetailsScreenDestination
 import dev.daika.davy.ui.screens.home.HomeScreen
+import dev.daika.davy.ui.screens.home.HomeScreenDestination
 
 @Composable
 fun App(
@@ -17,31 +19,24 @@ fun App(
 
     NavHost(
         navController = navController,
-        startDestination = Screens.Home(),
+        startDestination = HomeScreenDestination,
         builder = {
-            composable(route = Screens.Home()) {
+            composable<HomeScreenDestination> {
                 HomeScreen(
-                    onAnimeSelected = { animeId ->
-                        navController.navigate(Screens.AnimeDetails.withArgs(animeId))
+                    onAnimeSelected = { anime ->
+                        navController.navigate(AnimeDetailsScreenDestination(anime.id))
                     }
                 )
             }
-//            composable(
-//                route = Screens.AnimeDetails(),
-//                arguments = listOf(
-//                    navArgument("animeId") { type = NavType.StringType }
-//                )
-//            ) { backStackEntry ->
-//                val animeId = backStackEntry.arguments?.getString("animeId")
-//                AnimeDetailsScreen(
-//                    animeId = animeId,
-//                    onBackPressed = {
-//                        if (navController.navigateUp()) {
-//                            onBackPressed()
-//                        }
-//                    }
-//                )
-//            }
+            composable<AnimeDetailsScreenDestination> { backStackEntry ->
+                AnimeDetailsScreen(
+                    onBackPressed = {
+                        if (navController.navigateUp()) {
+                            onBackPressed()
+                        }
+                    }
+                )
+            }
         }
     )
 }

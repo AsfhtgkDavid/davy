@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.daika.davy.domain.model.Anime
 import dev.daika.davy.ui.common.AnimeRow
+import kotlinx.serialization.Serializable
 
 @Composable
 fun HomeScreen(
@@ -39,7 +40,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun AnnouncementsList(
+private fun AnnouncementsList(
     announcements: List<Anime>,
     onAnimeSelected: (Anime) -> Unit,
     modifier: Modifier = Modifier
@@ -62,3 +63,5 @@ fun AnnouncementsList(
     }
 }
 
+@Serializable
+object HomeScreenDestination
