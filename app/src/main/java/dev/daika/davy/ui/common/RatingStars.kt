@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
-import kotlinx.serialization.Serializable
 
 @Composable
 fun RatingStars(modifier: Modifier = Modifier, rating: Double, maxStars: Int = 10) {

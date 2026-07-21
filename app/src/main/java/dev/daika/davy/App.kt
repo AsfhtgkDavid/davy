@@ -4,8 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import dev.daika.davy.domain.model.Anime
 import dev.daika.davy.ui.screens.anime.AnimeDetailsScreen
 import dev.daika.davy.ui.screens.anime.AnimeDetailsScreenDestination
 import dev.daika.davy.ui.screens.home.HomeScreen
@@ -28,13 +26,16 @@ fun App(
                     }
                 )
             }
-            composable<AnimeDetailsScreenDestination> { backStackEntry ->
+            composable<AnimeDetailsScreenDestination> {
                 AnimeDetailsScreen(
                     onBackPressed = {
                         if (navController.navigateUp()) {
                             onBackPressed()
                         }
-                    }
+                    },
+                    onEpisodeSelected = { episode ->
+                        // Handle episode selection, e.g., navigate to a player screen
+                    },
                 )
             }
         }

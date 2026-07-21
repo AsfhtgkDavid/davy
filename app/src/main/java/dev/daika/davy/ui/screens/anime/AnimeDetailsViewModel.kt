@@ -1,11 +1,9 @@
 package dev.daika.davy.ui.screens.anime
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.daika.davy.data.repository.YummyRepository
 import dev.daika.davy.domain.model.Anime
 import dev.daika.davy.domain.usecase.YummyGetAnimeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +28,7 @@ class AnimeDetailsViewModel @Inject constructor(
     private fun getAnimeDetails() {
         viewModelScope.launch {
             try {
-                val animeDetails = getAnimeUseCase(animeId)
+                val animeDetails = getAnimeUseCase(animeId, true)
                 _state.value = AnimeDetailsUiState.Success(animeDetails)
             } catch (e: Exception) {
                 _state.value = AnimeDetailsUiState.Error(e.message ?: "Unknown error")

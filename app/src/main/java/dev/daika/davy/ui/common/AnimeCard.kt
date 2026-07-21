@@ -13,7 +13,6 @@ import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.ShapeDefaults
 import androidx.tv.material3.StandardCardContainer
 import androidx.tv.material3.Surface
-import dev.daika.davy.domain.model.Anime
 
 @Composable
 fun AnimeCard(

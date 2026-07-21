@@ -20,12 +20,12 @@ class YummyRepository @Inject constructor(
 
     }
 
-    suspend fun getAnimeDetails(id: Int): Anime {
+    suspend fun getAnimeDetails(id: Int, needVideos: Boolean): Anime {
         val cachedAnime = cache.get(id)
-        return if (cachedAnime != null) {
+        return if (cachedAnime != null && (!needVideos || !cachedAnime.videos.isNullOrEmpty())) {
             cachedAnime
         } else {
-            val animeDetails = yummyApi.getAnimeDetails(id)
+            val animeDetails = yummyApi.getAnimeDetails(id, needVideos)
             cache.put(id, animeDetails)
             animeDetails
         }

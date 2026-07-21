@@ -1,6 +1,7 @@
 package dev.daika.davy.ui.screens.anime
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,36 +16,51 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.tv.material3.Button
+import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.daika.davy.domain.model.Anime
+import dev.daika.davy.domain.model.AnimePlayer
+import dev.daika.davy.domain.model.AnimeTranslation
 import dev.daika.davy.ui.common.PosterImage
 import dev.daika.davy.ui.common.RatingStars
+import dev.daika.davy.ui.common.TvDropdown
 import kotlinx.serialization.Serializable
 
 @Composable
 fun AnimeDetailsScreen(
     onBackPressed: () -> Unit,
+    onEpisodeSelected: (AnimePlayer) -> Unit,
     animeDetailsViewModel: AnimeDetailsViewModel = hiltViewModel()
 ) {
     val state by animeDetailsViewModel.state.collectAsState()
+    var showPlayDialog by remember { mutableStateOf(false) }
     Log.i("AnimeDetailsScreen", "AnimeDetailsScreen called with state: $state")
 
     when (state) {
@@ -60,7 +76,7 @@ fun AnimeDetailsScreen(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                TopActionButtons()
+                TopActionButtons(onPlayClicked = { showPlayDialog = true })
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -78,6 +94,17 @@ fun AnimeDetailsScreen(
                     AnimeDescription(anime = anime, modifier = Modifier.weight(1f))
                 }
             }
+
+            if (showPlayDialog) {
+                PlaySelectionDialog(
+                    animeTranslations = AnimeTranslation.fromVideoDto(anime.videos ?: emptyList()),
+                    onDismiss = { showPlayDialog = false },
+                    onEpisodeSelected = { selectedPlayer ->
+                        showPlayDialog = false
+                        onEpisodeSelected(selectedPlayer)
+                    }
+                )
+            }
         }
 
         is AnimeDetailsUiState.Error -> {
@@ -87,16 +114,119 @@ fun AnimeDetailsScreen(
 }
 
 @Composable
-private fun TopActionButtons() {
+fun PlaySelectionDialog(
+    animeTranslations: List<AnimeTranslation>,
+    onDismiss: () -> Unit,
+    onEpisodeSelected: (AnimePlayer) -> Unit
+) {
+    var selectedTranslation by remember { mutableStateOf(animeTranslations.firstOrNull()) }
+    var selectedPlayer by remember { mutableStateOf(selectedTranslation?.availablePlayers?.firstOrNull()) }
+
+    var isTranslationExpanded by remember { mutableStateOf(false) }
+    var isPlayerExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(selectedTranslation) {
+        selectedPlayer = selectedTranslation?.availablePlayers?.firstOrNull()
+    }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .width(600.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(24.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    TvDropdown(
+                        modifier = Modifier.weight(1f),
+                        items = animeTranslations,
+                        selectedItem = selectedTranslation,
+                        onItemSelected = { selectedTranslation = it },
+                        isExpanded = isTranslationExpanded,
+                        onExpandedChange = {
+                            isTranslationExpanded = it
+                            if (it) isPlayerExpanded = false
+                        },
+                        itemText = { translation ->
+                            val maxEps = translation.availablePlayers.maxOfOrNull {
+                                it.episodes.size ?: 0
+                            } ?: 0
+                            "${translation.title} ($maxEps eps)"
+                        }
+                    )
+
+                    TvDropdown(
+                        modifier = Modifier.weight(1f),
+                        items = selectedTranslation?.availablePlayers ?: emptyList(),
+                        selectedItem = selectedPlayer,
+                        onItemSelected = { selectedPlayer = it },
+                        isExpanded = isPlayerExpanded,
+                        onExpandedChange = {
+                            isPlayerExpanded = it
+                            if (it) isTranslationExpanded = false
+                        },
+                        itemText = { player ->
+                            "${player.player} (${player.episodes.size} eps)"
+                        }
+                    )
+                }
+
+                Text(
+                    text = "Episodes",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                val episodes = selectedPlayer?.episodes ?: emptyList()
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(64.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.height(300.dp)
+                ) {
+                    items(episodes) { episode ->
+                        Button(
+                            onClick = { onEpisodeSelected(selectedPlayer!!) },
+                            modifier = Modifier.aspectRatio(1f),
+                            shape = ButtonDefaults.shape(shape = RoundedCornerShape(8.dp)),
+                            colors = ButtonDefaults.colors(
+                                containerColor = Color(0xFF2C2C2C),
+                                disabledContainerColor = Color(0xFF2C2C2C).copy(alpha = 0.5f),
+                                focusedContainerColor = MaterialTheme.colorScheme.primary,
+                            )
+                        ) {
+                            Text(
+                                text = episode.title,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TopActionButtons(onPlayClicked: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
-            onClick = {},
+            onClick = onPlayClicked,
             modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            colors = ButtonDefaults.colors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Icon(
                 imageVector = Icons.Default.PlayArrow,

@@ -50,10 +50,54 @@ data class AnimeVideoDto(
     @SerialName("iframe_url")
     val iframeUrl: String,
     val data: PlayerDataDto,
+    val number: String, // WHY STRING?
 )
 
 @Serializable
 data class PlayerDataDto(
     val player: String,
     val dubbing: String,
+)
+
+data class AnimeTranslation(
+    val title: String,
+    val availablePlayers: List<AnimePlayer>
+) {
+    companion object {
+        fun fromVideoDto(videoDto: List<AnimeVideoDto>): List<AnimeTranslation> {
+            val translationsMap =
+                mutableMapOf<String, MutableMap<String, MutableList<AnimeEpisode>>>()
+
+            for (video in videoDto) {
+                val translationTitle = video.data.dubbing
+                val translation = translationsMap.getOrPut(translationTitle) { mutableMapOf() }
+                translation.getOrPut(video.data.player) {
+                    mutableListOf()
+                }.add(
+                    AnimeEpisode(
+                        videoId = video.id,
+                        title = video.number,
+                        iframeUrl = video.iframeUrl
+                    )
+                )
+            }
+
+            return translationsMap.map { (title, players) ->
+                AnimeTranslation(title, players.map { (player, episodes) ->
+                    AnimePlayer(player, episodes)
+                })
+            }
+        }
+    }
+}
+
+data class AnimePlayer(
+    val player: String,
+    val episodes: List<AnimeEpisode>
+)
+
+data class AnimeEpisode(
+    val videoId: Int,
+    val title: String,
+    val iframeUrl: String
 )
