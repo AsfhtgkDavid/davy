@@ -27,10 +27,6 @@ class HomeScreenViewModel @Inject constructor(
             try {
                 val feed = yummyGetFeedUseCase()
                 _uiState.value = HomeScreenUiState.Success(feed)
-                Log.i(
-                    "HomeScreenViewModel",
-                    "Feed loaded successfully: ${feed.announcements.size} announcements"
-                )
             } catch (e: Exception) {
                 _uiState.value = HomeScreenUiState.Error(e.message ?: "Unknown error")
                 Log.e("HomeScreenViewModel", "Error loading feed: ${e.message}", e)

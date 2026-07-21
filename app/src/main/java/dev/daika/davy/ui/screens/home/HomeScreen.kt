@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.daika.davy.domain.model.Anime
+import dev.daika.davy.domain.model.AnimeSeason
+import dev.daika.davy.domain.model.TopCarousel
 import dev.daika.davy.ui.common.AnimeRow
 import kotlinx.serialization.Serializable
 
@@ -28,8 +30,8 @@ fun HomeScreen(
         }
 
         is HomeScreenUiState.Success -> {
-            AnnouncementsList(
-                announcements = (state as HomeScreenUiState.Success).feed.announcements,
+            SeasonList(
+                topCarousel = (state as HomeScreenUiState.Success).feed.topCarousel,
                 onAnimeSelected = onAnimeSelected
             )
         }
@@ -40,23 +42,24 @@ fun HomeScreen(
 }
 
 @Composable
-private fun AnnouncementsList(
-    announcements: List<Anime>,
+private fun SeasonList(
+    topCarousel: TopCarousel,
     onAnimeSelected: (Anime) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Log.i("HomeScreen", "AnnouncementsList: ${announcements.size} announcements")
+    Log.i("HomeScreen", "SeasonList: ${topCarousel.items.size} items")
     val lazyListState = rememberLazyListState()
+    val animeSeason = AnimeSeason.fromSeasonNumber(topCarousel.season)
     LazyColumn(
         state = lazyListState,
         contentPadding = PaddingValues(bottom = 108.dp),
         modifier = modifier
     ) {
-        item(contentType = "AnnouncementRow") {
+        item(contentType = "SeasonRow") {
             AnimeRow(
                 modifier = Modifier.padding(top = 16.dp),
-                animeList = announcements,
-                title = "Announcements",
+                animeList = topCarousel.items,
+                title = "${animeSeason.title}'s 20${topCarousel.year} Anime",
                 onAnimeSelected = onAnimeSelected
             )
         }

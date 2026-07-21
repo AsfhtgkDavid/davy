@@ -13,7 +13,7 @@ class YummyRepository @Inject constructor(
 
     suspend fun getFeed(): YummyFeed {
         val feed = yummyApi.getFeed()
-        feed.announcements.forEach { anime ->
+        feed.topCarousel.items.forEach { anime ->
             cache.put(anime.id, anime)
         }
         return feed
