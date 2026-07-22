@@ -28,11 +28,6 @@ fun App(
             }
             composable<AnimeDetailsScreenDestination> {
                 AnimeDetailsScreen(
-                    onBackPressed = {
-                        if (navController.navigateUp()) {
-                            onBackPressed()
-                        }
-                    },
                     onEpisodeSelected = { episode ->
                         // Handle episode selection, e.g., navigate to a player screen
                     },

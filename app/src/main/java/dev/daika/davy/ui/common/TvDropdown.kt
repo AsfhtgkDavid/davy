@@ -1,6 +1,8 @@
 package dev.daika.davy.ui.common
 
+import androidx.compose.foundation.MarqueeAnimationMode
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +20,24 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
@@ -45,69 +59,125 @@ fun <T> TvDropdown(
 ) {
     val isEnabled = items.isNotEmpty()
 
-    Column(modifier = modifier) {
-        if (!isExpanded) {
-            Button(
-                onClick = { onExpandedChange(true) },
-                enabled = isEnabled,
+    var buttonSize by remember { mutableStateOf(IntSize.Zero) }
+    val density = LocalDensity.current
+    var buttonFocused by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        Button(
+            onClick = { onExpandedChange(!isExpanded) },
+            enabled = isEnabled,
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    buttonSize = coordinates.size
+                }
+                .onFocusChanged { focusState ->
+                    buttonFocused = focusState.isFocused
+                },
+            shape = ButtonDefaults.shape(shape = RoundedCornerShape(8.dp)),
+            colors = ButtonDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                focusedContainerColor = MaterialTheme.colorScheme.primary
+            ),
+        ) {
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                shape = ButtonDefaults.shape(RoundedCornerShape(8.dp)),
-                colors = ButtonDefaults.colors(
-                    containerColor = Color(0xFF2C2C2C),
-                    disabledContainerColor = Color(0xFF2C2C2C).copy(alpha = 0.5f),
-                    focusedContainerColor = MaterialTheme.colorScheme.primary,
-                )
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                var textModifier = Modifier.weight(1f)
+                if (buttonFocused) {
+                    textModifier = textModifier.basicMarquee()
+                }
+                Text(
+                    text = selectedItem?.let { itemText(it) } ?: "Select an item",
+                    maxLines = 1,
+                    modifier = textModifier,
+                    color = if (buttonFocused) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                if (isEnabled) {
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = selectedItem?.let { itemText(it) } ?: "Select an item",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f)
+                        text = "|",
+                        color = if (buttonFocused) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier.rotate(if (isExpanded) 180f else 0f),
+                        tint = if (buttonFocused) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFF222222))
-            ) {
-                LazyColumn(
-                    modifier = Modifier.heightIn(max = 200.dp)
-                ) {
-                    items(items) { item ->
-                        val isSelected = item == selectedItem
+        }
 
-                        Surface(
-                            onClick = {
-                                onItemSelected(item)
+        if (isExpanded) {
+            Popup(
+                alignment = Alignment.TopStart,
+                offset = IntOffset(0, buttonSize.height),
+                onDismissRequest = { onExpandedChange(false) },
+                properties = PopupProperties(focusable = true)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(with(density) { buttonSize.width.toDp() })
+                        .padding(top = 4.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .onFocusChanged { focusState ->
+                            if (!focusState.hasFocus && !buttonFocused) {
                                 onExpandedChange(false)
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                            colors = ClickableSurfaceDefaults.colors(
-                                containerColor = Color.Transparent,
-                                focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
-                            )
-                        ) {
-                            Text(
-                                text = itemText(item),
-                                color = if (isSelected) Color.White else Color(0xFFCCCCCC),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
+                            }
+                        }
+                ) {
+                    LazyColumn(
+                        modifier = Modifier.heightIn(max = 200.dp)
+                    ) {
+                        items(items) { item ->
+                            val isSelected = item == selectedItem
+
+                            var itemFocused by remember { mutableStateOf(false) }
+                            Surface(
+                                onClick = {
+                                    onItemSelected(item)
+                                    onExpandedChange(false)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .onFocusChanged { focusState ->
+                                        itemFocused = focusState.isFocused
+                                    },
+                                colors = ClickableSurfaceDefaults.colors(
+                                    containerColor = Color.Transparent,
+                                    focusedContainerColor = MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.8f
+                                    )
+                                )
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    var textModifier = Modifier.weight(1f)
+                                    if (itemFocused) {
+                                        textModifier = textModifier.basicMarquee()
+                                    }
+                                    Text(
+                                        text = itemText(item),
+                                        color = if (itemFocused) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = textModifier
+                                    )
+                                }
+                            }
                         }
                     }
                 }

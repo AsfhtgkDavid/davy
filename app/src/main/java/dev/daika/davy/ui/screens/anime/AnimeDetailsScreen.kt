@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -36,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -55,8 +57,7 @@ import kotlinx.serialization.Serializable
 
 @Composable
 fun AnimeDetailsScreen(
-    onBackPressed: () -> Unit,
-    onEpisodeSelected: (AnimePlayer) -> Unit,
+    onEpisodeSelected: (Int) -> Unit,
     animeDetailsViewModel: AnimeDetailsViewModel = hiltViewModel()
 ) {
     val state by animeDetailsViewModel.state.collectAsState()
@@ -99,9 +100,9 @@ fun AnimeDetailsScreen(
                 PlaySelectionDialog(
                     animeTranslations = AnimeTranslation.fromVideoDto(anime.videos ?: emptyList()),
                     onDismiss = { showPlayDialog = false },
-                    onEpisodeSelected = { selectedPlayer ->
+                    onEpisodeSelected = { episodeId ->
                         showPlayDialog = false
-                        onEpisodeSelected(selectedPlayer)
+                        onEpisodeSelected(episodeId)
                     }
                 )
             }
@@ -117,7 +118,7 @@ fun AnimeDetailsScreen(
 fun PlaySelectionDialog(
     animeTranslations: List<AnimeTranslation>,
     onDismiss: () -> Unit,
-    onEpisodeSelected: (AnimePlayer) -> Unit
+    onEpisodeSelected: (Int) -> Unit
 ) {
     var selectedTranslation by remember { mutableStateOf(animeTranslations.firstOrNull()) }
     var selectedPlayer by remember { mutableStateOf(selectedTranslation?.availablePlayers?.firstOrNull()) }
@@ -187,27 +188,33 @@ fun PlaySelectionDialog(
 
                 val episodes = selectedPlayer?.episodes ?: emptyList()
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(64.dp),
+                    columns = GridCells.Adaptive(48.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.height(300.dp)
                 ) {
                     items(episodes) { episode ->
                         Button(
-                            onClick = { onEpisodeSelected(selectedPlayer!!) },
+                            onClick = { onEpisodeSelected(episode.videoId) },
                             modifier = Modifier.aspectRatio(1f),
                             shape = ButtonDefaults.shape(shape = RoundedCornerShape(8.dp)),
+                            contentPadding = PaddingValues(0.dp),
                             colors = ButtonDefaults.colors(
-                                containerColor = Color(0xFF2C2C2C),
-                                disabledContainerColor = Color(0xFF2C2C2C).copy(alpha = 0.5f),
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
                                 focusedContainerColor = MaterialTheme.colorScheme.primary,
                             )
                         ) {
-                            Text(
-                                text = episode.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = episode.title,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
                         }
                     }
                 }
@@ -220,12 +227,12 @@ fun PlaySelectionDialog(
 private fun TopActionButtons(onPlayClicked: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
             onClick = onPlayClicked,
-            modifier = Modifier.weight(1f),
+            scale = ButtonDefaults.scale(focusedScale = 1.05f),
             colors = ButtonDefaults.colors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Icon(
