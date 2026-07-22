@@ -8,6 +8,8 @@ import dev.daika.davy.ui.screens.anime.AnimeDetailsScreen
 import dev.daika.davy.ui.screens.anime.AnimeDetailsScreenDestination
 import dev.daika.davy.ui.screens.home.HomeScreen
 import dev.daika.davy.ui.screens.home.HomeScreenDestination
+import dev.daika.davy.ui.screens.player.PlayerScreen
+import dev.daika.davy.ui.screens.player.PlayerScreenDestination
 
 @Composable
 fun App(
@@ -28,11 +30,15 @@ fun App(
             }
             composable<AnimeDetailsScreenDestination> {
                 AnimeDetailsScreen(
-                    onEpisodeSelected = { episode ->
-                        // Handle episode selection, e.g., navigate to a player screen
+                    onEpisodeSelected = { animeId, episodeId ->
+                        navController.navigate(PlayerScreenDestination(animeId, episodeId))
                     },
                 )
+            }
+            composable<PlayerScreenDestination> {
+                PlayerScreen()
             }
         }
     )
 }
+

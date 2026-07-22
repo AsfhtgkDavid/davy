@@ -36,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -48,7 +47,6 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.daika.davy.domain.model.Anime
-import dev.daika.davy.domain.model.AnimePlayer
 import dev.daika.davy.domain.model.AnimeTranslation
 import dev.daika.davy.ui.common.PosterImage
 import dev.daika.davy.ui.common.RatingStars
@@ -57,20 +55,20 @@ import kotlinx.serialization.Serializable
 
 @Composable
 fun AnimeDetailsScreen(
-    onEpisodeSelected: (Int) -> Unit,
-    animeDetailsViewModel: AnimeDetailsViewModel = hiltViewModel()
+    onEpisodeSelected: (Int, Int) -> Unit,
+    animeDetailsScreenViewModel: AnimeDetailsScreenViewModel = hiltViewModel()
 ) {
-    val state by animeDetailsViewModel.state.collectAsState()
+    val state by animeDetailsScreenViewModel.uiState.collectAsState()
     var showPlayDialog by remember { mutableStateOf(false) }
     Log.i("AnimeDetailsScreen", "AnimeDetailsScreen called with state: $state")
 
     when (state) {
-        is AnimeDetailsUiState.Loading -> {
+        is AnimeDetailsScreenUiState.Loading -> {
             // Show loading indicator
         }
 
-        is AnimeDetailsUiState.Success -> {
-            val anime = (state as AnimeDetailsUiState.Success).anime
+        is AnimeDetailsScreenUiState.Success -> {
+            val anime = (state as AnimeDetailsScreenUiState.Success).anime
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -102,13 +100,13 @@ fun AnimeDetailsScreen(
                     onDismiss = { showPlayDialog = false },
                     onEpisodeSelected = { episodeId ->
                         showPlayDialog = false
-                        onEpisodeSelected(episodeId)
+                        onEpisodeSelected(anime.id, episodeId)
                     }
                 )
             }
         }
 
-        is AnimeDetailsUiState.Error -> {
+        is AnimeDetailsScreenUiState.Error -> {
             // Show error message
         }
     }
@@ -158,7 +156,7 @@ fun PlaySelectionDialog(
                         },
                         itemText = { translation ->
                             val maxEps = translation.availablePlayers.maxOfOrNull {
-                                it.episodes.size ?: 0
+                                it.episodes.size
                             } ?: 0
                             "${translation.title} ($maxEps eps)"
                         }

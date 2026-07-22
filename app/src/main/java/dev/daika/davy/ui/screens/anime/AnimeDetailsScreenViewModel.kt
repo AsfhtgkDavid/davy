@@ -12,14 +12,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AnimeDetailsViewModel @Inject constructor(
+class AnimeDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getAnimeUseCase: YummyGetAnimeUseCase
 ) : ViewModel() {
     private val animeId: Int = checkNotNull(savedStateHandle["animeId"])
 
-    private var _state = MutableStateFlow<AnimeDetailsUiState>(AnimeDetailsUiState.Loading)
-    val state = _state.asStateFlow()
+    private var _uiState =
+        MutableStateFlow<AnimeDetailsScreenUiState>(AnimeDetailsScreenUiState.Loading)
+    val uiState = _uiState.asStateFlow()
 
     init {
         getAnimeDetails()
@@ -29,16 +30,16 @@ class AnimeDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val animeDetails = getAnimeUseCase(animeId, true)
-                _state.value = AnimeDetailsUiState.Success(animeDetails)
+                _uiState.value = AnimeDetailsScreenUiState.Success(animeDetails)
             } catch (e: Exception) {
-                _state.value = AnimeDetailsUiState.Error(e.message ?: "Unknown error")
+                _uiState.value = AnimeDetailsScreenUiState.Error(e.message ?: "Unknown error")
             }
         }
     }
 }
 
-sealed interface AnimeDetailsUiState {
-    object Loading : AnimeDetailsUiState
-    data class Success(val anime: Anime) : AnimeDetailsUiState
-    data class Error(val message: String) : AnimeDetailsUiState
+sealed interface AnimeDetailsScreenUiState {
+    object Loading : AnimeDetailsScreenUiState
+    data class Success(val anime: Anime) : AnimeDetailsScreenUiState
+    data class Error(val message: String) : AnimeDetailsScreenUiState
 }
