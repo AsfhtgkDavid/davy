@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.daika.davy.data.model.YummyFeed
 import dev.daika.davy.domain.entity.Feed
 import dev.daika.davy.domain.usecase.YummyGetFeedUseCase
 import kotlinx.coroutines.flow.MutableStateFlow

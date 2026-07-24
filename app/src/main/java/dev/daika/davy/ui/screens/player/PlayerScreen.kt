@@ -1,6 +1,5 @@
 package dev.daika.davy.ui.screens.player
 
-import android.media.browse.MediaBrowser
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.aspectRatio

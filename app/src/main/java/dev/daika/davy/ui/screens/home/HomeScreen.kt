@@ -11,8 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import dev.daika.davy.domain.entity.AnimeSeason
 import dev.daika.davy.domain.entity.Anime
+import dev.daika.davy.domain.entity.AnimeSeason
 import dev.daika.davy.domain.entity.Feed
 import dev.daika.davy.ui.common.AnimeRow
 import kotlinx.serialization.Serializable
