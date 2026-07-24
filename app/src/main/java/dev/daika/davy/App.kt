@@ -25,6 +25,9 @@ fun App(
                 HomeScreen(
                     onAnimeSelected = { anime ->
                         navController.navigate(AnimeDetailsScreenDestination(anime.id))
+                    },
+                    onSearchClicked = {
+                        // Handle search click
                     }
                 )
             }

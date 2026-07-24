@@ -3,6 +3,7 @@ package dev.daika.davy.ui.common
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -66,7 +67,6 @@ fun AnimeRow(
                     fontSize = 30.sp
                 ),
                 modifier = Modifier
-                    .alpha(1f)
                     .padding(top = 16.dp, start = 16.dp, bottom = 8.dp)
             )
         }
@@ -81,7 +81,10 @@ fun AnimeRow(
                     .focusRestorer(firstItem),
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                itemsIndexed(animeState, key = { _, anime -> anime.id }) { index, anime ->
+                itemsIndexed(
+                    animeState,
+                    key = { _, anime -> anime.id },
+                    contentType = { _, _ -> "AnimeItem" }) { index, anime ->
                     val itemModifier = if (index == 0) {
                         Modifier.focusRequester(firstItem)
                     } else {
@@ -138,20 +141,21 @@ private fun AnimeRowItem(
 
 @Composable
 private fun AnimeRowItemTitle(anime: Anime, isFocused: Boolean) {
-    val movieNameAlpha by animateFloatAsState(
-        targetValue = if (isFocused) 1f else 0f,
-        label = "",
-    )
+    val modifier = if (isFocused) {
+        Modifier.basicMarquee()
+    } else {
+        Modifier
+    }
     Text(
         text = anime.title,
         style = MaterialTheme.typography.bodyMedium.copy(
-            fontWeight = FontWeight.SemiBold
+            fontWeight = if (isFocused) FontWeight.SemiBold else FontWeight.Normal
         ),
         textAlign = TextAlign.Center,
         modifier = Modifier
-            .alpha(movieNameAlpha)
             .fillMaxWidth()
-            .padding(top = 4.dp),
+            .padding(top = 4.dp)
+            .then(modifier),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
