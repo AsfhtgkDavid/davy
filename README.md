@@ -36,12 +36,17 @@ playback.
 
 ## Contributing
 
-Contributions are welcome.
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for the full development workflow, coding guidelines, and pull request process.
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Open a pull request
+If you want to add support for new player parsers, please work in the separate parser repository:
+
+- https://github.com/AsfhtgkDavid/davy-parsers
+
+Before submitting, make sure the project still builds:
+
+```bash
+./gradlew assembleDebug
+```
 
 ## License
 
