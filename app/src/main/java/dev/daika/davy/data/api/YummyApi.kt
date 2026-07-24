@@ -1,7 +1,7 @@
 package dev.daika.davy.data.api
 
-import dev.daika.davy.domain.model.Anime
-import dev.daika.davy.domain.model.YummyFeed
+import dev.daika.davy.data.model.DetailAnimeDto
+import dev.daika.davy.data.model.YummyFeed
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -14,5 +14,5 @@ interface YummyApi {
     suspend fun getAnimeDetails(
         @Path("id") id: Int,
         @Query("need_videos") needVideos: Boolean = false
-    ): Anime
+    ): DetailAnimeDto
 }

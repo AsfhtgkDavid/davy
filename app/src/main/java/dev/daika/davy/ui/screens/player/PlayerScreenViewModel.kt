@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.daika.davy.domain.entity.getIframeById
 import dev.daika.davy.domain.usecase.YummyGetAnimeUseCase
 import dev.daika.davyparsers.Parser
 import dev.daika.davyparsers.PlayerData
@@ -34,10 +35,9 @@ class PlayerScreenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val anime = yummyGetAnimeUseCase(animeId, true)
-                val episode =
-                    anime.videos?.firstOrNull { it.id == episodeId }
-                        ?: throw IllegalArgumentException("Episode not found")
-                val iframeUrl = "https:${episode.iframeUrl}"
+                val iframeUrl = "https:${
+                    anime.translations.getIframeById(episodeId) ?: throw IllegalArgumentException("Episode not found")
+                }"
                 val referer = "https://old.yummyani.me/catalog/item/${anime.url}"
                 Log.d(
                     "PlayerScreenViewModel",

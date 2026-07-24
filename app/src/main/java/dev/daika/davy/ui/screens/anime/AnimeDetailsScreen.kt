@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -46,8 +48,9 @@ import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import dev.daika.davy.domain.model.Anime
-import dev.daika.davy.domain.model.AnimeTranslation
+import dev.daika.davy.domain.entity.Anime
+import dev.daika.davy.domain.entity.AnimeTranslation
+import dev.daika.davy.ui.common.AnimeRow
 import dev.daika.davy.ui.common.PosterImage
 import dev.daika.davy.ui.common.RatingStars
 import dev.daika.davy.ui.common.TvDropdown
@@ -56,6 +59,7 @@ import kotlinx.serialization.Serializable
 @Composable
 fun AnimeDetailsScreen(
     onEpisodeSelected: (Int, Int) -> Unit,
+    onAnotherAnimeSelected: (Anime) -> Unit,
     animeDetailsScreenViewModel: AnimeDetailsScreenViewModel = hiltViewModel()
 ) {
     val state by animeDetailsScreenViewModel.uiState.collectAsState()
@@ -92,11 +96,18 @@ fun AnimeDetailsScreen(
 
                     AnimeDescription(anime = anime, modifier = Modifier.weight(1f))
                 }
+
+                if (anime.viewingOrder.isNotEmpty()) {
+                    ViewingOrderList(
+                        viewingOrder = anime.viewingOrder,
+                        onAnimeSelected = onAnotherAnimeSelected
+                    )
+                }
             }
 
             if (showPlayDialog) {
                 PlaySelectionDialog(
-                    animeTranslations = AnimeTranslation.fromVideoDto(anime.videos ?: emptyList()),
+                    animeTranslations = anime.translations,
                     onDismiss = { showPlayDialog = false },
                     onEpisodeSelected = { episodeId ->
                         showPlayDialog = false
@@ -253,15 +264,17 @@ private fun AnimeDescription(anime: Anime, modifier: Modifier = Modifier) {
             fontWeight = MaterialTheme.typography.headlineSmall.fontWeight,
             color = MaterialTheme.colorScheme.onSurface
         )
-        Text(
-            text = anime.otherTitles?.joinToString(" / ") ?: "",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
+        if (anime.otherTitles.isNotEmpty()) {
+            Text(
+                text = anime.otherTitles.joinToString(" / "),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(anime.genres ?: emptyList()) { genre ->
+            items(anime.genres) { genre ->
                 Box(
                     modifier = Modifier
                         .padding(vertical = 4.dp)
@@ -274,7 +287,7 @@ private fun AnimeDescription(anime: Anime, modifier: Modifier = Modifier) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = genre.title,
+                        text = genre,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -289,6 +302,16 @@ private fun AnimeDescription(anime: Anime, modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onSurface
         )
     }
+}
+
+@Composable
+private fun ViewingOrderList(viewingOrder: List<Anime>, onAnimeSelected: (Anime) -> Unit) {
+    AnimeRow(
+        modifier = Modifier.padding(top = 16.dp),
+        animeList = viewingOrder,
+        title = "Viewing Order",
+        onAnimeSelected = onAnimeSelected
+    )
 }
 
 @Serializable

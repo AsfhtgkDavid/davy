@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
-import dev.daika.davy.domain.model.Anime
+import dev.daika.davy.domain.entity.Anime
 
 @Composable
 fun AnimeRow(
@@ -165,32 +165,34 @@ private fun AnimeRowItemImage(anime: Anime, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxSize()
         )
-        Surface(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(8.dp),
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            shape = MaterialTheme.shapes.small
-        ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
+        if (anime.rating != null) {
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                shape = MaterialTheme.shapes.small
             ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = null,
-                    tint = Color.Yellow,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = String.format("%.1f", anime.rating.average),
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    modifier = Modifier.padding(end = 4.dp)
-                )
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Color.Yellow,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = String.format("%.1f", anime.rating.average),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
+                }
             }
         }
     }
