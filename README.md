@@ -23,7 +23,7 @@ playback.
 
 - [x] Current season anime browsing
 - [x] Built-in player
-- [ ] Search
+- [ ] Search ([#3](https://github.com/AsfhtgkDavid/davy/issues/3))
 - [ ] Local watch history
 - [ ] Integration with MyAnimeList and other watchlists
 - [ ] Integration with other anime aggregators
