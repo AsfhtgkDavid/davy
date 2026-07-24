@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.daika.davy.domain.model.YummyFeed
+import dev.daika.davy.domain.entity.Feed
 import dev.daika.davy.domain.usecase.YummyGetFeedUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,6 +37,6 @@ class HomeScreenViewModel @Inject constructor(
 
 sealed interface HomeScreenUiState {
     object Loading : HomeScreenUiState
-    data class Success(val feed: YummyFeed) : HomeScreenUiState
+    data class Success(val feed: Feed) : HomeScreenUiState
     data class Error(val message: String) : HomeScreenUiState
 }

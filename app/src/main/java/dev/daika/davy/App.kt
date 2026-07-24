@@ -33,6 +33,9 @@ fun App(
                     onEpisodeSelected = { animeId, episodeId ->
                         navController.navigate(PlayerScreenDestination(animeId, episodeId))
                     },
+                    onAnotherAnimeSelected = { anime ->
+                        navController.navigate(AnimeDetailsScreenDestination(anime.id))
+                    }
                 )
             }
             composable<PlayerScreenDestination> {

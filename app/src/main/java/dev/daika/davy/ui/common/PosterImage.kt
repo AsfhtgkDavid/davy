@@ -4,14 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
-import dev.daika.davy.domain.model.Anime
+import dev.daika.davy.domain.entity.Anime
 
 @Composable
 fun PosterImage(anime: Anime, modifier: Modifier = Modifier) {
     AsyncImage(
         modifier = modifier,
-        model = "https://${anime.poster.fullsize}",
-        contentDescription = anime.title,
+        model = "https://${anime.poster}",
+        contentDescription = "${anime.title} poster",
         contentScale = ContentScale.Crop
     )
 }

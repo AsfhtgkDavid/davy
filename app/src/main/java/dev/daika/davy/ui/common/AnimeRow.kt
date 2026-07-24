@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
-import dev.daika.davy.domain.model.Anime
+import dev.daika.davy.domain.entity.Anime
 
 @Composable
 fun AnimeRow(
