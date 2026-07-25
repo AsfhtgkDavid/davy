@@ -10,6 +10,8 @@ import dev.daika.davy.ui.screens.home.HomeScreen
 import dev.daika.davy.ui.screens.home.HomeScreenDestination
 import dev.daika.davy.ui.screens.player.PlayerScreen
 import dev.daika.davy.ui.screens.player.PlayerScreenDestination
+import dev.daika.davy.ui.screens.search.SearchScreen
+import dev.daika.davy.ui.screens.search.SearchScreenDestination
 
 @Composable
 fun App(
@@ -27,7 +29,7 @@ fun App(
                         navController.navigate(AnimeDetailsScreenDestination(anime.id))
                     },
                     onSearchClicked = {
-                        // Handle search click
+                        navController.navigate(SearchScreenDestination)
                     }
                 )
             }
@@ -43,6 +45,13 @@ fun App(
             }
             composable<PlayerScreenDestination> {
                 PlayerScreen()
+            }
+            composable<SearchScreenDestination> {
+                SearchScreen(
+                    onAnimeSelected = { anime ->
+                        navController.navigate(AnimeDetailsScreenDestination(anime.id))
+                    }
+                )
             }
         }
     )

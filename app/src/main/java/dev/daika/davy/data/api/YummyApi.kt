@@ -1,6 +1,7 @@
 package dev.daika.davy.data.api
 
 import dev.daika.davy.data.model.DetailAnimeDto
+import dev.daika.davy.data.model.SearchAnimeDto
 import dev.daika.davy.data.model.YummyFeed
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -15,4 +16,11 @@ interface YummyApi {
         @Path("id") id: Int,
         @Query("need_videos") needVideos: Boolean = false
     ): DetailAnimeDto
+
+    @GET("/anime")
+    suspend fun searchAnime(
+        @Query("q") query: String,
+        @Query("offset") offset: Int = 0,
+        @Query("limit") limit: Int = 20
+    ): List<SearchAnimeDto>
 }

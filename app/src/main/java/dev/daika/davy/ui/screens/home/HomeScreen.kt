@@ -3,12 +3,14 @@ package dev.daika.davy.ui.screens.home
 import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.tv.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.tv.material3.Button
+import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Icon
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.AnimeSeason
@@ -34,16 +37,16 @@ fun HomeScreen(
     val state by homeScreenViewModel.uiState.collectAsState()
     LazyColumn {
         item(contentType = "SearchButton") {
-            Button(
+            IconButton(
                 onClick = onSearchClicked,
                 modifier = Modifier
-                    .padding(16.dp)
-                    .clip(CircleShape)
+                    .size(64.dp)
+                    .padding(8.dp),
+                shape = ButtonDefaults.shape(CircleShape)
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search",
-                    modifier = Modifier.padding(8.dp)
                 )
             }
         }
@@ -76,7 +79,7 @@ private fun SeasonList(
     Log.i("HomeScreen", "SeasonList: ${feed.items.size} items")
     val animeSeason = AnimeSeason.fromSeasonNumber(feed.season)
     AnimeRow(
-        modifier = modifier.padding(top = 16.dp),
+        modifier = modifier.padding(top = 8.dp),
         animeList = feed.items,
         title = "${animeSeason.title}'s 20${feed.year} Anime",
         onAnimeSelected = onAnimeSelected

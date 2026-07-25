@@ -37,4 +37,12 @@ class YummyRepository @Inject constructor(
             animeDetails
         }
     }
+
+    suspend fun searchAnime(query: String, offset: Int = 0, limit: Int = 20): List<Anime> {
+        val searchResults = yummyApi.searchAnime(query, offset, limit).map { it.toEntity() }
+        searchResults.forEach { anime ->
+            cache.put(anime.id, anime)
+        }
+        return searchResults
+    }
 }
