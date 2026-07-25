@@ -1,4 +1,6 @@
 # DAVY
+![GitHub License](https://img.shields.io/github/license/AsfhtgkDavid/davy)
+![GitHub Issues](https://img.shields.io/github/issues/AsfhtgkDavid/davy)
 
 DAVY is a modern Android anime app for discovering and watching anime from the current season. It is
 designed to feel lightweight and approachable while still offering a polished experience for
