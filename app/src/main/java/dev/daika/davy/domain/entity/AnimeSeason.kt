@@ -1,4 +1,4 @@
-package dev.daika.davy.domain.model
+package dev.daika.davy.domain.entity
 
 enum class AnimeSeason(
     val title: String

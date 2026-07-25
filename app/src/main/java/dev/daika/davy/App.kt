@@ -56,6 +56,11 @@ fun App(
                             episodeId
                         )
                     )
+                },
+                onAnotherAnimeSelected = { anime ->
+                    navController.navigate(
+                        AnimeDetailsScreenDestination(anime.id)
+                    )
                 }
             )
         }

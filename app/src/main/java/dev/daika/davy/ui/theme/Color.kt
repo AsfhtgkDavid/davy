@@ -1,4 +1,5 @@
 package dev.daika.davy.ui.theme
+
 import androidx.compose.ui.graphics.Color
 
 val primaryDark = Color(0xFFA6C8FF)

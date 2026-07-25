@@ -18,9 +18,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import dev.daika.davy.domain.model.Anime
-import dev.daika.davy.domain.model.AnimeSeason
-import dev.daika.davy.domain.model.TopCarousel
+import dev.daika.davy.domain.entity.Anime
+import dev.daika.davy.domain.entity.AnimeSeason
+import dev.daika.davy.domain.entity.Feed
 import dev.daika.davy.ui.common.AnimeRow
 import kotlinx.serialization.Serializable
 import androidx.compose.material.icons.Icons
@@ -68,6 +68,10 @@ fun HomeScreen(
                     onAnimeSelected = onAnimeSelected
                 )
             }
+            SeasonList(
+                feed = (state as HomeScreenUiState.Success).feed,
+                onAnimeSelected = onAnimeSelected
+            )
         }
 
         is HomeScreenUiState.Error -> {
@@ -78,13 +82,13 @@ fun HomeScreen(
 
 @Composable
 private fun SeasonList(
-    topCarousel: TopCarousel,
+    feed: Feed,
     onAnimeSelected: (Anime) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Log.i("HomeScreen", "SeasonList: ${topCarousel.items.size} items")
+    Log.i("HomeScreen", "SeasonList: ${feed.items.size} items")
     val lazyListState = rememberLazyListState()
-    val animeSeason = AnimeSeason.fromSeasonNumber(topCarousel.season)
+    val animeSeason = AnimeSeason.fromSeasonNumber(feed.season)
     LazyColumn(
         state = lazyListState,
         contentPadding = PaddingValues(bottom = 108.dp),
@@ -93,8 +97,8 @@ private fun SeasonList(
         item(contentType = "SeasonRow") {
             AnimeRow(
                 modifier = Modifier.padding(top = 16.dp),
-                animeList = topCarousel.items,
-                title = "${animeSeason.title}'s 20${topCarousel.year} Anime",
+                animeList = feed.items,
+                title = "${animeSeason.title}'s 20${feed.year} Anime",
                 onAnimeSelected = onAnimeSelected
             )
         }
