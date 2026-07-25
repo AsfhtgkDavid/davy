@@ -1,10 +1,16 @@
 package dev.daika.davy.ui.screens.search
 
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.OutlinedTextField
@@ -18,12 +24,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
 import androidx.tv.material3.MaterialTheme
 import dev.daika.davy.domain.entity.Anime
+import dev.daika.davy.ui.common.AnimeItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -35,7 +44,7 @@ fun SearchScreen(
     onAnimeSelected: (Anime) -> Unit = {},
     searchScreenViewModel: SearchScreenViewModel = hiltViewModel()
 ) {
-    val uiState by searchScreenViewModel.uiState.collectAsState()
+    val lazyPagingItems = searchScreenViewModel.pagedItems.collectAsLazyPagingItems()
 
     var searchQuery by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -52,29 +61,34 @@ fun SearchScreen(
                 searchQuery = it
                 searchJob?.cancel()
                 searchJob = scope.launch {
-                    delay(1.seconds)
-                    searchScreenViewModel.searchAnime(searchQuery)
+                    delay(10.seconds)
+                    searchScreenViewModel.updateSearchQuery(searchQuery)
                 }
             },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Search
+            ),
             keyboardActions = KeyboardActions(
                 onSearch = {
                     searchJob?.cancel()
                     searchJob = scope.launch {
-                        searchScreenViewModel.searchAnime(searchQuery)
+                        searchScreenViewModel.updateSearchQuery(searchQuery)
                     }
                 }
             ),
             trailingIcon = {
-                IconButton(
-                    onClick = {
-                        searchQuery = ""
-                        searchJob?.cancel()
+                if (searchQuery.length > 2) {
+                    IconButton(
+                        onClick = {
+                            searchQuery = ""
+                            searchJob?.cancel()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear search query",
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = "Clear search query",
-                    )
                 }
             },
             colors = OutlinedTextFieldDefaults.colors(
@@ -88,16 +102,25 @@ fun SearchScreen(
                 .padding(bottom = 16.dp)
                 .clip(MaterialTheme.shapes.medium),
         )
-        when (uiState) {
-            is SearchScreenUiState.Loading -> {
-                // Show loading indicator
-            }
 
-            is SearchScreenUiState.Success -> {
-            }
+        Spacer(modifier = Modifier.height(8.dp))
 
-            is SearchScreenUiState.Error -> {
-                // Show error message
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 150.dp),
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = spacedBy(8.dp),
+            verticalArrangement = spacedBy(8.dp)
+        ) {
+            items(lazyPagingItems.itemCount) { index ->
+                val anime = lazyPagingItems[index]
+                if (anime != null) {
+                    AnimeItem(
+                        anime = anime,
+                        modifier = Modifier,
+                        onAnimeSelected = onAnimeSelected,
+                        index = index
+                    )
+                }
             }
         }
     }

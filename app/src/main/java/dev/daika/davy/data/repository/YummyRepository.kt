@@ -1,6 +1,8 @@
 package dev.daika.davy.data.repository
 
 import android.util.LruCache
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import dev.daika.davy.data.api.YummyApi
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.Feed
@@ -38,11 +40,11 @@ class YummyRepository @Inject constructor(
         }
     }
 
-    suspend fun searchAnime(query: String, offset: Int = 0, limit: Int = 20): List<Anime> {
-        val searchResults = yummyApi.searchAnime(query, offset, limit).map { it.toEntity() }
-        searchResults.forEach { anime ->
-            cache.put(anime.id, anime)
-        }
-        return searchResults
-    }
+    fun searchAnime(query: String) = Pager(
+        config = PagingConfig(
+            pageSize = 20,
+            enablePlaceholders = false
+        ),
+        pagingSourceFactory = { YummySearchPagingSource(yummyApi, query) }
+    ).flow
 }
