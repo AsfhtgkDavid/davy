@@ -10,6 +10,8 @@ import dev.daika.davy.ui.screens.home.HomeScreen
 import dev.daika.davy.ui.screens.home.HomeScreenDestination
 import dev.daika.davy.ui.screens.player.PlayerScreen
 import dev.daika.davy.ui.screens.player.PlayerScreenDestination
+import dev.daika.davy.ui.screens.search.SearchScreen
+import dev.daika.davy.ui.screens.search.SearchScreenDestination
 
 @Composable
 fun App(
@@ -19,26 +21,47 @@ fun App(
 
     NavHost(
         navController = navController,
-        startDestination = HomeScreenDestination,
-        builder = {
-            composable<HomeScreenDestination> {
-                HomeScreen(
-                    onAnimeSelected = { anime ->
-                        navController.navigate(AnimeDetailsScreenDestination(anime.id))
-                    }
-                )
-            }
-            composable<AnimeDetailsScreenDestination> {
-                AnimeDetailsScreen(
-                    onEpisodeSelected = { animeId, episodeId ->
-                        navController.navigate(PlayerScreenDestination(animeId, episodeId))
-                    },
-                )
-            }
-            composable<PlayerScreenDestination> {
-                PlayerScreen()
-            }
-        }
-    )
-}
+        startDestination = HomeScreenDestination
+    ) {
 
+        composable<HomeScreenDestination> {
+            HomeScreen(
+                onAnimeSelected = { anime ->
+                    navController.navigate(
+                        AnimeDetailsScreenDestination(anime.id)
+                    )
+                },
+                onSearchClicked = {
+                    navController.navigate(
+                        SearchScreenDestination
+                    )
+                }
+            )
+        }
+
+        composable<SearchScreenDestination> {
+            SearchScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<AnimeDetailsScreenDestination> {
+            AnimeDetailsScreen(
+                onEpisodeSelected = { animeId, episodeId ->
+                    navController.navigate(
+                        PlayerScreenDestination(
+                            animeId,
+                            episodeId
+                        )
+                    )
+                }
+            )
+        }
+
+        composable<PlayerScreenDestination> {
+            PlayerScreen()
+        }
+    }
+}
