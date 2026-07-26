@@ -3,6 +3,7 @@ package dev.daika.davy.data.repository;
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import dev.daika.davy.data.api.YummyApi
+import dev.daika.davy.data.model.toEntity
 import dev.daika.davy.domain.entity.Anime
 
 class YummySearchPagingSource(
