@@ -2,6 +2,7 @@ package dev.daika.davy.data.api
 
 import dev.daika.davy.data.model.AnimeSearchDto
 import dev.daika.davy.data.model.DetailAnimeDto
+import dev.daika.davy.data.model.SearchAnimeDto
 import dev.daika.davy.data.model.YummyFeed
 import retrofit2.http.GET
 import retrofit2.http.Path

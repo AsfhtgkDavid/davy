@@ -1,5 +1,8 @@
 # DAVY
 
+![GitHub License](https://img.shields.io/github/license/AsfhtgkDavid/davy)
+![GitHub Issues](https://img.shields.io/github/issues/AsfhtgkDavid/davy)
+
 DAVY is a modern Android anime app for discovering and watching anime from the current season. It is
 designed to feel lightweight and approachable while still offering a polished experience for
 browsing, selecting episodes, and playing videos.
@@ -9,6 +12,19 @@ browsing, selecting episodes, and playing videos.
 DAVY is built with Kotlin and Jetpack Compose, using a TV-friendly interface and a built-in media
 player. The app pulls anime data from the Yummy API and helps users move quickly from discovery to
 playback.
+
+The application is primarily targeted at TV platforms (Android TV / Google TV) and is designed with
+focus-based navigation and remote-friendly controls.
+
+## Tech stack
+
+- Kotlin
+- Jetpack Compose (Compose for TV)
+- ExoPlayer (media playback)
+- AndroidX TV
+- Yummy API (data source)
+- Coroutines (asynchronous work)
+- Retrofit & OkHttp (networking)
 
 ## Features
 
@@ -27,6 +43,7 @@ playback.
 - [ ] Local watch history
 - [ ] Integration with MyAnimeList and other watchlists
 - [ ] Integration with other anime aggregators
+- [ ] Adaptation for phones (mobile UI)
 
 ## Screenshots
 
@@ -36,7 +53,8 @@ playback.
 
 ## Contributing
 
-Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for the full development workflow, coding guidelines, and pull request process.
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for the full development
+workflow, coding guidelines, and pull request process.
 
 If you want to add support for new player parsers, please work in the separate parser repository:
 

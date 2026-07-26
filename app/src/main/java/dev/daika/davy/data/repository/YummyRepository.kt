@@ -1,6 +1,8 @@
 package dev.daika.davy.data.repository
 
 import android.util.LruCache
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import dev.daika.davy.data.api.YummyApi
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.Feed

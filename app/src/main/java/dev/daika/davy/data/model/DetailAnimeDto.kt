@@ -56,11 +56,3 @@ data class ViewingOrderAnimeDto(
         rating = AnimeRating(rating, 0),
     )
 }
-
-@Serializable
-data class AnimeGenreDto(
-    val id: Int,
-    val title: String,
-) {
-    fun toEntity() = title
-}
