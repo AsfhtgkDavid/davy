@@ -7,10 +7,25 @@ import coil3.compose.AsyncImage
 import dev.daika.davy.domain.entity.Anime
 
 @Composable
-fun PosterImage(anime: Anime, modifier: Modifier = Modifier) {
+fun PosterImage(
+    anime: Anime,
+    modifier: Modifier = Modifier
+) {
+
+    val posterUrl = when {
+        anime.poster.startsWith("//") ->
+            "https:${anime.poster}"
+
+        anime.poster.startsWith("http") ->
+            anime.poster
+
+        else ->
+            "https://${anime.poster}"
+    }
+
     AsyncImage(
         modifier = modifier,
-        model = "https://${anime.poster}",
+        model = posterUrl,
         contentDescription = "${anime.title} poster",
         contentScale = ContentScale.Crop
     )

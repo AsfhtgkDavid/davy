@@ -64,14 +64,10 @@ fun HomeScreen(
                 }
 
                 SeasonList(
-                    topCarousel = (state as HomeScreenUiState.Success).feed.topCarousel,
+                    feed = (state as HomeScreenUiState.Success).feed,
                     onAnimeSelected = onAnimeSelected
                 )
             }
-            SeasonList(
-                feed = (state as HomeScreenUiState.Success).feed,
-                onAnimeSelected = onAnimeSelected
-            )
         }
 
         is HomeScreenUiState.Error -> {
