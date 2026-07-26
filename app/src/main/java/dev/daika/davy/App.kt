@@ -65,6 +65,7 @@ fun App(
             )
         }
 
+
         composable<PlayerScreenDestination> {
             PlayerScreen()
         }
