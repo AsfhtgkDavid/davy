@@ -4,6 +4,7 @@ import android.util.LruCache
 import dev.daika.davy.data.api.YummyApi
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.Feed
+import dev.daika.davy.data.model.toEntity
 import javax.inject.Inject
 
 class YummyRepository @Inject constructor(
@@ -36,5 +37,16 @@ class YummyRepository @Inject constructor(
             cache.put(id, animeDetails)
             animeDetails
         }
+    }
+
+    suspend fun searchAnime(query: String): List<Anime> {
+        if (query.isBlank()) return emptyList()
+
+        return yummyApi.searchAnime(query.trim())
+            .map { dto ->
+                dto.toEntity().also { anime ->
+                    cache.put(anime.id, anime)
+                }
+            }
     }
 }
