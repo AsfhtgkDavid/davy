@@ -1,5 +1,6 @@
 package dev.daika.davy.ui.common
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -24,9 +25,9 @@ fun PosterImage(
     }
 
     AsyncImage(
-        modifier = modifier,
         model = posterUrl,
-        contentDescription = "${anime.title} poster",
+        contentDescription = anime.title,
+        modifier = modifier.fillMaxSize(),
         contentScale = ContentScale.Crop
     )
 }
