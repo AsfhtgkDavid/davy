@@ -41,8 +41,9 @@ fun App(
 
         composable<SearchScreenDestination> {
             SearchScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
+                onAnimeSelected = { anime ->
+                    // Navigate to details screen
+                    navController.navigate("anime_details_route/${anime.id}")
                 }
             )
         }

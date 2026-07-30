@@ -3,10 +3,12 @@ package dev.daika.davy.data.repository
 import android.util.LruCache
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import dev.daika.davy.data.api.YummyApi
+import dev.daika.davy.data.model.toEntity
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.Feed
-import dev.daika.davy.data.model.toEntity
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class YummyRepository @Inject constructor(
@@ -20,7 +22,6 @@ class YummyRepository @Inject constructor(
             cache.put(anime.id, anime)
         }
         return feed
-
     }
 
     suspend fun getAnimeDetails(id: Int, needVideos: Boolean): Anime {
@@ -29,10 +30,12 @@ class YummyRepository @Inject constructor(
             if (!needVideos || cachedAnime.translations.isNotEmpty()) {
                 cachedAnime
             } else {
-                // TODO: There is /videos endpoint need to use it instead of fetching all details again
-                val animeDetails = yummyApi.getAnimeDetails(id, true).toEntity()
-                cache.put(id, animeDetails)
-                animeDetails
+                val videos = yummyApi.getAnimeVideos(id)
+                val updatedAnime = cachedAnime.copy(
+                    translations = videos.toEntity()
+                )
+                cache.put(id, updatedAnime)
+                updatedAnime
             }
         } else {
             val animeDetails = yummyApi.getAnimeDetails(id, needVideos).toEntity()
@@ -41,12 +44,22 @@ class YummyRepository @Inject constructor(
         }
     }
 
+    fun getSearchPagingFlow(query: String): Flow<PagingData<Anime>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { YummySearchPagingSource(this, query) }
+        ).flow
+    }
+
     suspend fun searchAnime(query: String): List<Anime> {
         if (query.isBlank()) return emptyList()
 
         return yummyApi.searchAnime(query.trim())
-            .map { dto ->
-                dto.toEntity().also { anime ->
+            .mapNotNull { dto ->
+                dto.toEntity()?.also { anime ->
                     cache.put(anime.id, anime)
                 }
             }

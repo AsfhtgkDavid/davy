@@ -21,20 +21,20 @@ data class DetailAnimeDto(
     val videos: List<AnimeVideoDto> = emptyList(),
     @SerialName("viewing_order")
     val viewingOrder: List<ViewingOrderAnimeDto> = emptyList()
-) {
-    fun toEntity() = Anime(
-        id = id,
-        title = title,
-        description = description,
-        url = url,
-        poster = poster.fullsize,
-        rating = rating.toEntity(),
-        genres = genres.map { it.toEntity() },
-        otherTitles = otherTitles,
-        translations = videos.toEntity(),
-        viewingOrder = viewingOrder.map { it.toEntity() }
-    )
-}
+)
+
+fun DetailAnimeDto.toEntity() = Anime(
+    id = id,
+    title = title,
+    description = description,
+    url = url,
+    poster = poster.fullsize,
+    rating = rating.toEntity(),
+    genres = genres.map { it.toEntity() },
+    otherTitles = otherTitles,
+    translations = videos.toEntity(),
+    viewingOrder = viewingOrder.map { it.toEntity() }
+)
 
 @Serializable
 data class ViewingOrderAnimeDto(
@@ -46,13 +46,13 @@ data class ViewingOrderAnimeDto(
     val url: String,
     val poster: AnimePostersDto,
     val rating: Double,
-) {
-    fun toEntity() = Anime(
-        id = id,
-        title = title,
-        description = description,
-        url = url,
-        poster = poster.fullsize,
-        rating = AnimeRating(rating, 0),
-    )
-}
+)
+
+fun ViewingOrderAnimeDto.toEntity() = Anime(
+    id = id,
+    title = title,
+    description = description,
+    url = url,
+    poster = poster.fullsize,
+    rating = AnimeRating(rating, 0),
+)

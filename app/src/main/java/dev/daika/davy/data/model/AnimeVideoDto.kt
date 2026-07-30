@@ -13,8 +13,13 @@ data class AnimeVideoDto(
     @SerialName("iframe_url")
     val iframeUrl: String,
     val data: PlayerDataDto,
-    val number: String, // WHY STRING?
-)
+    val number: String,
+) {
+
+    fun toEpisode(): AnimeEpisode {
+        return AnimeEpisode(id, number, iframeUrl)
+    }
+}
 
 @Serializable
 data class PlayerDataDto(
@@ -32,9 +37,7 @@ fun List<AnimeVideoDto>.toEntity(): List<AnimeTranslation> {
                     .map { (player, episodes) ->
                         AnimePlayer(
                             player = player,
-                            episodes = episodes.map {
-                                AnimeEpisode(it.id, it.number, it.iframeUrl)
-                            }
+                            episodes = episodes.map { it.toEpisode() }
                         )
                     }
             )
