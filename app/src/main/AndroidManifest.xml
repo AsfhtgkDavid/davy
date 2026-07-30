@@ -11,6 +11,13 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <attribution
+        android:tag="playback"
+        android:label="@string/playback_attribution" />
+    <attribution
+        android:tag="@string/empty"
+        android:label="@string/playback_attribution" />
+
     <application
         android:name=".DavyApplication"
         android:allowBackup="true"
