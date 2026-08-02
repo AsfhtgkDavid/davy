@@ -1,5 +1,6 @@
 package dev.daika.davy.ui.screens.player
 
+import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.focusable
@@ -50,7 +51,7 @@ fun RowScope.VideoPlayerControllerIndicator(
     )
     var seekProgress by remember { mutableLongStateOf(0L) }
 
-    val accelerationState = remember {
+    val accelerationState = remember(totalDuration) {
         object {
             var lastEventTime = 0L
             var durationHeld = 0L

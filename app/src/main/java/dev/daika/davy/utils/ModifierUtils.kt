@@ -9,6 +9,7 @@
  */
 package dev.daika.davy.utils
 
+import android.util.Log
 import android.view.KeyEvent
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.onPreviewKeyEvent
@@ -18,29 +19,31 @@ fun Modifier.handleDPadKeyEvents(
     onRight: (() -> Unit)? = null,
     onEnter: (() -> Unit)? = null
 ) = onPreviewKeyEvent {
-    fun onActionUp(block: () -> Unit) {
-        if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) block()
-    }
-
     when (it.nativeKeyEvent.keyCode) {
         KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_LEFT -> {
             onLeft?.apply {
-                onActionUp(::invoke)
-                return@onPreviewKeyEvent true
+                if (it.nativeKeyEvent.action == KeyEvent.ACTION_DOWN) {
+                    invoke()
+                    return@onPreviewKeyEvent true
+                }
             }
         }
 
         KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_RIGHT -> {
             onRight?.apply {
-                onActionUp(::invoke)
-                return@onPreviewKeyEvent true
+                if (it.nativeKeyEvent.action == KeyEvent.ACTION_DOWN) {
+                    invoke()
+                    return@onPreviewKeyEvent true
+                }
             }
         }
 
         KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
             onEnter?.apply {
-                onActionUp(::invoke)
-                return@onPreviewKeyEvent true
+                if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
+                    invoke()
+                    return@onPreviewKeyEvent true
+                }
             }
         }
     }
