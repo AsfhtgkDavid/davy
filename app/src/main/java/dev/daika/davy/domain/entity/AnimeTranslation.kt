@@ -5,12 +5,12 @@ data class AnimeTranslation(
     val availablePlayers: List<AnimePlayer>
 )
 
-fun List<AnimeTranslation>.getIframeById(episodeId: Int): String? {
-    return this.asSequence()
-        .flatMap { it.availablePlayers }
-        .flatMap { it.episodes }
-        .firstOrNull { it.videoId == episodeId }
-        ?.iframeUrl
+fun List<AnimeTranslation>.getPlayerByEpisodeId(episodeId: Int): AnimePlayer? {
+    return this.firstNotNullOfOrNull { translation ->
+        translation.availablePlayers.firstOrNull { player ->
+            player.episodes.any { episode -> episode.videoId == episodeId }
+        }
+    }
 }
 
 data class AnimePlayer(
