@@ -47,9 +47,9 @@ focus-based navigation and remote-friendly controls.
 
 ## Screenshots
 
-![HomeScreen.png](images/HomeScreen.png)
+![HomeScreen.png](metadata/en-US/images/tvScreenshots/HomeScreen.png)
 
-![DetailView.png](images/DetailView.png)
+![DetailView.png](metadata/en-US/images/tvScreenshots/DetailView.png)
 
 ## Contributing
 
