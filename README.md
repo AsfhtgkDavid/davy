@@ -47,9 +47,9 @@ focus-based navigation and remote-friendly controls.
 
 ## Screenshots
 
-![HomeScreen.png](metadata/en-US/images/tvScreenshots/HomeScreen.png)
+![HomeScreen.png](fastlane/metadata/android/en-US/images/tvScreenshots/HomeScreen.png)
 
-![DetailView.png](metadata/en-US/images/tvScreenshots/DetailView.png)
+![DetailView.png](fastlane/metadata/android/en-US/images/tvScreenshots/DetailView.png)
 
 ## Contributing
 

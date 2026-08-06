@@ -4,15 +4,18 @@ Thanks for your interest in contributing to DAVY.
 
 ## Project Overview
 
-DAVY is an Android anime app built with Kotlin, Jetpack Compose, Hilt, and ExoPlayer. The app currently focuses on browsing anime from the current season, opening anime details, and playing episodes.
+DAVY is an Android anime app built with Kotlin, Jetpack Compose, Hilt, and ExoPlayer. The app
+currently focuses on browsing anime from the current season, opening anime details, and playing
+episodes.
 
 ## Before You Start
 
 - Make sure you have Android Studio or the Android SDK installed.
-- Install JDK 17 or newer.
+- Install JDK 21 or newer.
 - Ensure you have Git configured locally.
-- If you plan to work on player parsers, note that parser implementations live in the separate repository:
-  - https://github.com/AsfhtgkDavid/davy-parsers
+- If you plan to work on player parsers, note that parser implementations live in the separate
+  repository:
+    - https://github.com/AsfhtgkDavid/davy-parsers
 
 ## Development Setup
 
@@ -62,15 +65,18 @@ DAVY is an Android anime app built with Kotlin, Jetpack Compose, Hilt, and ExoPl
 
 ## Adding New Player Parsers
 
-If you want to add support for new player sources or episode parsers, please work in the parser repository:
+If you want to add support for new player sources or episode parsers, please work in the parser
+repository:
 
 - https://github.com/AsfhtgkDavid/davy-parsers
 
-This project consumes parser implementations from that repository, so parser-related changes should be made there unless the integration layer in DAVY itself must also be updated.
+This project consumes parser implementations from that repository, so parser-related changes should
+be made there unless the integration layer in DAVY itself must also be updated.
 
 ## Pull Request Guidelines
 
 Please include:
+
 - A short description of the problem you solved
 - The motivation behind the change
 - Screenshots or screen recordings when the UI changes
@@ -78,4 +84,5 @@ Please include:
 
 ## Questions
 
-If you are unsure where to start, open an issue or contact the maintainers before starting significant work.
+If you are unsure where to start, open an issue or contact the maintainers before starting
+significant work.
