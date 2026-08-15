@@ -4,6 +4,7 @@ import android.util.LruCache
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import dev.daika.davy.data.api.YummyApi
+import dev.daika.davy.data.model.toEntity
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.Feed
 import javax.inject.Inject
@@ -28,8 +29,8 @@ class YummyRepository @Inject constructor(
             if (!needVideos || cachedAnime.translations.isNotEmpty()) {
                 cachedAnime
             } else {
-                // TODO: There is /videos endpoint need to use it instead of fetching all details again
-                val animeDetails = yummyApi.getAnimeDetails(id, true).toEntity()
+                val translations = yummyApi.getAnimeVideos(id).toEntity()
+                val animeDetails = cachedAnime.copy(translations = translations)
                 cache.put(id, animeDetails)
                 animeDetails
             }
