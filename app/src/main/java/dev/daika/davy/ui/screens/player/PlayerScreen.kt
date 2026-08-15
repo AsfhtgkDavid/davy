@@ -1,7 +1,7 @@
 package dev.daika.davy.ui.screens.player
 
+import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.compose.BackHandler
 import androidx.annotation.OptIn
@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -34,35 +34,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
+import androidx.media3.common.TrackSelectionOverride
+import androidx.media3.common.Tracks
+import androidx.media3.common.text.CueGroup
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
-import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
-import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import dev.daika.davy.R
+import dev.daika.davy.ui.common.SelectionMenuPopup
 import dev.daika.davy.utils.formatTime
 import dev.daika.davyparsers.PlayerData
 import kotlinx.coroutines.delay
@@ -73,8 +77,6 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel()) {
     val uiState by playerScreenViewModel.uiState.collectAsState()
-
-    Log.i("PlayerScreen", "PlayerScreen recomposed with uiState: $uiState")
 
     when (uiState) {
         is PlayerScreenUiState.Loading -> {
@@ -96,19 +98,22 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
             var resetControlsTimer by remember { mutableIntStateOf(0) }
 
             var selectedSource by remember {
-                mutableStateOf(playerData.translations.first { it.isDefault }.streams.first().urls.first())
+                mutableStateOf((playerData.translations.firstOrNull { it.isDefault }
+                    ?: (playerData.translations.first())).streams.first().urls.first())
+            }
+            var selectedSubtitles by remember {
+                mutableStateOf(playerData.subtitles.firstOrNull { it.isDefault }?.src)
             }
             var savedPosition by remember { mutableLongStateOf(0L) }
             var videoDuration by remember { mutableLongStateOf(1L) }
             var playWhenReadyState by remember { mutableStateOf(true) }
+            var subtitleText by remember { mutableStateOf("") }
+            var currentTracks by remember { mutableStateOf(Tracks.EMPTY) }
 
-            val httpDataSourceFactory = DefaultHttpDataSource.Factory()
-                .setDefaultRequestProperties(
-                    mapOf(
-                        "Origin" to (uiState as PlayerScreenUiState.Success).iframeUrl
-                    )
-                )
-            val dataSourceFactory = DefaultDataSource.Factory(context, httpDataSourceFactory)
+            val dataSourceFactory = DefaultDataSource.Factory(
+                context,
+                (uiState as PlayerScreenUiState.Success).dataSourceFactory
+            )
             val exoPlayer = remember {
                 ExoPlayer.Builder(context)
                     .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
@@ -116,6 +121,23 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
                     .apply {
                         playWhenReady = true
                     }
+            }
+
+            fun setItem(
+                mediaItem: MediaItem
+            ) {
+                var savedPosition1 = savedPosition
+                var playWhenReadyState1 = playWhenReadyState
+                if (exoPlayer.mediaItemCount > 0) {
+                    savedPosition1 = exoPlayer.currentPosition
+                    playWhenReadyState1 = exoPlayer.playWhenReady
+                }
+
+                exoPlayer.replaceMediaItem(0, mediaItem)
+                exoPlayer.prepare()
+
+                exoPlayer.seekTo(savedPosition1)
+                exoPlayer.playWhenReady = playWhenReadyState1
             }
 
             BackHandler(enabled = isControlsVisible) {
@@ -137,18 +159,44 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
             }
 
             LaunchedEffect(selectedSource) {
-                val mediaItem = MediaItem.fromUri(selectedSource)
+                subtitleText = ""
 
-                if (exoPlayer.mediaItemCount > 0) {
-                    savedPosition = exoPlayer.currentPosition
-                    playWhenReadyState = exoPlayer.playWhenReady
+                val subtitleConfigs = playerData.subtitles.map { subtitle ->
+                    MediaItem.SubtitleConfiguration.Builder(Uri.parse(subtitle.src))
+                        .setMimeType(MimeTypes.TEXT_VTT)
+                        .setId(subtitle.src)
+                        .setLabel(subtitle.label)
+                        .build()
                 }
 
-                exoPlayer.replaceMediaItem(0, mediaItem)
-                exoPlayer.prepare()
+                val mediaItem = MediaItem.Builder()
+                    .setUri(selectedSource)
+                    .setSubtitleConfigurations(subtitleConfigs)
+                    .build()
 
-                exoPlayer.seekTo(savedPosition)
-                exoPlayer.playWhenReady = playWhenReadyState
+                setItem(mediaItem)
+            }
+
+            LaunchedEffect(selectedSubtitles, currentTracks) {
+                val trackSelectionParameters = exoPlayer.trackSelectionParameters.buildUpon()
+
+                if (selectedSubtitles == null) {
+                    trackSelectionParameters.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
+                    trackSelectionParameters.clearOverridesOfType(C.TRACK_TYPE_TEXT)
+                } else {
+                    trackSelectionParameters.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
+
+                    currentTracks.groups.find { trackGroup ->
+                        trackGroup.mediaTrackGroup.getFormat(0).id?.split(":")?.drop(1)
+                            ?.joinToString(":") == selectedSubtitles
+                    }?.let { textTrackGroup ->
+                        trackSelectionParameters.setOverrideForType(
+                            TrackSelectionOverride(textTrackGroup.mediaTrackGroup, 0)
+                        )
+                    }
+                }
+
+                exoPlayer.trackSelectionParameters = trackSelectionParameters.build()
             }
 
             DisposableEffect(exoPlayer) {
@@ -164,8 +212,23 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
                     override fun onIsPlayingChanged(isPlayingState: Boolean) {
                         isPlaying = isPlayingState
                     }
+
+                    override fun onCues(cueGroup: CueGroup) {
+                        subtitleText = cueGroup.cues.firstOrNull()?.text?.toString() ?: ""
+                    }
+
+                    override fun onTracksChanged(tracks: Tracks) {
+                        currentTracks = tracks
+                    }
                 }
                 exoPlayer.addListener(listener)
+
+                currentTracks = exoPlayer.currentTracks
+                isPlaying = exoPlayer.isPlaying
+                if (exoPlayer.playbackState == Player.STATE_READY) {
+                    videoDuration = exoPlayer.contentDuration.coerceAtLeast(1L)
+                }
+
                 onDispose {
                     exoPlayer.removeListener(listener)
                 }
@@ -223,6 +286,33 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
                             )
                     )
                 }
+                if (subtitleText.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = if (isControlsVisible) 100.dp else 24.dp),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        Text(
+                            text = subtitleText,
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            style = TextStyle(
+                                shadow = Shadow(
+                                    color = Color.Black,
+                                    offset = Offset(2f, 2f),
+                                    blurRadius = 4f
+                                )
+                            ),
+                            modifier = Modifier
+                                .background(
+                                    Color.Black.copy(alpha = 0.6f),
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .padding(horizontal = 12.dp, vertical = 6.dp)
+                        )
+                    }
+                }
 
                 if (isControlsVisible) {
                     PlayerControls(
@@ -240,8 +330,10 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
                             currentPosition = position
                         },
                         onQualitySelect = { urls -> selectedSource = urls.first() },
+                        onSubtitleSelect = { url -> selectedSubtitles = url },
                         onUserInteraction = { resetControlsTimer++ },
-                        currentQuality = selectedSource
+                        currentQuality = selectedSource,
+                        currentSubtitles = selectedSubtitles
                     )
                 }
             }
@@ -260,14 +352,17 @@ fun PlayerControls(
     videoDuration: Long,
     playerData: PlayerData,
     currentQuality: String,
+    currentSubtitles: String?,
     onPlayPause: () -> Unit,
     onNextEpisode: () -> Unit,
     onPrevEpisode: () -> Unit,
     onSeek: (Long) -> Unit,
     onQualitySelect: (List<String>) -> Unit,
+    onSubtitleSelect: (String?) -> Unit,
     onUserInteraction: () -> Unit
 ) {
     var showQualityOptions by remember { mutableStateOf(false) }
+    var showSubtitleOptions by remember { mutableStateOf(false) }
 
     var positionPreview by remember { mutableStateOf<Long?>(null) }
     val focusRequester = remember { FocusRequester() }
@@ -351,52 +446,54 @@ fun PlayerControls(
                         contentDescription = "Quality Settings"
                     )
                 }
+
+                if (playerData.subtitles.isNotEmpty())
+                    IconButton(onClick = { showSubtitleOptions = true }) {
+                        Icon(
+                            painterResource(R.drawable.outline_subtitles_24),
+                            contentDescription = "Subtitles Settings"
+                        )
+                    }
             }
             if (showQualityOptions) {
-                Popup(
-                    alignment = Alignment.Center,
-                    onDismissRequest = { showQualityOptions = false },
-                    properties = PopupProperties(focusable = true)
-                ) {
-                    val focusRequester = remember { FocusRequester() }
-                    LaunchedEffect(Unit) {
-                        focusRequester.requestFocus()
-                    }
-                    Box(
-                        modifier = Modifier
-                            .width(124.dp)
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(16.dp)
-                    ) {
-                        Column {
-                            Text("Select Quality", style = MaterialTheme.typography.titleMedium)
-                            playerData.translations.first { it.isDefault }.streams.forEach { stream ->
-                                var itemFocused by remember { mutableStateOf(false) }
-                                val isSelected = stream.urls.contains(currentQuality)
-                                Surface(
-                                    onClick = {
-                                        onQualitySelect(stream.urls)
-                                        showQualityOptions = false
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .then(if (isSelected) Modifier.focusRequester(focusRequester) else Modifier)
-                                        .onFocusChanged { focusState ->
-                                            itemFocused = focusState.isFocused
-                                        },
-                                    colors = ClickableSurfaceDefaults.colors(
-                                        containerColor = Color.Transparent,
-                                        focusedContainerColor = MaterialTheme.colorScheme.primary.copy(
-                                            alpha = 0.8f
-                                        )
-                                    )
-                                ) {
-                                    Text(stream.quality)
-                                }
-                            }
-                        }
-                    }
-                }
+                val streams = (playerData.translations.firstOrNull { it.isDefault }
+                    ?: playerData.translations.first()).streams
+                val qualityOptions = streams.map { it.quality }
+                val selectedIndex =
+                    streams.indexOfFirst { it.urls.contains(currentQuality) }.coerceAtLeast(0)
+
+                SelectionMenuPopup(
+                    title = "Select Quality",
+                    options = qualityOptions,
+                    selectedIndex = selectedIndex,
+                    onSelect = { index ->
+                        onQualitySelect(streams[index].urls)
+                        showQualityOptions = false
+                    },
+                    onDismiss = { showQualityOptions = false }
+                )
+            }
+
+            if (showSubtitleOptions) {
+                val subtitles = playerData.subtitles
+                val subtitleOptions = subtitles.map { it.label }.toMutableList()
+                val selectedIndex =
+                    subtitles.indexOfFirst { it.src == currentSubtitles } + 1
+                subtitleOptions.add(0, "Turn Off")
+
+                SelectionMenuPopup(
+                    title = "Select Subtitles",
+                    options = subtitleOptions,
+                    selectedIndex = selectedIndex,
+                    onSelect = { index ->
+                        if (index == 0)
+                            onSubtitleSelect(null)
+                        else
+                            onSubtitleSelect(subtitles[index - 1].src)
+                        showSubtitleOptions = false
+                    },
+                    onDismiss = { showSubtitleOptions = false }
+                )
             }
         }
     }

@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.okhttp.OkHttpDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.AnimePlayer
@@ -14,13 +16,16 @@ import dev.daika.davyparsers.PlayerData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import okhttp3.Headers.Companion.toHeaders
+import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayerScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val yummyGetAnimeUseCase: YummyGetAnimeUseCase,
-    private val parsers: List<@JvmSuppressWildcards Parser>
+    private val parsers: List<@JvmSuppressWildcards Parser>,
+    private val okHttpClient: OkHttpClient
 ) : ViewModel() {
     private val animeId: Int = checkNotNull(savedStateHandle["animeId"])
     private var episodeId: Int = checkNotNull(savedStateHandle["episodeId"])
@@ -92,16 +97,26 @@ class PlayerScreenViewModel @Inject constructor(
                         referer
                     )
                     ?: throw IllegalArgumentException("Failed to parse player data")
-            _uiState.value = PlayerScreenUiState.Success(playerData, iframeUrl)
+            _uiState.value =
+                PlayerScreenUiState.Success(playerData, headersToDatasource(playerData.headers))
         } catch (e: Exception) {
             Log.e("PlayerScreenViewModel", "Error loading player data: ${e.message}", e)
             _uiState.value = PlayerScreenUiState.Error(e.message ?: "Unknown error")
         }
     }
+
+    private fun headersToDatasource(headers: Map<String, String>) =
+        OkHttpDataSource.Factory(okHttpClient.newBuilder().addInterceptor { chain ->
+            val request =
+                chain.request().newBuilder().headers(headers.toHeaders()).build()
+            chain.proceed(request)
+        }.build())
 }
 
 sealed interface PlayerScreenUiState {
     object Loading : PlayerScreenUiState
-    data class Success(val playerData: PlayerData, val iframeUrl: String) : PlayerScreenUiState
+    data class Success(val playerData: PlayerData, val dataSourceFactory: DataSource.Factory) :
+        PlayerScreenUiState
+
     data class Error(val message: String) : PlayerScreenUiState
 }
