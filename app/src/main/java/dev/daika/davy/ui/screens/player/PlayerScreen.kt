@@ -99,7 +99,7 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
 
             var selectedSource by remember {
                 mutableStateOf((playerData.translations.firstOrNull { it.isDefault }
-                    ?: (playerData.translations.first())).streams.first().urls.first())
+                    ?: (playerData.translations.first())).streams.maxByOrNull { it.quality.toInt() }!!.urls.first())
             }
             var selectedSubtitles by remember {
                 mutableStateOf(playerData.subtitles.firstOrNull { it.isDefault }?.src)
@@ -457,7 +457,7 @@ fun PlayerControls(
             }
             if (showQualityOptions) {
                 val streams = (playerData.translations.firstOrNull { it.isDefault }
-                    ?: playerData.translations.first()).streams
+                    ?: playerData.translations.first()).streams.sortedBy { it.quality.toInt() }
                 val qualityOptions = streams.map { it.quality }
                 val selectedIndex =
                     streams.indexOfFirst { it.urls.contains(currentQuality) }.coerceAtLeast(0)
