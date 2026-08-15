@@ -1,6 +1,5 @@
 package dev.daika.davy.ui.screens.search
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

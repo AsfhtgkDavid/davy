@@ -9,7 +9,6 @@
  */
 package dev.daika.davy.utils
 
-import android.util.Log
 import android.view.KeyEvent
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.onPreviewKeyEvent
