@@ -1,7 +1,6 @@
 package dev.daika.davy.data.model
 
 import dev.daika.davy.domain.entity.Anime
-import dev.daika.davy.domain.entity.AnimeRating
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
