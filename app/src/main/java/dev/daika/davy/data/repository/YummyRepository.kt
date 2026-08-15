@@ -8,7 +8,9 @@ import dev.daika.davy.data.model.toEntity
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.Feed
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class YummyRepository @Inject constructor(
     private val yummyApi: YummyApi
 ) {
@@ -25,7 +27,7 @@ class YummyRepository @Inject constructor(
 
     suspend fun getAnimeDetails(id: Int, needVideos: Boolean): Anime {
         val cachedAnime = cache.get(id)
-        return if (cachedAnime != null) {
+        return if (cachedAnime != null && cachedAnime.genres.isNotEmpty()) {
             if (!needVideos || cachedAnime.translations.isNotEmpty()) {
                 cachedAnime
             } else {
