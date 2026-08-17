@@ -24,7 +24,7 @@ class YummyRepository @Inject constructor(
 
     suspend fun getAnimeDetails(id: Int, needVideos: Boolean): Anime {
         val cachedAnime = cache.get(id)
-        return if (cachedAnime != null && cachedAnime.genres.isNotEmpty()) {
+        return if (cachedAnime != null) {
             if (!needVideos || cachedAnime.translations.isNotEmpty()) {
                 cachedAnime
             } else {
