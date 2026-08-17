@@ -104,7 +104,7 @@ fun SearchScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (searchQuery.isNotEmpty())
+        if (searchQuery.isNotBlank())
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier.fillMaxSize(),

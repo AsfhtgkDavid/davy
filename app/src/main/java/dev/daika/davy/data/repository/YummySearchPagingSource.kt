@@ -10,7 +10,7 @@ class YummySearchPagingSource(
     private val query: String
 ) : PagingSource<Int, Anime>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Anime> {
-        if (query.isEmpty())
+        if (query.isBlank())
             return LoadResult.Page(
                 data = emptyList(),
                 prevKey = null,
