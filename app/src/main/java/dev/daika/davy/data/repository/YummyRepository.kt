@@ -24,15 +24,8 @@ class YummyRepository @Inject constructor(
 
     suspend fun getAnimeDetails(id: Int, needVideos: Boolean): Anime {
         val cachedAnime = cache.get(id)
-        return if (cachedAnime != null && cachedAnime.genres.isNotEmpty()) {
-            if (!needVideos || cachedAnime.translations.isNotEmpty()) {
-                cachedAnime
-            } else {
-                val translations = yummyApi.getAnimeVideos(id).toEntity()
-                val animeDetails = cachedAnime.copy(translations = translations)
-                cache.put(id, animeDetails)
-                animeDetails
-            }
+        return if (cachedAnime != null) {
+            cachedAnime
         } else {
             val animeDetails = yummyApi.getAnimeDetails(id, needVideos).toEntity()
             cache.put(id, animeDetails)
