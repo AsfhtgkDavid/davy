@@ -1,4 +1,4 @@
-package dev.daika.davy.data.repository;
+package dev.daika.davy.data.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -10,6 +10,12 @@ class YummySearchPagingSource(
     private val query: String
 ) : PagingSource<Int, Anime>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Anime> {
+        if (query.isEmpty())
+            return LoadResult.Page(
+                data = emptyList(),
+                prevKey = null,
+                nextKey = null
+            )
         val page = params.key ?: 1
         return try {
             val response = yummyApi.searchAnime(

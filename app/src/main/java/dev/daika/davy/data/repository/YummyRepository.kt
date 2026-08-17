@@ -18,9 +18,6 @@ class YummyRepository @Inject constructor(
 
     suspend fun getFeed(): Feed {
         val feed = yummyApi.getFeed().toEntity()
-        feed.items.forEach { anime ->
-            cache.put(anime.id, anime)
-        }
         return feed
 
     }
@@ -46,6 +43,7 @@ class YummyRepository @Inject constructor(
     fun searchAnime(query: String) = Pager(
         config = PagingConfig(
             pageSize = 20,
+            initialLoadSize = 20,
             enablePlaceholders = false
         ),
         pagingSourceFactory = { YummySearchPagingSource(yummyApi, query) }
