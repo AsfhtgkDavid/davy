@@ -51,6 +51,16 @@ focus-based navigation and remote-friendly controls.
 
 ![DetailView.png](fastlane/metadata/android/en-US/images/tvScreenshots/DetailView.png)
 
+## Donate
+
+If you find DAVY helpful, consider supporting the project with a cryptocurrency donation:
+
+- **TON/Gram (Toncoin)**: `UQD6fbJ73BmC7qPgoR_UrilSBu6kcBMPeNg-J9ZHlZOE1gFQ`
+- **BTC (Bitcoin)**: `bc1q5xmq99krq0vykhzpgc5upl5vzttfdl2feflf53`
+- **ETH (Ethereum)**: `0x87B0F2f291015Acd4a2A941cefE492F56E362d11`
+
+Every contribution helps keep the project alive and funded!
+
 ## Contributing
 
 Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for the full development
