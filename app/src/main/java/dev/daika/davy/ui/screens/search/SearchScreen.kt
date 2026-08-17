@@ -76,7 +76,7 @@ fun SearchScreen(
                 }
             ),
             trailingIcon = {
-                if (searchQuery.length > 2) {
+                if (searchQuery.isNotEmpty()) {
                     IconButton(
                         onClick = {
                             searchQuery = ""
@@ -104,24 +104,25 @@ fun SearchScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = spacedBy(8.dp),
-            verticalArrangement = spacedBy(8.dp)
-        ) {
-            items(lazyPagingItems.itemCount) { index ->
-                val anime = lazyPagingItems[index]
-                if (anime != null) {
-                    AnimeItem(
-                        anime = anime,
-                        modifier = Modifier,
-                        onAnimeSelected = onAnimeSelected,
-                        index = index
-                    )
+        if (searchQuery.isNotBlank())
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 150.dp),
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = spacedBy(8.dp),
+                verticalArrangement = spacedBy(8.dp)
+            ) {
+                items(lazyPagingItems.itemCount) { index ->
+                    val anime = lazyPagingItems[index]
+                    if (anime != null) {
+                        AnimeItem(
+                            anime = anime,
+                            modifier = Modifier,
+                            onAnimeSelected = onAnimeSelected,
+                            index = index
+                        )
+                    }
                 }
             }
-        }
     }
 }
 

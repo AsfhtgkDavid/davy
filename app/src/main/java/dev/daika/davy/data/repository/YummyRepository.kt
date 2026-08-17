@@ -4,10 +4,13 @@ import android.util.LruCache
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import dev.daika.davy.data.api.YummyApi
+import dev.daika.davy.data.model.toEntity
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.Feed
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class YummyRepository @Inject constructor(
     private val yummyApi: YummyApi
 ) {
@@ -15,9 +18,6 @@ class YummyRepository @Inject constructor(
 
     suspend fun getFeed(): Feed {
         val feed = yummyApi.getFeed().toEntity()
-        feed.items.forEach { anime ->
-            cache.put(anime.id, anime)
-        }
         return feed
 
     }
@@ -28,8 +28,8 @@ class YummyRepository @Inject constructor(
             if (!needVideos || cachedAnime.translations.isNotEmpty()) {
                 cachedAnime
             } else {
-                // TODO: There is /videos endpoint need to use it instead of fetching all details again
-                val animeDetails = yummyApi.getAnimeDetails(id, true).toEntity()
+                val translations = yummyApi.getAnimeVideos(id).toEntity()
+                val animeDetails = cachedAnime.copy(translations = translations)
                 cache.put(id, animeDetails)
                 animeDetails
             }
@@ -43,6 +43,7 @@ class YummyRepository @Inject constructor(
     fun searchAnime(query: String) = Pager(
         config = PagingConfig(
             pageSize = 20,
+            initialLoadSize = 20,
             enablePlaceholders = false
         ),
         pagingSourceFactory = { YummySearchPagingSource(yummyApi, query) }

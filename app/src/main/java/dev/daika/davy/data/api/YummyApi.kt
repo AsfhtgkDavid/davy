@@ -1,5 +1,6 @@
 package dev.daika.davy.data.api
 
+import dev.daika.davy.data.model.AnimeVideoDto
 import dev.daika.davy.data.model.DetailAnimeDto
 import dev.daika.davy.data.model.SearchAnimeDto
 import dev.daika.davy.data.model.YummyFeed
@@ -16,6 +17,11 @@ interface YummyApi {
         @Path("id") id: Int,
         @Query("need_videos") needVideos: Boolean = false
     ): DetailAnimeDto
+
+    @GET("/anime/{id}/videos")
+    suspend fun getAnimeVideos(
+        @Path("id") id: Int
+    ): List<AnimeVideoDto>
 
     @GET("/anime")
     suspend fun searchAnime(
