@@ -58,6 +58,7 @@ If you find DAVY helpful, consider supporting the project with a cryptocurrency 
 - **TON/Gram (Toncoin)**: `UQD6fbJ73BmC7qPgoR_UrilSBu6kcBMPeNg-J9ZHlZOE1gFQ`
 - **BTC (Bitcoin)**: `bc1q5xmq99krq0vykhzpgc5upl5vzttfdl2feflf53`
 - **ETH (Ethereum)**: `0x87B0F2f291015Acd4a2A941cefE492F56E362d11`
+- **XMR (Monero)**: `8Bf41hGnngn1S8vHzaRuTg14VfowCWU1nLQUmWerudh11fSZVDGMuXu4qSmnpoCw8tWbKYBPc6KWEWHb1PvjNTy1Q4SUywR`
 
 Every contribution helps keep the project alive and funded!
 
