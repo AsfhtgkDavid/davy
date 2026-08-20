@@ -1,0 +1,10 @@
+Added:
+- Added support for external subtitles (specifically for Alloha).
+- Video quality options are now automatically sorted, with the highest quality selected by default.
+
+Changed:
+- Reduced the number of API requests through improved caching mechanisms.
+
+Fixed:
+- Resolved an issue with the back button in the video player.
+- Fixed the incorrect display of quality settings.
