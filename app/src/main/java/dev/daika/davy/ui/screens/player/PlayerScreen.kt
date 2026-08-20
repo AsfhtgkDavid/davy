@@ -37,6 +37,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -265,7 +267,7 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
                     .fillMaxSize()
                     .focusable()
                     .onKeyEvent { keyEvent ->
-                        if (keyEvent.nativeKeyEvent.action == KeyEvent.ACTION_DOWN) {
+                        if (keyEvent.nativeKeyEvent.action == KeyEvent.ACTION_DOWN && keyEvent.key != Key.Back) {
                             resetControlsTimer++
                             if (!isControlsVisible) {
                                 isControlsVisible = true
