@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -41,6 +44,7 @@ import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
+import dev.daika.davy.utils.ifElse
 
 @Composable
 fun <T> TvDropdown(
@@ -57,6 +61,8 @@ fun <T> TvDropdown(
     var buttonSize by remember { mutableStateOf(IntSize.Zero) }
     val density = LocalDensity.current
     var buttonFocused by remember { mutableStateOf(false) }
+
+    val focusRequester = remember { FocusRequester() }
 
     Box(modifier = modifier) {
         Button(
@@ -90,7 +96,8 @@ fun <T> TvDropdown(
                     text = selectedItem?.let { itemText(it) } ?: "Select an item",
                     maxLines = 1,
                     modifier = textModifier,
-                    color = if (buttonFocused) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                    color = if (buttonFocused) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 if (isEnabled) {
@@ -111,6 +118,9 @@ fun <T> TvDropdown(
         }
 
         if (isExpanded) {
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
             Popup(
                 alignment = Alignment.TopStart,
                 offset = IntOffset(0, buttonSize.height),
@@ -143,6 +153,10 @@ fun <T> TvDropdown(
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .ifElse(
+                                        isSelected || (selectedItem == null && items[0] == item),
+                                        Modifier.focusRequester(focusRequester)
+                                    )
                                     .onFocusChanged { focusState ->
                                         itemFocused = focusState.isFocused
                                     },
