@@ -72,6 +72,7 @@ import dev.daika.davyparsers.PlayerData
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration.Companion.seconds
+import androidx.core.net.toUri
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -162,7 +163,7 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
                 subtitleText = ""
 
                 val subtitleConfigs = playerData.subtitles.map { subtitle ->
-                    MediaItem.SubtitleConfiguration.Builder(Uri.parse(subtitle.src))
+                    MediaItem.SubtitleConfiguration.Builder(subtitle.src.toUri())
                         .setMimeType(MimeTypes.TEXT_VTT)
                         .setId(subtitle.src)
                         .setLabel(subtitle.label)
