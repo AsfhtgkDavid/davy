@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -193,4 +194,30 @@ fun <T> TvDropdown(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun TvDropdownPreview() {
+    TvDropdown(
+        items = List(5) { "$it" },
+        selectedItem = "2",
+        onItemSelected = {},
+        isExpanded = false,
+        onExpandedChange = {},
+        itemText = {it}
+        )
+}
+
+@Preview(heightDp = 200, showBackground = true)
+@Composable
+fun TvDropdownPreviewExpanded() {
+    TvDropdown(
+        items = List(5) { "$it" },
+        selectedItem = "2",
+        onItemSelected = {},
+        isExpanded = true,
+        onExpandedChange = {},
+        itemText = {it}
+    )
 }

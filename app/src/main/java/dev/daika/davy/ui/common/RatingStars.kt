@@ -16,6 +16,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -56,7 +57,14 @@ fun RatingStars(modifier: Modifier = Modifier, rating: Double, maxStars: Int = 1
     }
 }
 
-class FractionalClipShape(private val fillFraction: Float) : Shape {
+
+@Preview(showBackground = true)
+@Composable
+fun RatingStarsPreview() {
+    RatingStars(rating = 5.6)
+}
+
+private class FractionalClipShape(private val fillFraction: Float) : Shape {
     override fun createOutline(
         size: Size,
         layoutDirection: LayoutDirection,
