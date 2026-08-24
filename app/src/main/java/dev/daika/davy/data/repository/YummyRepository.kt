@@ -1,12 +1,12 @@
 package dev.daika.davy.data.repository
 
-import android.util.LruCache
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import dev.daika.davy.data.api.YummyApi
 import dev.daika.davy.data.model.toEntity
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.Feed
+import dev.daika.davy.utils.ExpiringCache
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,7 +14,7 @@ import javax.inject.Singleton
 class YummyRepository @Inject constructor(
     private val yummyApi: YummyApi
 ) {
-    private val cache = LruCache<Int, Anime>(30)
+    private val cache = ExpiringCache<Int, Anime>(5, 3_600_000)
 
     suspend fun getFeed(): Feed {
         val feed = yummyApi.getFeed().toEntity()
