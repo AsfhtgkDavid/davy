@@ -13,6 +13,12 @@ import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.ShapeDefaults
 import androidx.tv.material3.StandardCardContainer
 import androidx.tv.material3.Surface
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun AnimeCard(
@@ -44,5 +50,18 @@ fun AnimeCard(
                 content = image
             )
         },
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AnimeCardPreview() {
+    AnimeCard(
+        onClick = {},
+        modifier = Modifier.fillMaxWidth(),
+        title = { Text("Sample Title") },
+        image = {
+            Box(Modifier.fillMaxSize().background(Color.Gray))
+        }
     )
 }
