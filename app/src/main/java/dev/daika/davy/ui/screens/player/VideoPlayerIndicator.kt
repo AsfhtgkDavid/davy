@@ -23,8 +23,6 @@ import androidx.tv.material3.MaterialTheme
 import dev.daika.davy.utils.handleDPadKeyEvents
 import kotlin.math.pow
 
-const val MAX_LIMIT = 30L * 60L * 1000L
-
 @Composable
 fun RowScope.VideoPlayerControllerIndicator(
     isPlaying: Boolean,
@@ -62,7 +60,7 @@ fun RowScope.VideoPlayerControllerIndicator(
                 lastEventTime = now
 
                 val secondsPassed = durationHeld.toDouble() / 1000.0
-                return (300L * 50.0.pow(secondsPassed)).toLong().coerceAtMost(totalDuration / 10)
+                return (2000L * 50.0.pow(secondsPassed)).toLong().coerceAtMost(totalDuration / 25)
             }
         }
     }
