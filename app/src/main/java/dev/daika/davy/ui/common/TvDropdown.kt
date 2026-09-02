@@ -89,14 +89,12 @@ fun <T> TvDropdown(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                var textModifier = Modifier.weight(1f)
-                if (buttonFocused) {
-                    textModifier = textModifier.basicMarquee()
-                }
                 Text(
                     text = selectedItem?.let { itemText(it) } ?: "Select an item",
                     maxLines = 1,
-                    modifier = textModifier,
+                    modifier = Modifier
+                        .weight(1f)
+                        .ifElse(buttonFocused, Modifier.basicMarquee()),
                     color = if (buttonFocused) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -175,16 +173,14 @@ fun <T> TvDropdown(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    var textModifier = Modifier.weight(1f)
-                                    if (itemFocused) {
-                                        textModifier = textModifier.basicMarquee()
-                                    }
                                     Text(
                                         text = itemText(item),
                                         color = if (itemFocused) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
-                                        modifier = textModifier
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .ifElse(itemFocused, Modifier.basicMarquee())
                                     )
                                 }
                             }
@@ -205,8 +201,8 @@ fun TvDropdownPreview() {
         onItemSelected = {},
         isExpanded = false,
         onExpandedChange = {},
-        itemText = {it}
-        )
+        itemText = { it }
+    )
 }
 
 @Preview(heightDp = 200, showBackground = true)
@@ -218,6 +214,6 @@ fun TvDropdownPreviewExpanded() {
         onItemSelected = {},
         isExpanded = true,
         onExpandedChange = {},
-        itemText = {it}
+        itemText = { it }
     )
 }

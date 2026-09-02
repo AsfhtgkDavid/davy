@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import dev.daika.davy.domain.entity.Anime
+import dev.daika.davy.utils.ifElse
 
 @Composable
 fun AnimeItem(
@@ -70,11 +71,6 @@ fun AnimeItem(
 
 @Composable
 private fun AnimeItemTitle(anime: Anime, isFocused: Boolean) {
-    val modifier = if (isFocused) {
-        Modifier.basicMarquee()
-    } else {
-        Modifier.Companion
-    }
     Text(
         text = anime.title,
         style = MaterialTheme.typography.bodyMedium.copy(
@@ -84,14 +80,14 @@ private fun AnimeItemTitle(anime: Anime, isFocused: Boolean) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 4.dp)
-            .then(modifier),
+            .ifElse(isFocused, Modifier.basicMarquee()),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
 }
 
 @Composable
-private fun AnimeItemImage(anime: Anime, modifier: Modifier = Modifier.Companion) {
+private fun AnimeItemImage(anime: Anime, modifier: Modifier = Modifier) {
     Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()) {
         PosterImage(
             anime = anime,
