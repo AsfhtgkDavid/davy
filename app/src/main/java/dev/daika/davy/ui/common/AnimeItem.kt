@@ -1,5 +1,6 @@
 package dev.daika.davy.ui.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -9,9 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.onFocusChanged
@@ -29,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
+import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.utils.ifElse
@@ -60,6 +63,11 @@ fun AnimeItem(
             .focusProperties {
                 left = if (index == 0) FocusRequester.Cancel else FocusRequester.Default
             }
+            .ifElse(
+                isFocused, Modifier
+                    .scale(1.1f)
+                    .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(4.dp))
+            )
             .then(modifier),
         onClick = { onAnimeSelected(anime) }
     ) {
@@ -76,6 +84,7 @@ private fun AnimeItemTitle(anime: Anime, isFocused: Boolean) {
         style = MaterialTheme.typography.bodyMedium.copy(
             fontWeight = if (isFocused) FontWeight.SemiBold else FontWeight.Normal
         ),
+        color = if (isFocused) MaterialTheme.colorScheme.onSecondary else Color.Unspecified,
         textAlign = TextAlign.Center,
         modifier = Modifier
             .fillMaxWidth()
@@ -98,7 +107,7 @@ private fun AnimeItemImage(anime: Anime, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(8.dp),
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
             shape = MaterialTheme.shapes.small
         ) {
             Row(
@@ -116,7 +125,7 @@ private fun AnimeItemImage(anime: Anime, modifier: Modifier = Modifier) {
                     text = String.format("%.1f", anime.rating.average),
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     ),
                     modifier = Modifier.padding(end = 4.dp)
                 )
