@@ -24,6 +24,7 @@ import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
+import dev.daika.davy.utils.ifElse
 
 @Composable
 fun SelectionMenuPopup(
@@ -77,7 +78,7 @@ fun SelectionMenuPopup(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
-                            .then(if (isSelected) Modifier.focusRequester(focusRequester) else Modifier),
+                            .ifElse(isSelected, Modifier.focusRequester(focusRequester)),
                         colors = ClickableSurfaceDefaults.colors(
                             containerColor = Color.Transparent,
                             focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
