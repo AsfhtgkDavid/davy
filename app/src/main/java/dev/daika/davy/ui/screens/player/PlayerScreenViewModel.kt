@@ -80,16 +80,19 @@ class PlayerScreenViewModel @Inject constructor(
         _uiState.value = PlayerScreenUiState.Loading
         try {
             val anime = anime ?: throw IllegalArgumentException("Anime not found")
-            val iframeUrl = "https:${
-                player?.episodes?.firstOrNull { it.videoId == episodeId }?.iframeUrl ?: throw IllegalArgumentException(
-                    "Episode not found"
-                )
-            }"
+
+
+            val currentEpisode = player?.episodes?.firstOrNull { it.videoId == episodeId }
+                ?: throw IllegalArgumentException("Episode not found")
+
+            val iframeUrl = "https:${currentEpisode.iframeUrl}"
             val referer = "https://old.yummyani.me/catalog/item/${anime.url}"
+
             Log.d(
                 "PlayerScreenViewModel",
                 "Fetching player data for iframeUrl: $iframeUrl with referer: $referer"
             )
+
             val playerData =
                 Parser.getParserForUrl(iframeUrl, parsers)
                     ?.parse(
@@ -97,8 +100,13 @@ class PlayerScreenViewModel @Inject constructor(
                         referer
                     )
                     ?: throw IllegalArgumentException("Failed to parse player data")
-            _uiState.value =
-                PlayerScreenUiState.Success(playerData, headersToDatasource(playerData.headers))
+
+            _uiState.value = PlayerScreenUiState.Success(
+                playerData = playerData,
+                dataSourceFactory = headersToDatasource(playerData.headers),
+                animeTitle = anime.title ?: "",
+                episodeNumber = currentEpisode.title
+            )
         } catch (e: Exception) {
             Log.e("PlayerScreenViewModel", "Error loading player data: ${e.message}", e)
             _uiState.value = PlayerScreenUiState.Error(e.message ?: "Unknown error")
@@ -115,8 +123,12 @@ class PlayerScreenViewModel @Inject constructor(
 
 sealed interface PlayerScreenUiState {
     object Loading : PlayerScreenUiState
-    data class Success(val playerData: PlayerData, val dataSourceFactory: DataSource.Factory) :
-        PlayerScreenUiState
+    data class Success(
+        val playerData: PlayerData,
+        val dataSourceFactory: DataSource.Factory,
+        val animeTitle: String,
+        val episodeNumber: String
+    ) : PlayerScreenUiState
 
     data class Error(val message: String) : PlayerScreenUiState
 }
