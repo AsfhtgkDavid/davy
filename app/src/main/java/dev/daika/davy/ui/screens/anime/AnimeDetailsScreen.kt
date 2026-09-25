@@ -48,6 +48,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.daika.davy.domain.entity.Anime
+import dev.daika.davy.domain.entity.AnimeStatus
 import dev.daika.davy.domain.entity.AnimeTranslation
 import dev.daika.davy.ui.common.AnimeRow
 import dev.daika.davy.ui.common.PosterImage
@@ -106,7 +107,7 @@ fun AnimeDetailsScreen(
 
             if (showPlayDialog) {
                 PlaySelectionDialog(
-                    animeTranslations = anime.translations,
+                    anime = anime,
                     onDismiss = { showPlayDialog = false },
                     onEpisodeSelected = { episodeId ->
                         showPlayDialog = false
@@ -124,14 +125,15 @@ fun AnimeDetailsScreen(
 
 @Composable
 fun PlaySelectionDialog(
-    animeTranslations: List<AnimeTranslation>,
+    anime: Anime,
     onDismiss: () -> Unit,
     onEpisodeSelected: (Int) -> Unit
 ) {
-    val allPlayers = animeTranslations.flatMap { it.availablePlayers }
-    val isSingleEpisodeTitle = allPlayers.isNotEmpty() && allPlayers.all { it.episodes.size <= 1 }
+    val allPlayers = anime.translations.flatMap { it.availablePlayers }
+    val isSingleEpisodeTitle =
+        allPlayers.isNotEmpty() && allPlayers.all { it.episodes.size <= 1 } && anime.status == AnimeStatus.RELEASED
 
-    var selectedTranslation by remember { mutableStateOf(animeTranslations.firstOrNull()) }
+    var selectedTranslation by remember { mutableStateOf(anime.translations.firstOrNull()) }
     var selectedPlayer by remember { mutableStateOf(selectedTranslation?.availablePlayers?.firstOrNull()) }
 
     var isTranslationExpanded by remember { mutableStateOf(false) }
@@ -155,7 +157,7 @@ fun PlaySelectionDialog(
                 if (isSingleEpisodeTitle) {
                     TvDropdown(
                         modifier = Modifier.fillMaxWidth(),
-                        items = animeTranslations,
+                        items = anime.translations,
                         selectedItem = selectedTranslation,
                         onItemSelected = { selectedTranslation = it },
                         isExpanded = isTranslationExpanded,
@@ -178,7 +180,7 @@ fun PlaySelectionDialog(
                     ) {
                         TvDropdown(
                             modifier = Modifier.weight(1f),
-                            items = animeTranslations,
+                            items = anime.translations,
                             selectedItem = selectedTranslation,
                             onItemSelected = { selectedTranslation = it },
                             isExpanded = isTranslationExpanded,
@@ -226,7 +228,8 @@ fun PlaySelectionDialog(
                         items(players) { player ->
                             Button(
                                 onClick = {
-                                    player.episodes.firstOrNull()?.let { onEpisodeSelected(it.videoId) }
+                                    player.episodes.firstOrNull()
+                                        ?.let { onEpisodeSelected(it.videoId) }
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = ButtonDefaults.shape(shape = RoundedCornerShape(8.dp)),

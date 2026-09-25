@@ -6,6 +6,7 @@ data class Anime(
     val description: String,
     val url: String,
     val poster: String,
+    val status: AnimeStatus,
 
     val otherTitles: List<String> = emptyList(),
     val rating: AnimeRating = AnimeRating(0.0, 0),
