@@ -20,7 +20,9 @@ data class DetailAnimeDto(
     val otherTitles: List<String> = emptyList(),
     val videos: List<AnimeVideoDto> = emptyList(),
     @SerialName("viewing_order")
-    val viewingOrder: List<ViewingOrderAnimeDto> = emptyList()
+    val viewingOrder: List<ViewingOrderAnimeDto> = emptyList(),
+    @SerialName("anime_status")
+    val status: AnimeStatusDto,
 ) {
     fun toEntity() = Anime(
         id = id,
@@ -32,7 +34,8 @@ data class DetailAnimeDto(
         genres = genres.map { it.toEntity() },
         otherTitles = otherTitles,
         translations = videos.toEntity(),
-        viewingOrder = viewingOrder.map { it.toEntity() }
+        viewingOrder = viewingOrder.map { it.toEntity() },
+        status = status.toEntity(),
     )
 }
 
@@ -46,6 +49,8 @@ data class ViewingOrderAnimeDto(
     val url: String,
     val poster: AnimePostersDto,
     val rating: Double,
+    @SerialName("anime_status")
+    val status: AnimeStatusDto,
 ) {
     fun toEntity() = Anime(
         id = id,
@@ -54,5 +59,6 @@ data class ViewingOrderAnimeDto(
         url = url,
         poster = poster.fullsize,
         rating = AnimeRating(rating, 0),
+        status = status.toEntity(),
     )
 }

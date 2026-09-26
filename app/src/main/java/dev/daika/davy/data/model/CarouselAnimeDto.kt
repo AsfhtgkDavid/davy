@@ -1,6 +1,7 @@
 package dev.daika.davy.data.model
 
 import dev.daika.davy.domain.entity.Anime
+import dev.daika.davy.domain.entity.AnimeStatus
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -21,7 +22,8 @@ data class CarouselAnimeDto(
         description = description,
         url = url,
         poster = poster.fullsize,
-        rating = rating.toEntity()
+        rating = rating.toEntity(),
+        status = AnimeStatus.ONGOING,
     )
 }
 

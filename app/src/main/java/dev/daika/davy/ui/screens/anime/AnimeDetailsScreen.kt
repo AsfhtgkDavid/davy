@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -47,6 +48,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.daika.davy.domain.entity.Anime
+import dev.daika.davy.domain.entity.AnimeStatus
 import dev.daika.davy.domain.entity.AnimeTranslation
 import dev.daika.davy.ui.common.AnimeRow
 import dev.daika.davy.ui.common.PosterImage
@@ -105,7 +107,7 @@ fun AnimeDetailsScreen(
 
             if (showPlayDialog) {
                 PlaySelectionDialog(
-                    animeTranslations = anime.translations,
+                    anime = anime,
                     onDismiss = { showPlayDialog = false },
                     onEpisodeSelected = { episodeId ->
                         showPlayDialog = false
@@ -123,11 +125,15 @@ fun AnimeDetailsScreen(
 
 @Composable
 fun PlaySelectionDialog(
-    animeTranslations: List<AnimeTranslation>,
+    anime: Anime,
     onDismiss: () -> Unit,
     onEpisodeSelected: (Int) -> Unit
 ) {
-    var selectedTranslation by remember { mutableStateOf(animeTranslations.firstOrNull()) }
+    val allPlayers = anime.translations.flatMap { it.availablePlayers }
+    val isSingleEpisodeTitle =
+        allPlayers.isNotEmpty() && allPlayers.all { it.episodes.size <= 1 } && anime.status == AnimeStatus.RELEASED
+
+    var selectedTranslation by remember { mutableStateOf(anime.translations.firstOrNull()) }
     var selectedPlayer by remember { mutableStateOf(selectedTranslation?.availablePlayers?.firstOrNull()) }
 
     var isTranslationExpanded by remember { mutableStateOf(false) }
@@ -148,14 +154,10 @@ fun PlaySelectionDialog(
             Column(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
+                if (isSingleEpisodeTitle) {
                     TvDropdown(
-                        modifier = Modifier.weight(1f),
-                        items = animeTranslations,
+                        modifier = Modifier.fillMaxWidth(),
+                        items = anime.translations,
                         selectedItem = selectedTranslation,
                         onItemSelected = { selectedTranslation = it },
                         isExpanded = isTranslationExpanded,
@@ -170,57 +172,110 @@ fun PlaySelectionDialog(
                             "${translation.title} ($maxEps eps)"
                         }
                     )
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        TvDropdown(
+                            modifier = Modifier.weight(1f),
+                            items = anime.translations,
+                            selectedItem = selectedTranslation,
+                            onItemSelected = { selectedTranslation = it },
+                            isExpanded = isTranslationExpanded,
+                            onExpandedChange = {
+                                isTranslationExpanded = it
+                                if (it) isPlayerExpanded = false
+                            },
+                            itemText = { translation ->
+                                val maxEps = translation.availablePlayers.maxOfOrNull {
+                                    it.episodes.size
+                                } ?: 0
+                                "${translation.title} ($maxEps eps)"
+                            }
+                        )
 
-                    TvDropdown(
-                        modifier = Modifier.weight(1f),
-                        items = selectedTranslation?.availablePlayers ?: emptyList(),
-                        selectedItem = selectedPlayer,
-                        onItemSelected = { selectedPlayer = it },
-                        isExpanded = isPlayerExpanded,
-                        onExpandedChange = {
-                            isPlayerExpanded = it
-                            if (it) isTranslationExpanded = false
-                        },
-                        itemText = { player ->
-                            "${player.player} (${player.episodes.size} eps)"
-                        }
-                    )
+                        TvDropdown(
+                            modifier = Modifier.weight(1f),
+                            items = selectedTranslation?.availablePlayers ?: emptyList(),
+                            selectedItem = selectedPlayer,
+                            onItemSelected = { selectedPlayer = it },
+                            isExpanded = isPlayerExpanded,
+                            onExpandedChange = {
+                                isPlayerExpanded = it
+                                if (it) isTranslationExpanded = false
+                            },
+                            itemText = { player ->
+                                "${player.player} (${player.episodes.size} eps)"
+                            }
+                        )
+                    }
                 }
 
                 Text(
-                    text = "Episodes",
+                    text = if (isSingleEpisodeTitle) "Players" else "Episodes",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                val episodes = selectedPlayer?.episodes ?: emptyList()
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(48.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.height(300.dp)
-                ) {
-                    items(episodes) { episode ->
-                        Button(
-                            onClick = { onEpisodeSelected(episode.videoId) },
-                            modifier = Modifier.aspectRatio(1f),
-                            shape = ButtonDefaults.shape(shape = RoundedCornerShape(8.dp)),
-                            contentPadding = PaddingValues(0.dp),
-                            colors = ButtonDefaults.colors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                focusedContainerColor = MaterialTheme.colorScheme.primary,
-                            )
-                        ) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
+                if (isSingleEpisodeTitle) {
+                    val players = selectedTranslation?.availablePlayers ?: emptyList()
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.height(300.dp)
+                    ) {
+                        items(players) { player ->
+                            Button(
+                                onClick = {
+                                    player.episodes.firstOrNull()
+                                        ?.let { onEpisodeSelected(it.videoId) }
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = ButtonDefaults.shape(shape = RoundedCornerShape(8.dp)),
+                                colors = ButtonDefaults.colors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    focusedContainerColor = MaterialTheme.colorScheme.primary,
+                                )
                             ) {
                                 Text(
-                                    text = episode.title,
+                                    text = player.player,
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
+                            }
+                        }
+                    }
+                } else {
+                    val episodes = selectedPlayer?.episodes ?: emptyList()
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(48.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.height(300.dp)
+                    ) {
+                        items(episodes) { episode ->
+                            Button(
+                                onClick = { onEpisodeSelected(episode.videoId) },
+                                modifier = Modifier.aspectRatio(1f),
+                                shape = ButtonDefaults.shape(shape = RoundedCornerShape(8.dp)),
+                                contentPadding = PaddingValues(0.dp),
+                                colors = ButtonDefaults.colors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    focusedContainerColor = MaterialTheme.colorScheme.primary,
+                                )
+                            ) {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = episode.title,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
                             }
                         }
                     }

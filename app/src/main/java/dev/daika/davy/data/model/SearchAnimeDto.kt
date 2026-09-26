@@ -15,6 +15,8 @@ data class SearchAnimeDto(
     val poster: AnimePostersDto,
     val rating: AnimeRatingDto,
     val genres: List<AnimeGenreDto>,
+    @SerialName("anime_status")
+    val status: AnimeStatusDto,
 ) {
     fun toEntity() = Anime(
         id = id,
@@ -24,5 +26,6 @@ data class SearchAnimeDto(
         poster = poster.fullsize,
         rating = rating.toEntity(),
         genres = genres.map { it.toEntity() },
+        status = status.toEntity(),
     )
 }
