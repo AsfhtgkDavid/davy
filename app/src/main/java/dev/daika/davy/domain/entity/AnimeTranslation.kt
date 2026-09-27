@@ -8,7 +8,7 @@ data class AnimeTranslation(
 )
 
 fun AnimePlayer.isSupported(parsers: List<Parser>): Boolean {
-    return episodes.any { episode ->
+    return episodes.isNotEmpty() && episodes.all { episode ->
         Parser.getParserForUrl("https:${episode.iframeUrl}", parsers) != null
     }
 }
