@@ -79,7 +79,10 @@ fun AnimeDetailsScreen(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                TopActionButtons(onPlayClicked = { showPlayDialog = true })
+                TopActionButtons(
+                    onPlayClicked = { showPlayDialog = true },
+                    enabled = anime.translations.any { it.availablePlayers.isNotEmpty() }
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -286,7 +289,10 @@ fun PlaySelectionDialog(
 }
 
 @Composable
-private fun TopActionButtons(onPlayClicked: () -> Unit) {
+private fun TopActionButtons(
+    onPlayClicked: () -> Unit,
+    enabled: Boolean = true
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -294,6 +300,7 @@ private fun TopActionButtons(onPlayClicked: () -> Unit) {
     ) {
         Button(
             onClick = onPlayClicked,
+            enabled = enabled,
             scale = ButtonDefaults.scale(focusedScale = 1.05f),
             colors = ButtonDefaults.colors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
