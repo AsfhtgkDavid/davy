@@ -37,6 +37,7 @@ fun List<AnimeVideoDto>.toEntity(): List<AnimeTranslation> {
                             }
                         )
                     }
+                    .sortedBy { it.player }
             )
         }
 }
