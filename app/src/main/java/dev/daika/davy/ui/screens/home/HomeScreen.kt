@@ -1,21 +1,28 @@
 package dev.daika.davy.ui.screens.home
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
+import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.Text
 import dev.daika.davy.domain.entity.Anime
 import dev.daika.davy.domain.entity.AnimeSeason
 import dev.daika.davy.domain.entity.Feed
@@ -46,20 +53,49 @@ fun HomeScreen(
             }
         }
 
-        when (state) {
+        when (val currentState = state) {
             is HomeScreenUiState.Loading -> {
+                item(contentType = "LoadingState") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(vertical = 32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
             }
 
             is HomeScreenUiState.Success -> {
                 item(contentType = "AnimeRow") {
                     SeasonList(
-                        feed = (state as HomeScreenUiState.Success).feed,
+                        feed = currentState.feed,
                         onAnimeSelected = onAnimeSelected
                     )
                 }
             }
 
             is HomeScreenUiState.Error -> {
+                item(contentType = "ErrorState") {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Something went wrong",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = currentState.message,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
         }
     }
