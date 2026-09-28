@@ -34,7 +34,10 @@ data class DetailAnimeDto(
         genres = genres.map { it.toEntity() },
         otherTitles = otherTitles,
         translations = videos.toEntity(),
-        viewingOrder = viewingOrder.map { it.toEntity() },
+        viewingOrder = viewingOrder.map { item ->
+            val entity = item.toEntity()
+            if (entity.id == id) entity.copy(rating = rating.toEntity()) else entity
+        },
         status = status.toEntity(),
     )
 }
@@ -48,7 +51,7 @@ data class ViewingOrderAnimeDto(
     @SerialName("anime_url")
     val url: String,
     val poster: AnimePostersDto,
-    val rating: Double,
+    val rating: Double = 0.0,
     @SerialName("anime_status")
     val status: AnimeStatusDto,
 ) {
