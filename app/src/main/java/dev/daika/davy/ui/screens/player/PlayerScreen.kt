@@ -81,7 +81,7 @@ import androidx.core.net.toUri
 fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel()) {
     val uiState by playerScreenViewModel.uiState.collectAsState()
 
-    when (uiState) {
+    when (val currentState = uiState) {
         is PlayerScreenUiState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -89,10 +89,9 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
         }
 
         is PlayerScreenUiState.Success -> {
-            val successState = uiState as PlayerScreenUiState.Success
-            val playerData = successState.playerData
-            val animeTitle = successState.animeTitle
-            val episodeNumber = successState.episodeNumber
+            val playerData = currentState.playerData
+            val animeTitle = currentState.animeTitle
+            val episodeNumber = currentState.episodeNumber
 
             val context =
                 if (Build.VERSION.SDK_INT >= 30) LocalContext.current.createAttributionContext("playback") else LocalContext.current
@@ -119,7 +118,7 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
 
             val dataSourceFactory = DefaultDataSource.Factory(
                 context,
-                successState.dataSourceFactory
+                currentState.dataSourceFactory
             )
             val exoPlayer = remember {
                 ExoPlayer.Builder(context)
@@ -349,7 +348,24 @@ fun PlayerScreen(playerScreenViewModel: PlayerScreenViewModel = hiltViewModel())
         }
 
         is PlayerScreenUiState.Error -> {
-
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Unable to load player",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = currentState.message,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.8f)
+                    )
+                }
+            }
         }
     }
 }

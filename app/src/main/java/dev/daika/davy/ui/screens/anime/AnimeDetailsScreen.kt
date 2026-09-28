@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -66,13 +67,15 @@ fun AnimeDetailsScreen(
     var showPlayDialog by remember { mutableStateOf(false) }
     Log.i("AnimeDetailsScreen", "AnimeDetailsScreen called with state: $state")
 
-    when (state) {
+    when (val currentState = state) {
         is AnimeDetailsScreenUiState.Loading -> {
-            // Show loading indicator
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
         }
 
         is AnimeDetailsScreenUiState.Success -> {
-            val anime = (state as AnimeDetailsScreenUiState.Success).anime
+            val anime = currentState.anime
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -121,7 +124,24 @@ fun AnimeDetailsScreen(
         }
 
         is AnimeDetailsScreenUiState.Error -> {
-            // Show error message
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Something went wrong",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = currentState.message,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         }
     }
 }
