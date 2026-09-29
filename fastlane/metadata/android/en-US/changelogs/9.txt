@@ -1,0 +1,10 @@
+Added:
+- Title and current episode display in the video player
+- Loading animations and error message views on several screens
+
+Changed:
+- Single-episode titles no longer display an episode selection grid
+- Blocked unsupported streaming balancers
+
+Fixed:
+- Playback timer not displaying hours for longer media

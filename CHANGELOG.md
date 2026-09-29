@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-09-29
+
+### Added
+
+- Title and episode number display inside the player
+  overlay ([#25](https://github.com/AsfhtgkDavid/davy/issues/25)).
+- Loading animations and error message views on several
+  screens ([#34](https://github.com/AsfhtgkDavid/davy/issues/34)).
+
+### Changed
+
+- Hide the episode selector grid for single-episode
+  media ([#29](https://github.com/AsfhtgkDavid/davy/issues/29)).
+- Blocked unsupported streaming balancers ([#30](https://github.com/AsfhtgkDavid/davy/issues/30)).
+
+### Fixed
+
+- Playback timestamp formatting failing to display hours for videos exceeding 60
+  minutes ([#26](https://github.com/AsfhtgkDavid/davy/issues/26)).
+
 ## [1.2.0] - 2026-09-19
 
 ### Added
