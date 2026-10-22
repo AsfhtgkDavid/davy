@@ -6,34 +6,30 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.tv.material3.ExperimentalTvMaterial3Api
-import androidx.tv.material3.LocalContentColor
-import androidx.tv.material3.MaterialTheme
+import androidx.compose.ui.graphics.Color
 import dagger.hilt.android.AndroidEntryPoint
-import dev.daika.davy.ui.theme.DavyTheme
+import dev.daika.davy.core.common.preference.ModePreferences
+import dev.daika.davy.navigation.AppNavigation
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalTvMaterial3Api::class)
+    @Inject
+    lateinit var modePreferences: ModePreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            DavyTheme {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surface)
-                ) {
-                    CompositionLocalProvider(
-                        LocalContentColor provides MaterialTheme.colorScheme.onSurface
-                    ) {
-                        App(
-                            onBackPressed = onBackPressedDispatcher::onBackPressed,
-                        )
-                    }
-                }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFF111318))
+            ) {
+                AppNavigation(
+                    modePreferences = modePreferences,
+                    onBackPressed = onBackPressedDispatcher::onBackPressed
+                )
             }
         }
     }
