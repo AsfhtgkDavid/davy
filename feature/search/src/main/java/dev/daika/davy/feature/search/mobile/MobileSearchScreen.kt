@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -194,10 +193,9 @@ fun MobileSearchScreen(
                 .padding(paddingValues)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            val isInitial = searchQuery.isBlank() && !filterState.hasActiveFilters()
+            val isInitial = searchQuery.length < 2 && !filterState.hasActiveFilters()
 
             if (isInitial) {
-                // Initial prompt
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -232,7 +230,6 @@ fun MobileSearchScreen(
                     }
                 }
             } else {
-                // Results Grid
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(150.dp),
                     contentPadding = PaddingValues(16.dp),
@@ -250,7 +247,6 @@ fun MobileSearchScreen(
                         }
                     }
 
-                    // Loading indicator for append
                     if (lazyPagingItems.loadState.append is LoadState.Loading) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Box(
@@ -264,7 +260,6 @@ fun MobileSearchScreen(
                         }
                     }
 
-                    // Empty State
                     if (lazyPagingItems.loadState.refresh is LoadState.NotLoading && lazyPagingItems.itemCount == 0) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Column(
@@ -289,7 +284,6 @@ fun MobileSearchScreen(
                     }
                 }
 
-                // Loading overlay for refresh
                 if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -300,7 +294,6 @@ fun MobileSearchScreen(
                 }
             }
 
-            // Filter Bottom Sheet
             if (showFilterSheet) {
                 MobileFilterBottomSheet(
                     filterState = filterState,
@@ -313,7 +306,7 @@ fun MobileSearchScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MobileFilterBottomSheet(
     filterState: AnimeFilterState,
@@ -356,7 +349,6 @@ private fun MobileFilterBottomSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Sort
             Text(
                 text = "Sort by",
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
@@ -386,7 +378,6 @@ private fun MobileFilterBottomSheet(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Status
             Text(
                 text = "Anime status",
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
@@ -419,7 +410,6 @@ private fun MobileFilterBottomSheet(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Types
             Text(
                 text = "Anime type",
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
@@ -452,7 +442,6 @@ private fun MobileFilterBottomSheet(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Genres
             if (genreOptions.isNotEmpty()) {
                 Text(
                     text = "Genres",
@@ -487,7 +476,6 @@ private fun MobileFilterBottomSheet(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // Apply Button
             Button(
                 onClick = {
                     onFilterChange(tempState)

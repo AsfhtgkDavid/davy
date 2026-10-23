@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -257,6 +256,7 @@ private fun MobileAnimeDetailsContent(
         val hasPlayableEpisodes = anime.translations.any { it.availablePlayers.isNotEmpty() }
         Button(
             onClick = {
+                // TODO: Sync with history
                 val firstEpisode = selectedPlayer?.episodes?.firstOrNull()
                     ?: anime.translations.firstOrNull()?.availablePlayers?.firstOrNull()?.episodes?.firstOrNull()
                 if (firstEpisode != null) {
@@ -283,7 +283,6 @@ private fun MobileAnimeDetailsContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Genres chips
         if (anime.genres.isNotEmpty()) {
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -309,7 +308,6 @@ private fun MobileAnimeDetailsContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Description with expandable toggle
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -342,7 +340,6 @@ private fun MobileAnimeDetailsContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Dubbing & Player Selector
         if (anime.translations.isNotEmpty()) {
             Text(
                 text = "Voiceover & Episodes",
@@ -387,7 +384,6 @@ private fun MobileAnimeDetailsContent(
                     }
                 }
 
-                // Player Dropdown
                 val availablePlayers = selectedTranslation?.availablePlayers ?: emptyList()
                 if (availablePlayers.size > 1) {
                     Box(modifier = Modifier.weight(1f)) {
@@ -427,7 +423,6 @@ private fun MobileAnimeDetailsContent(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Episodes list/grid
             val episodes = selectedPlayer?.episodes ?: emptyList()
             if (episodes.isNotEmpty()) {
                 FlowRow(
@@ -460,7 +455,6 @@ private fun MobileAnimeDetailsContent(
             }
         }
 
-        // Viewing order
         if (anime.viewingOrder.isNotEmpty()) {
             Spacer(modifier = Modifier.height(24.dp))
             Text(

@@ -1,7 +1,5 @@
 package dev.daika.davy.feature.player.mobile
 
-import android.app.Activity
-import android.content.Context
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -332,7 +330,6 @@ fun MobilePlayerScreen(
                     )
                 }
 
-                // Subtitle Display
                 if (subtitleText.isNotEmpty()) {
                     Box(
                         modifier = Modifier
@@ -361,7 +358,6 @@ fun MobilePlayerScreen(
                     }
                 }
 
-                // Touch Controls Overlay
                 AnimatedVisibility(
                     visible = isControlsVisible,
                     enter = fadeIn(),
@@ -380,7 +376,6 @@ fun MobilePlayerScreen(
                                 )
                             )
                     ) {
-                        // Top Bar: Back button, Anime Title & Episode
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -411,7 +406,6 @@ fun MobilePlayerScreen(
                             }
                         }
 
-                        // Center Controls: Prev, Rewind 10s, Play/Pause, Forward 10s, Next
                         Row(
                             modifier = Modifier.align(Alignment.Center),
                             horizontalArrangement = Arrangement.spacedBy(20.dp),
@@ -448,7 +442,6 @@ fun MobilePlayerScreen(
                                 )
                             }
 
-                            // Big Play / Pause Button
                             Surface(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.primary,
@@ -509,14 +502,12 @@ fun MobilePlayerScreen(
                             }
                         }
 
-                        // Bottom Bar: Slider + Times + Quality/Subtitles
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 12.dp)
                                 .align(Alignment.BottomCenter)
                         ) {
-                            // Slider
                             val safeTotal = videoDuration.coerceAtLeast(1L).toFloat()
                             val progressValue = if (isDraggingSlider) {
                                 sliderProgress
@@ -546,7 +537,6 @@ fun MobilePlayerScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
 
-                            // Time and settings actions
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -569,7 +559,6 @@ fun MobilePlayerScreen(
                                 )
 
                                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    // Quality Button
                                     IconButton(
                                         onClick = {
                                             userInteractionCount++
@@ -583,7 +572,6 @@ fun MobilePlayerScreen(
                                         )
                                     }
 
-                                    // Subtitles Button
                                     if (playerData.subtitles.isNotEmpty()) {
                                         IconButton(
                                             onClick = {
@@ -604,7 +592,6 @@ fun MobilePlayerScreen(
                     }
                 }
 
-                // Quality Bottom Sheet
                 if (showQualitySheet) {
                     val streams = (playerData.translations.firstOrNull { it.isDefault }
                         ?: playerData.translations.first()).streams.sortedBy { it.quality.toInt() }
@@ -649,7 +636,6 @@ fun MobilePlayerScreen(
                     }
                 }
 
-                // Subtitles Bottom Sheet
                 if (showSubtitleSheet) {
                     ModalBottomSheet(
                         onDismissRequest = { showSubtitleSheet = false },
@@ -666,7 +652,6 @@ fun MobilePlayerScreen(
                                 modifier = Modifier.padding(bottom = 12.dp)
                             )
 
-                            // Option: Turn Off
                             Surface(
                                 onClick = {
                                     selectedSubtitles = null
@@ -686,7 +671,6 @@ fun MobilePlayerScreen(
                                 )
                             }
 
-                            // All available subtitles
                             playerData.subtitles.forEach { subtitle ->
                                 val isSelected = subtitle.src == selectedSubtitles
                                 Surface(

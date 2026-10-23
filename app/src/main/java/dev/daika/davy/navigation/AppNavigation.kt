@@ -1,16 +1,10 @@
 package dev.daika.davy.navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -24,7 +18,6 @@ import dev.daika.davy.feature.details.tv.TvAnimeDetailsScreen
 import dev.daika.davy.feature.home.HomeScreenDestination
 import dev.daika.davy.feature.home.mobile.MobileHomeScreen
 import dev.daika.davy.feature.home.tv.TvHomeScreen
-import dev.daika.davy.feature.modeselection.ModeSelectionDestination
 import dev.daika.davy.feature.modeselection.ModeSelectionScreen
 import dev.daika.davy.feature.player.PlayerScreenDestination
 import dev.daika.davy.feature.player.mobile.MobilePlayerScreen

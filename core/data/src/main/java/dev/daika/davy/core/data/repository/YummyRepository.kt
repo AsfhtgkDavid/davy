@@ -61,14 +61,15 @@ class YummyRepository @Inject constructor(
         }
     }
 
-    override fun searchAnime(query: String, filter: AnimeFilterState): Flow<PagingData<Anime>> = Pager(
-        config = PagingConfig(
-            pageSize = 20,
-            initialLoadSize = 20,
-            enablePlaceholders = false
-        ),
-        pagingSourceFactory = { YummySearchPagingSource(yummyApi, query, filter) }
-    ).flow
+    override fun searchAnime(query: String, filter: AnimeFilterState): Flow<PagingData<Anime>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                initialLoadSize = 20,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { YummySearchPagingSource(yummyApi, query, filter) }
+        ).flow
 
     override suspend fun getAnimeGenres(): List<AnimeGenreFilter> {
         readGenresFromDisk()?.let { return it }
