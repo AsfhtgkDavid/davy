@@ -6,6 +6,8 @@ plugins {
     id("com.google.dagger.hilt.android")
 
     kotlin("plugin.serialization") version "2.3.20"
+
+    id("jacoco-report-aggregation")
 }
 
 android {
@@ -31,6 +33,9 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt")
             )
+        }
+        debug {
+            enableUnitTestCoverage = true
         }
     }
     compileOptions {
@@ -80,4 +85,72 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
+
+tasks.register<JacocoReport>("aggregatedJacocoReport") {
+    group = "Verification"
+    description = "Generates aggregated JaCoCo coverage report for all modules"
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*_MembersInjector.*",
+        "**/Dagger*.*",
+        "**/Hilt_*.*",
+        "**/*_Factory.*",
+        "**/*ComposableSingletons*.*",
+        "**/*Companion*.*"
+    )
+
+    val targetProjects = listOf(
+        project,
+        project(":core:common"),
+        project(":core:domain"),
+        project(":core:data"),
+        project(":feature:home"),
+        project(":feature:details"),
+        project(":feature:player"),
+        project(":feature:search"),
+    )
+
+    dependsOn(targetProjects.map { it.tasks.matching { task -> task.name == "testDebugUnitTest" } })
+
+    val javaClasses = targetProjects.map {
+        fileTree("${it.layout.buildDirectory.get()}/intermediates/javac/debug/classes") {
+            exclude(fileFilter)
+        }
+    }
+    val kotlinClasses = targetProjects.map {
+        fileTree("${it.layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
+            exclude(fileFilter)
+        }
+    }
+
+    classDirectories.setFrom(files(javaClasses, kotlinClasses))
+
+    val sources = targetProjects.flatMap {
+        listOf(
+            "${it.projectDir}/src/main/java",
+            "${it.projectDir}/src/main/kotlin"
+        )
+    }
+    sourceDirectories.setFrom(files(sources))
+
+    val executionFiles = targetProjects.map {
+        fileTree(it.layout.buildDirectory) {
+            include(
+                "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+                "jacoco/testDebugUnitTest.exec"
+            )
+        }
+    }
+    executionData.setFrom(files(executionFiles))
 }
