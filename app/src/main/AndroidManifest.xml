@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -12,11 +11,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <attribution
-        android:tag="playback"
-        android:label="@string/playback_attribution" />
+        android:label="@string/playback_attribution"
+        android:tag="playback" />
     <attribution
-        android:tag="@string/empty"
-        android:label="@string/playback_attribution" />
+        android:label="@string/playback_attribution"
+        android:tag="@string/empty" />
 
     <application
         android:name=".DavyApplication"
@@ -28,6 +27,7 @@
         android:theme="@style/Theme.DAVY">
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

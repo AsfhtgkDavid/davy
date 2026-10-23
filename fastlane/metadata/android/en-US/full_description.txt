@@ -1,11 +1,13 @@
-DAVY is a modern, lightweight media player designed specifically for Android TV and Google TV platforms. It provides a seamless way to discover and stream anime directly on your TV.
+DAVY is a modern, lightweight open-source app for discovering and watching anime on phones, Android TV, and Google TV. Browse the current season, search for anime, explore detailed information, choose a translation and player, and watch episodes with the built-in video player.
 
 Content is currently available in Russian only.
 
-Built from the ground up with Kotlin and Jetpack Compose, the app features a highly polished, TV-first interface. Navigate effortlessly using only your remote control (D-pad) without the need for touch emulation.
+Built with Kotlin and Jetpack Compose, DAVY adapts its interface to the device you use. The mobile UI is designed for touch navigation, while the TV UI provides focus-based navigation optimized for remote controls and D-pads.
 
 Key Features:
 
-* TV-Optimized: Focus-based navigation designed specifically for remote controls and smart TVs.
-* Fast & Lightweight: Minimum footprint, fast loading times, and smooth UI even on low-end TVs.
-* Modern Player: Reliable video streaming built on top of the modern Media3 (ExoPlayer) stack.
+* Phone Support: Touch-friendly browsing, search, anime details, episode selection, and playback.
+* TV-Optimized: Focus-based navigation designed for remote controls and smart TVs.
+* Anime Discovery: Browse the current season and find titles with built-in search.
+* Flexible Playback: Choose from available translations and players.
+* Modern Player: Reliable video streaming powered by Media3 (ExoPlayer).

@@ -21,3 +21,12 @@ dependencyResolutionManagement {
 
 rootProject.name = "DAVY"
 include(":app")
+include(":core:common")
+include(":core:domain")
+include(":core:data")
+include(":core:ui")
+include(":feature:mode-selection")
+include(":feature:home")
+include(":feature:details")
+include(":feature:player")
+include(":feature:search")
