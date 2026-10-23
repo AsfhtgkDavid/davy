@@ -7,7 +7,7 @@ plugins {
 
     kotlin("plugin.serialization") version "2.3.20"
 
-    id("jacoco-report-aggregation")
+    id("jacoco")
 }
 
 android {
@@ -105,13 +105,16 @@ tasks.register<JacocoReport>("aggregatedJacocoReport") {
         "**/*_MembersInjector.*",
         "**/Dagger*.*",
         "**/Hilt_*.*",
+        "**/*_HiltModules*.*",
+        "**/*_GeneratedInjector*.*",
         "**/*_Factory.*",
         "**/*_Factory$*.*",
         "**/*_Provide*Factory*.*",
+        "**/*_LazyMapKey*.*",
         "**/*ComposableSingletons*.*",
         "**/*Companion*.*",
-        "hilt_aggregated_deps/**",
-        "dagger/hilt/**"
+        "**/hilt_aggregated_deps/**",
+        "**/dagger/hilt/**"
     )
 
     val targetProjects = listOf(
@@ -125,12 +128,18 @@ tasks.register<JacocoReport>("aggregatedJacocoReport") {
         project(":feature:search"),
     )
 
-    dependsOn(targetProjects.map { "${it.path}:testDebugUnitTest" })
+    dependsOn(targetProjects.map { p ->
+        p.tasks.matching { it.name == "testDebugUnitTest" || it.name == "test" }
+    })
 
     val classTrees = targetProjects.map { p ->
         fileTree(p.layout.buildDirectory) {
             include(
                 "tmp/kotlin-classes/debug/dev/daika/davy/**",
+                "intermediates/kotlin-classes/debug/dev/daika/davy/**",
+                "intermediates/built_in_kotlinc/debug/**/classes/dev/daika/davy/**",
+                "classes/kotlin/main/dev/daika/davy/**",
+                "classes/java/main/dev/daika/davy/**",
                 "intermediates/javac/debug/**/classes/dev/daika/davy/**"
             )
             exclude(fileFilter)
@@ -143,14 +152,15 @@ tasks.register<JacocoReport>("aggregatedJacocoReport") {
             p.file("src/main/java"),
             p.file("src/main/kotlin")
         )
-    }.filter { it.exists() }
+    }
     sourceDirectories.setFrom(files(sources))
 
     val execFiles = targetProjects.map { p ->
         fileTree(p.layout.buildDirectory) {
             include(
                 "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-                "jacoco/testDebugUnitTest.exec"
+                "jacoco/testDebugUnitTest.exec",
+                "jacoco/test.exec"
             )
         }
     }
