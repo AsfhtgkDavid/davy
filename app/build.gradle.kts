@@ -106,8 +106,12 @@ tasks.register<JacocoReport>("aggregatedJacocoReport") {
         "**/Dagger*.*",
         "**/Hilt_*.*",
         "**/*_Factory.*",
+        "**/*_Factory$*.*",
+        "**/*_Provide*Factory*.*",
         "**/*ComposableSingletons*.*",
-        "**/*Companion*.*"
+        "**/*Companion*.*",
+        "hilt_aggregated_deps/**",
+        "dagger/hilt/**"
     )
 
     val targetProjects = listOf(
@@ -121,36 +125,34 @@ tasks.register<JacocoReport>("aggregatedJacocoReport") {
         project(":feature:search"),
     )
 
-    dependsOn(targetProjects.map { it.tasks.matching { task -> task.name == "testDebugUnitTest" } })
+    dependsOn(targetProjects.map { "${it.path}:testDebugUnitTest" })
 
-    val javaClasses = targetProjects.map {
-        fileTree("${it.layout.buildDirectory.get()}/intermediates/javac/debug/classes") {
+    val classTrees = targetProjects.map { p ->
+        fileTree(p.layout.buildDirectory) {
+            include(
+                "tmp/kotlin-classes/debug/dev/daika/davy/**",
+                "intermediates/javac/debug/**/classes/dev/daika/davy/**"
+            )
             exclude(fileFilter)
         }
     }
-    val kotlinClasses = targetProjects.map {
-        fileTree("${it.layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
-            exclude(fileFilter)
-        }
-    }
+    classDirectories.setFrom(files(classTrees))
 
-    classDirectories.setFrom(files(javaClasses, kotlinClasses))
-
-    val sources = targetProjects.flatMap {
+    val sources = targetProjects.flatMap { p ->
         listOf(
-            "${it.projectDir}/src/main/java",
-            "${it.projectDir}/src/main/kotlin"
+            p.file("src/main/java"),
+            p.file("src/main/kotlin")
         )
-    }
+    }.filter { it.exists() }
     sourceDirectories.setFrom(files(sources))
 
-    val executionFiles = targetProjects.map {
-        fileTree(it.layout.buildDirectory) {
+    val execFiles = targetProjects.map { p ->
+        fileTree(p.layout.buildDirectory) {
             include(
                 "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
                 "jacoco/testDebugUnitTest.exec"
             )
         }
     }
-    executionData.setFrom(files(executionFiles))
+    executionData.setFrom(files(execFiles))
 }
