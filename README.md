@@ -10,12 +10,30 @@ browsing, selecting episodes, and playing videos.
 
 ## Description
 
-DAVY is built with Kotlin and Jetpack Compose, using a TV-friendly interface and a built-in media
-player. The app pulls anime data from the Yummy API and helps users move quickly from discovery to
-playback.
+DAVY is built with Kotlin and Jetpack Compose, with interfaces adapted for both phones and TV
+devices, and a built-in media player. The app pulls anime data from the Yummy API and helps users
+move quickly from discovery to playback.
 
-The application is primarily targeted at TV platforms (Android TV / Google TV) and is designed with
-focus-based navigation and remote-friendly controls.
+On phones, DAVY provides a touch-friendly mobile interface for browsing, searching, viewing anime
+details, selecting episodes, and watching videos. On TV platforms (Android TV / Google TV), the app
+uses focus-based navigation and remote-friendly controls. The initial mode can be selected when the
+app starts.
+
+## Architecture
+
+DAVY uses a modular architecture that separates shared infrastructure, business logic, UI, and
+feature flows:
+
+- `app` — application entry point, dependency injection, and navigation
+- `core:common` — shared utilities and preferences
+- `core:domain` — domain models, repository contracts, and use cases
+- `core:data` — Yummy API integration, DTOs, and repository implementations
+- `core:ui` — shared Compose components and mobile/TV themes
+- `feature:*` — isolated feature modules for mode selection, home, anime details, player, and
+  search
+
+Feature modules reuse the shared domain and data layers while providing separate `mobile` and `tv`
+composables where the interaction model differs.
 
 ## Tech stack
 
@@ -34,6 +52,7 @@ focus-based navigation and remote-friendly controls.
 - Choose between available translations and players
 - Select episodes directly from the anime details flow
 - Watch videos with a built-in player powered by ExoPlayer
+- Mobile UI for phones with touch-friendly navigation
 - TV-friendly layout with focus-based navigation
 
 ## Roadmap
@@ -41,10 +60,10 @@ focus-based navigation and remote-friendly controls.
 - [x] Current season anime browsing
 - [x] Built-in player
 - [x] Search ([#3](https://github.com/AsfhtgkDavid/davy/issues/3))
+- [x] Phone support with a dedicated mobile UI
 - [ ] Local watch history
 - [ ] Integration with MyAnimeList and other watchlists
 - [ ] Integration with other anime aggregators
-- [ ] Adaptation for phones (mobile UI)
 
 ## Screenshots
 

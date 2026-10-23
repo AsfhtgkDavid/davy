@@ -1,1 +1,1 @@
-Lightweight, open-source anime player for Android TV.
+Open-source anime app for phones, Android TV, and Google TV.
