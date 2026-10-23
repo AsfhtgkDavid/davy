@@ -6,6 +6,8 @@ plugins {
     id("com.google.dagger.hilt.android")
 
     kotlin("plugin.serialization") version "2.3.20"
+
+    id("jacoco-report-aggregation")
 }
 
 android {
@@ -80,4 +82,30 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
+
+tasks.named<JacocoReport>("testCodeCoverageReport") {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*_MembersInjector.*",
+        "**/Dagger*.*",
+        "**/Hilt_*.*",
+        "**/*_Factory.*",
+        "**/*ComposableSingletons*.*"
+    )
+
+    classDirectories.setFrom(
+        classDirectories.files.map { dir ->
+            fileTree(dir) { exclude(fileFilter) }
+        }
+    )
 }
