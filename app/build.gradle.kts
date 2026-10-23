@@ -34,6 +34,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt")
             )
         }
+        debug {
+            enableUnitTestCoverage = true
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
@@ -84,7 +87,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
 
-tasks.named<JacocoReport>("testCodeCoverageReport") {
+tasks.register<JacocoReport>("aggregatedJacocoReport") {
+    group = "Verification"
+    description = "Generates aggregated JaCoCo coverage report for all modules"
+
     reports {
         xml.required.set(true)
         html.required.set(true)
@@ -100,12 +106,51 @@ tasks.named<JacocoReport>("testCodeCoverageReport") {
         "**/Dagger*.*",
         "**/Hilt_*.*",
         "**/*_Factory.*",
-        "**/*ComposableSingletons*.*"
+        "**/*ComposableSingletons*.*",
+        "**/*Companion*.*"
     )
 
-    classDirectories.setFrom(
-        classDirectories.files.map { dir ->
-            fileTree(dir) { exclude(fileFilter) }
-        }
+    val targetProjects = listOf(
+        project,
+        project(":core:common"),
+        project(":core:domain"),
+        project(":core:data"),
+        project(":feature:home"),
+        project(":feature:details"),
+        project(":feature:player"),
+        project(":feature:search"),
     )
+
+    dependsOn(targetProjects.map { it.tasks.matching { task -> task.name == "testDebugUnitTest" } })
+
+    val javaClasses = targetProjects.map {
+        fileTree("${it.layout.buildDirectory.get()}/intermediates/javac/debug/classes") {
+            exclude(fileFilter)
+        }
+    }
+    val kotlinClasses = targetProjects.map {
+        fileTree("${it.layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
+            exclude(fileFilter)
+        }
+    }
+
+    classDirectories.setFrom(files(javaClasses, kotlinClasses))
+
+    val sources = targetProjects.flatMap {
+        listOf(
+            "${it.projectDir}/src/main/java",
+            "${it.projectDir}/src/main/kotlin"
+        )
+    }
+    sourceDirectories.setFrom(files(sources))
+
+    val executionFiles = targetProjects.map {
+        fileTree(it.layout.buildDirectory) {
+            include(
+                "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+                "jacoco/testDebugUnitTest.exec"
+            )
+        }
+    }
+    executionData.setFrom(files(executionFiles))
 }
