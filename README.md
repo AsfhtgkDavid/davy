@@ -1,8 +1,9 @@
 # DAVY
 
-![GitHub License](https://img.shields.io/github/license/AsfhtgkDavid/davy)
-![GitHub Issues](https://img.shields.io/github/issues/AsfhtgkDavid/davy)
-![F-Droid Version](https://img.shields.io/f-droid/v/dev.daika.davy)
+[![GitHub License](https://img.shields.io/github/license/AsfhtgkDavid/davy)](LICENSE)
+[![GitHub Issues](https://img.shields.io/github/issues/AsfhtgkDavid/davy)](https://github.com/AsfhtgkDavid/davy/issues)
+[![F-Droid Version](https://img.shields.io/f-droid/v/dev.daika.davy)](https://f-droid.org/packages/dev.daika.davy/)
+[![codecov](https://codecov.io/github/AsfhtgkDavid/davy/graph/badge.svg?token=1UMXGQ37KS)](https://codecov.io/github/AsfhtgkDavid/davy)
 
 DAVY is a modern Android anime app for discovering and watching anime from the current season. It is
 designed to feel lightweight and approachable while still offering a polished experience for
@@ -29,8 +30,7 @@ feature flows:
 - `core:domain` — domain models, repository contracts, and use cases
 - `core:data` — Yummy API integration, DTOs, and repository implementations
 - `core:ui` — shared Compose components and mobile/TV themes
-- `feature:*` — isolated feature modules for mode selection, home, anime details, player, and
-  search
+- `feature:*` — isolated feature modules for mode selection, home, anime details, player, and search
 
 Feature modules reuse the shared domain and data layers while providing separate `mobile` and `tv`
 composables where the interaction model differs.
