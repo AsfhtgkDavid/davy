@@ -1,5 +1,7 @@
 package dev.daika.davy.feature.player.mobile
 
+import android.app.Activity
+import android.content.Context
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -88,6 +90,7 @@ import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import dev.daika.davy.core.common.util.formatTime
+import dev.daika.davy.core.ui.component.HideBars
 import dev.daika.davy.feature.player.PlayerScreenUiState
 import dev.daika.davy.feature.player.PlayerScreenViewModel
 import kotlinx.coroutines.delay
@@ -300,6 +303,8 @@ fun MobilePlayerScreen(
                     exoPlayer.release()
                 }
             }
+
+            HideBars()
 
             Box(
                 modifier = Modifier
@@ -745,3 +750,4 @@ fun MobilePlayerScreen(
         }
     }
 }
+

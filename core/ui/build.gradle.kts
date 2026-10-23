@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.androidx.tv.material)
     implementation(libs.androidx.tv.foundation)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.core.ktx)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
