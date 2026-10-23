@@ -21,6 +21,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -35,4 +39,8 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
 }
