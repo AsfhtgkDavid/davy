@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2026-10-24
+
+### Added
+
+- Mobile form-factor support with responsive smartphone layout.
+- Status badges indicating release progress (e.g., ongoing, completed/released).
+- Test suites covering core modules and business logic.
+
+### Changed
+
+- Re-architected codebase into a modular structure to improve scalability and maintainability.
+
 ## [1.3.0] - 2026-09-29
 
 ### Added

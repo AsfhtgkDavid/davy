@@ -1,0 +1,7 @@
+Added:
+- Mobile device support with dedicated smartphone UI
+- Status badges for titles (Ongoing, Released, etc.)
+- Unit and integration test coverage
+
+Changed:
+- Refactored core architecture into a modular structure
