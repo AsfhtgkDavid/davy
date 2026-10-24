@@ -43,4 +43,5 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./build/reports/kover/report.xml
+          disable_search: true
           fail_ci_if_error: true
