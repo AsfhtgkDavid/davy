@@ -27,6 +27,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,6 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -351,6 +354,32 @@ private fun AnimeDescription(anime: Anime, modifier: Modifier = Modifier) {
                 overflow = TextOverflow.Ellipsis
             )
         }
+
+        Surface(
+            shape = RoundedCornerShape(50),
+            color = when (anime.status) {
+                AnimeStatus.RELEASED -> Color(0xFF2E7D32).copy(alpha = 0.2f)
+                AnimeStatus.ONGOING -> Color(0xFFE65100).copy(alpha = 0.2f)
+                AnimeStatus.ANNOUNCE -> Color(0xFF1565C0).copy(alpha = 0.2f)
+            },
+            modifier = Modifier.padding(vertical = 2.dp)
+        ) {
+            Text(
+                text = when (anime.status) {
+                    AnimeStatus.RELEASED -> "Released"
+                    AnimeStatus.ONGOING -> "Ongoing"
+                    AnimeStatus.ANNOUNCE -> "Announced"
+                },
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 6.dp),
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                color = when (anime.status) {
+                    AnimeStatus.RELEASED -> Color(0xFF81C784)
+                    AnimeStatus.ONGOING -> Color(0xFFFFB74D)
+                    AnimeStatus.ANNOUNCE -> Color(0xFF90CAF9)
+                }
+            )
+        }
+
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(anime.genres) { genre ->
                 Box(
