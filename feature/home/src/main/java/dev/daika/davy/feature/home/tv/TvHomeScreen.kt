@@ -1,5 +1,6 @@
 package dev.daika.davy.feature.home.tv
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -70,6 +71,7 @@ fun TvHomeScreen(
 
                 Button(
                     onClick = onSwitchModeClicked,
+                    modifier = Modifier.clickable(onClick = onSwitchModeClicked),  // Fix for mobile
                     shape = ButtonDefaults.shape(RoundedCornerShape(8.dp)),
                     colors = ButtonDefaults.colors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
