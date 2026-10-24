@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+
+    alias(libs.plugins.kover)
 }
 
 android {
@@ -28,12 +30,6 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
-    }
-
-    buildTypes {
-        debug {
-            enableUnitTestCoverage = true
-        }
     }
 }
 

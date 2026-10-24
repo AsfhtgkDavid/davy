@@ -36,10 +36,10 @@ jobs:
 
       - name: Run Unit Tests & Generate Coverage
         run: |
-          ./gradlew :app:aggregatedJacocoReport --stacktrace --no-daemon
+          ./gradlew koverXmlReport --stacktrace --no-daemon
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: app/build/reports/jacoco/aggregatedJacocoReport/aggregatedJacocoReport.xml
+          files: build/reports/kover/report.xml
