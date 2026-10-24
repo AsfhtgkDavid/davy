@@ -8,9 +8,49 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.60.1" apply false
     kotlin("plugin.serialization") version "2.3.20" apply false
 
-    jacoco
+    alias(libs.plugins.kover)
 }
 
-jacoco {
-    toolVersion = "0.8.15"
+dependencies {
+    kover(project(":core:common"))
+    kover(project(":core:domain"))
+    kover(project(":core:data"))
+
+    kover(project(":feature:home"))
+    kover(project(":feature:details"))
+    kover(project(":feature:player"))
+    kover(project(":feature:search"))
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                annotatedBy(
+                    "*Composable",
+                    "*Preview"
+                )
+
+                classes(
+                    "hilt_aggregated_deps.*",
+                    "*.*_Factory*",
+                    "*.*_MembersInjector*",
+                    "*.*NetworkModule*",
+                    "*HiltModule*",
+
+                    "*.data.api.*",
+
+                    "*.*Destination*",
+                    "*.*Destination$*",
+
+                    "*.*ModifierUtils*",
+                    "*.*ScreenKt*"
+                )
+
+                packages(
+                    "*.ui"
+                )
+            }
+        }
+    }
 }

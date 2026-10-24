@@ -6,8 +6,6 @@ plugins {
     id("com.google.dagger.hilt.android")
 
     kotlin("plugin.serialization") version "2.3.20"
-
-    id("jacoco")
 }
 
 android {
@@ -81,88 +79,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
 
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
-}
-
-tasks.register<JacocoReport>("aggregatedJacocoReport") {
-    group = "Verification"
-    description = "Generates aggregated JaCoCo coverage report for all modules"
-
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-        csv.required.set(false)
-    }
-
-    val fileFilter = listOf(
-        "**/R.class",
-        "**/R$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "**/*_MembersInjector.*",
-        "**/Dagger*.*",
-        "**/Hilt_*.*",
-        "**/*_HiltModules*.*",
-        "**/*_GeneratedInjector*.*",
-        "**/*_Factory.*",
-        "**/*_Factory$*.*",
-        "**/*_Provide*Factory*.*",
-        "**/*_LazyMapKey*.*",
-        "**/*ComposableSingletons*.*",
-        "**/*Companion*.*",
-        "**/hilt_aggregated_deps/**",
-        "**/dagger/hilt/**"
-    )
-
-    val targetProjects = listOf(
-        project,
-        project(":core:common"),
-        project(":core:domain"),
-        project(":core:data"),
-        project(":feature:home"),
-        project(":feature:details"),
-        project(":feature:player"),
-        project(":feature:search"),
-    )
-
-    dependsOn(targetProjects.map { p ->
-        p.tasks.matching { it.name == "testDebugUnitTest" || it.name == "test" }
-    })
-
-    val classTrees = targetProjects.map { p ->
-        fileTree(p.layout.buildDirectory) {
-            include(
-                "tmp/kotlin-classes/debug/dev/daika/davy/**",
-                "intermediates/kotlin-classes/debug/dev/daika/davy/**",
-                "intermediates/built_in_kotlinc/debug/**/classes/dev/daika/davy/**",
-                "classes/kotlin/main/dev/daika/davy/**",
-                "classes/java/main/dev/daika/davy/**",
-                "intermediates/javac/debug/**/classes/dev/daika/davy/**"
-            )
-            exclude(fileFilter)
-        }
-    }
-    classDirectories.setFrom(files(classTrees))
-
-    val sources = targetProjects.flatMap { p ->
-        listOf(
-            p.file("src/main/java"),
-            p.file("src/main/kotlin")
-        )
-    }
-    sourceDirectories.setFrom(files(sources))
-
-    val execFiles = targetProjects.map { p ->
-        fileTree(p.layout.buildDirectory) {
-            include(
-                "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-                "jacoco/testDebugUnitTest.exec",
-                "jacoco/test.exec"
-            )
-        }
-    }
-    executionData.setFrom(files(execFiles))
 }
