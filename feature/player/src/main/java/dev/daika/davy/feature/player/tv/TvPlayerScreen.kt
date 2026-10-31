@@ -1,6 +1,7 @@
 package dev.daika.davy.feature.player.tv
 
 import android.os.Build
+import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.compose.BackHandler
 import androidx.annotation.OptIn
@@ -71,6 +72,8 @@ import dev.daika.davy.core.common.util.formatTime
 import dev.daika.davy.core.ui.R
 import dev.daika.davy.feature.player.PlayerScreenUiState
 import dev.daika.davy.feature.player.PlayerScreenViewModel
+import dev.daika.davy.feature.player.Resolution
+import dev.daika.davy.feature.player.Subtitle
 import dev.daika.davyparsers.PlayerData
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -91,7 +94,9 @@ fun TvPlayerScreen(
         }
 
         is PlayerScreenUiState.Success -> {
-            val playerData = currentState.playerData
+            Log.d("STATE", uiState.toString())
+            val availableResolutions = currentState.availableResolutions
+            val availableSubtitles = currentState.availableSubtitles
             val animeTitle = currentState.animeTitle
             val episodeNumber = currentState.episodeNumber
 
@@ -106,11 +111,10 @@ fun TvPlayerScreen(
             var resetControlsTimer by remember { mutableIntStateOf(0) }
 
             var selectedSource by remember {
-                mutableStateOf((playerData.translations.firstOrNull { it.isDefault }
-                    ?: (playerData.translations.first())).streams.maxByOrNull { it.quality.toInt() }!!.urls.first())
+                mutableStateOf(availableResolutions.last().src)
             }
             var selectedSubtitles by remember {
-                mutableStateOf(playerData.subtitles.firstOrNull { it.isDefault }?.src)
+                mutableStateOf(availableSubtitles.firstOrNull { it.default }?.src)
             }
             var savedPosition by remember { mutableLongStateOf(0L) }
             var videoDuration by remember { mutableLongStateOf(1L) }
@@ -167,7 +171,7 @@ fun TvPlayerScreen(
             LaunchedEffect(selectedSource) {
                 subtitleText = ""
 
-                val subtitleConfigs = playerData.subtitles.map { subtitle ->
+                val subtitleConfigs = availableSubtitles.map { subtitle ->
                     MediaItem.SubtitleConfiguration.Builder(subtitle.src.toUri())
                         .setMimeType(MimeTypes.TEXT_VTT)
                         .setId(subtitle.src)
@@ -325,7 +329,8 @@ fun TvPlayerScreen(
                         isPlaying = isPlaying,
                         currentPosition = currentPosition,
                         videoDuration = videoDuration,
-                        playerData = playerData,
+                        availableResolutions = availableResolutions,
+                        availableSubtitles = availableSubtitles,
                         animeTitle = animeTitle,
                         episodeNumber = episodeNumber,
                         onPlayPause = {
@@ -337,7 +342,7 @@ fun TvPlayerScreen(
                             exoPlayer.seekTo(position)
                             currentPosition = position
                         },
-                        onQualitySelect = { urls -> selectedSource = urls.first() },
+                        onQualitySelect = { url -> selectedSource = url },
                         onSubtitleSelect = { url -> selectedSubtitles = url },
                         onUserInteraction = { resetControlsTimer++ },
                         currentQuality = selectedSource,
@@ -375,7 +380,8 @@ fun TvPlayerControls(
     isPlaying: Boolean,
     currentPosition: Long,
     videoDuration: Long,
-    playerData: PlayerData,
+    availableResolutions: List<Resolution>,
+    availableSubtitles: List<Subtitle>,
     animeTitle: String,
     episodeNumber: String,
     currentQuality: String,
@@ -384,7 +390,7 @@ fun TvPlayerControls(
     onNextEpisode: () -> Unit,
     onPrevEpisode: () -> Unit,
     onSeek: (Long) -> Unit,
-    onQualitySelect: (List<String>) -> Unit,
+    onQualitySelect: (String) -> Unit,
     onSubtitleSelect: (String?) -> Unit,
     onUserInteraction: () -> Unit
 ) {
@@ -495,7 +501,7 @@ fun TvPlayerControls(
                     )
                 }
 
-                if (playerData.subtitles.isNotEmpty())
+                if (availableSubtitles.isNotEmpty())
                     IconButton(onClick = { showSubtitleOptions = true }) {
                         Icon(
                             painterResource(R.drawable.outline_subtitles_24),
@@ -504,18 +510,17 @@ fun TvPlayerControls(
                     }
             }
             if (showQualityOptions) {
-                val streams = (playerData.translations.firstOrNull { it.isDefault }
-                    ?: playerData.translations.first()).streams.sortedBy { it.quality.toInt() }
-                val qualityOptions = streams.map { it.quality }
+                val qualityOptions = availableResolutions.map { it.quality }
                 val selectedIndex =
-                    streams.indexOfFirst { it.urls.contains(currentQuality) }.coerceAtLeast(0)
+                    availableResolutions.indexOfFirst { it.src.contains(currentQuality) }
+                        .coerceAtLeast(0)
 
                 SelectionMenuPopup(
                     title = "Select Quality",
                     options = qualityOptions,
                     selectedIndex = selectedIndex,
                     onSelect = { index ->
-                        onQualitySelect(streams[index].urls)
+                        onQualitySelect(availableResolutions[index].src)
                         showQualityOptions = false
                     },
                     onDismiss = { showQualityOptions = false }
@@ -523,10 +528,9 @@ fun TvPlayerControls(
             }
 
             if (showSubtitleOptions) {
-                val subtitles = playerData.subtitles
-                val subtitleOptions = subtitles.map { it.label }.toMutableList()
+                val subtitleOptions = availableSubtitles.map { it.label }.toMutableList()
                 val selectedIndex =
-                    subtitles.indexOfFirst { it.src == currentSubtitles } + 1
+                    availableSubtitles.indexOfFirst { it.src == currentSubtitles } + 1
                 subtitleOptions.add(0, "Turn Off")
 
                 SelectionMenuPopup(
@@ -537,7 +541,7 @@ fun TvPlayerControls(
                         if (index == 0)
                             onSubtitleSelect(null)
                         else
-                            onSubtitleSelect(subtitles[index - 1].src)
+                            onSubtitleSelect(availableSubtitles[index - 1].src)
                         showSubtitleOptions = false
                     },
                     onDismiss = { showSubtitleOptions = false }

@@ -100,7 +100,7 @@ import kotlin.time.Duration.Companion.seconds
 fun MobilePlayerScreen(
     onBackPressed: () -> Unit,
     playerScreenViewModel: PlayerScreenViewModel = hiltViewModel()
-) {
+) {/*
     val uiState by playerScreenViewModel.uiState.collectAsState()
 
     when (val currentState = uiState) {
@@ -733,5 +733,6 @@ fun MobilePlayerScreen(
             }
         }
     }
+*/
 }
 
