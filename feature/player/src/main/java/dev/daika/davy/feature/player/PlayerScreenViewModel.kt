@@ -141,7 +141,7 @@ class PlayerScreenViewModel @Inject constructor(
                     Subtitle(
                         it.label,
                         "https://davy/sub/${
-                            URLEncoder.encode(it.label, "UTF-8")
+                            URLEncoder.encode(it.label, "UTF-8").replace("+", "%20")
                         }/${it.src.toHttpUrl().pathSegments.last()}",
                         it.isDefault
                     )

@@ -38,7 +38,7 @@ class PlayerInterceptorTest {
                     isDefault = true,
                     streams = listOf(
                         MediaStream(
-                            quality = "1080p",
+                            quality = "1080",
                             urls = videoMirrors
                         )
                     )
