@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Unit Tests & Generate Coverage
         run: |
-          ./gradlew koverXmlReport --stacktrace --no-daemon
+          ./gradlew koverXmlReport --build-cache --stacktrace --no-daemon
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v7
