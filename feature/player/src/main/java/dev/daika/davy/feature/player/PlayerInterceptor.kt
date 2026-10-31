@@ -1,5 +1,6 @@
 package dev.daika.davy.feature.player
 
+import android.util.Log
 import dev.daika.davyparsers.PlayerData
 import okhttp3.Headers
 import okhttp3.HttpUrl
@@ -41,32 +42,34 @@ class PlayerInterceptor :
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val origRequest = chain.request()
+        if (origRequest.url.host != "davy") {
+            Log.w("PlayerInterceptor", "Request to ${origRequest.url.host}")
+            return chain.proceed(origRequest.newBuilder().headers(headers).build())
+        }
         var request = origRequest
         var response: Response? = null
-        val pathSegments = request.url.pathSegments.reversed()
-        val segment = pathSegments.first()
-        val type = pathSegments[2]
+        val pathSegments = request.url.pathSegments
+        val segments = pathSegments.drop(2)
+        val type = pathSegments[0]
         val mirrors = if (type == "video")
             playerData?.translations?.first { it.isDefault }?.streams?.first { it.quality == pathSegments[1] }?.urls?.map { it.toHttpUrl() }
                 ?: throw IllegalArgumentException()
         else
             listOf(playerData?.subtitles?.first {
-                it.label == URLDecoder.decode(
-                    pathSegments[1],
-                    "UTF-8"
-                )
+                it.label == pathSegments[1]
             }?.src?.toHttpUrl() ?: throw IllegalArgumentException())
         var attempts = 0
         var currentTarget = getActiveMirror(mirrors)
         while (attempts < mirrors.size) {
             attempts++
-            request = buildRequest(segment, currentTarget)
+            request = buildRequest(segments, currentTarget)
             try {
                 response = chain.proceed(request)
                 response = response.newBuilder().request(origRequest).build()
                 if (response.isSuccessful)
                     return response
-                response.close()
+                if (attempts < mirrors.size)
+                    response.close()
             } catch (e: IOException) {
                 if (attempts >= mirrors.size) throw e
             }
@@ -76,8 +79,12 @@ class PlayerInterceptor :
         return response ?: chain.proceed(origRequest)
     }
 
-    private fun buildRequest(segment: String, url: HttpUrl): Request =
-        Request.Builder().url(url.newBuilder().addPathSegment(segment).build()).headers(headers)
+    private fun buildRequest(segments: List<String>, url: HttpUrl): Request =
+        Request.Builder().url(
+            url.newBuilder().removePathSegment(url.pathSegments.size - 1)
+                .apply { segments.forEach { addPathSegment(it) } }
+                .build()
+        ).headers(headers)
             .get().build()
 
     fun updateHeaders(headers: Map<String, String>) {

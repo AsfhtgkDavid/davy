@@ -128,14 +128,15 @@ class PlayerScreenViewModel @Inject constructor(
             interceptor.setPlayerData(playerData)
 
             _uiState.value = PlayerScreenUiState.Success(
-                availableResolutions = playerData.translations.first { it.isDefault }.streams.map {
-                    Resolution(
-                        "https://davy/video/${it.quality}/${
-                            it.urls.first().toHttpUrl().pathSegments.last()
-                        }",
-                        it.quality
-                    )
-                },
+                availableResolutions = playerData.translations.first { it.isDefault }.streams.sortedBy { it.quality.toInt() }
+                    .map {
+                        Resolution(
+                            "https://davy/video/${it.quality}/${
+                                it.urls.first().toHttpUrl().pathSegments.last()
+                            }",
+                            it.quality
+                        )
+                    },
                 availableSubtitles = playerData.subtitles.map {
                     Subtitle(
                         it.label,
