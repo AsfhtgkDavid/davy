@@ -20,10 +20,10 @@ import java.io.IOException
 class PlayerInterceptorTest {
     private fun createSamplePlayerData(
         videoMirrors: List<String> = listOf(
-            "https://mirror1.com/stream",
-            "https://mirror2.com/stream"
+            "https://mirror1.com/stream/index.m3u8",
+            "https://mirror2.com/stream/index.m3u8"
         ),
-        subtitleUrl: String = "https://subs.example.com/mk"
+        subtitleUrl: String = "https://subs.example.com/mk/sub.vtt"
     ): PlayerData {
         return PlayerData(
             headers = mapOf(
@@ -85,7 +85,7 @@ class PlayerInterceptorTest {
         val chain = mockk<Interceptor.Chain>()
         val requestSlot = slot<Request>()
         val origRequest = Request.Builder()
-            .url("https://davy/video/1080p/index.m3u8")
+            .url("https://davy/video/1080/index.m3u8")
             .build()
 
         every { chain.request() } returns origRequest
@@ -111,7 +111,7 @@ class PlayerInterceptorTest {
         val chain = mockk<Interceptor.Chain>()
         val requests = mutableListOf<Request>()
         val origRequest = Request.Builder()
-            .url("https://davy/video/1080p/index.m3u8")
+            .url("https://davy/video/1080/index.m3u8")
             .build()
 
         every { chain.request() } returns origRequest
@@ -141,7 +141,7 @@ class PlayerInterceptorTest {
 
         val chain = mockk<Interceptor.Chain>()
         val origRequest = Request.Builder()
-            .url("https://davy/video/1080p/index.m3u8")
+            .url("https://davy/video/1080/index.m3u8")
             .build()
 
         every { chain.request() } returns origRequest
@@ -183,7 +183,7 @@ class PlayerInterceptorTest {
         val chain = mockk<Interceptor.Chain>()
         val requestSlot = slot<Request>()
         val origRequest = Request.Builder()
-            .url("https://davy/video/1080p/index.m3u8")
+            .url("https://davy/video/1080/index.m3u8")
             .build()
 
         every { chain.request() } returns origRequest
@@ -206,7 +206,7 @@ class PlayerInterceptorTest {
         val chain = mockk<Interceptor.Chain>()
         val requestSlot = slot<Request>()
         val origRequest = Request.Builder()
-            .url("https://davy/video/1080p/index.m3u8")
+            .url("https://davy/video/1080/index.m3u8")
             .build()
 
         every { chain.request() } returns origRequest
