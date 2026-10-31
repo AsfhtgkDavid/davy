@@ -100,7 +100,7 @@ import kotlin.time.Duration.Companion.seconds
 fun MobilePlayerScreen(
     onBackPressed: () -> Unit,
     playerScreenViewModel: PlayerScreenViewModel = hiltViewModel()
-) {/*
+) {
     val uiState by playerScreenViewModel.uiState.collectAsState()
 
     when (val currentState = uiState) {
@@ -116,7 +116,8 @@ fun MobilePlayerScreen(
         }
 
         is PlayerScreenUiState.Success -> {
-            val playerData = currentState.playerData
+            val availableResolutions = currentState.availableResolutions
+            val availableSubtitles = currentState.availableSubtitles
             val animeTitle = currentState.animeTitle
             val episodeNumber = currentState.episodeNumber
 
@@ -134,12 +135,11 @@ fun MobilePlayerScreen(
 
             var selectedSource by remember {
                 mutableStateOf(
-                    (playerData.translations.firstOrNull { it.isDefault }
-                        ?: playerData.translations.first()).streams.maxByOrNull { it.quality.toInt() }!!.urls.first()
+                    availableResolutions.last().src
                 )
             }
             var selectedSubtitles by remember {
-                mutableStateOf(playerData.subtitles.firstOrNull { it.isDefault }?.src)
+                mutableStateOf(availableSubtitles.firstOrNull { it.default }?.src)
             }
 
             var playWhenReadyState by remember { mutableStateOf(true) }
@@ -201,7 +201,7 @@ fun MobilePlayerScreen(
 
             LaunchedEffect(selectedSource) {
                 subtitleText = ""
-                val subtitleConfigs = playerData.subtitles.map { subtitle ->
+                val subtitleConfigs = availableSubtitles.map { subtitle ->
                     MediaItem.SubtitleConfiguration.Builder(subtitle.src.toUri())
                         .setMimeType(MimeTypes.TEXT_VTT)
                         .setId(subtitle.src)
@@ -572,7 +572,7 @@ fun MobilePlayerScreen(
                                         )
                                     }
 
-                                    if (playerData.subtitles.isNotEmpty()) {
+                                    if (availableSubtitles.isNotEmpty()) {
                                         IconButton(
                                             onClick = {
                                                 userInteractionCount++
@@ -593,9 +593,6 @@ fun MobilePlayerScreen(
                 }
 
                 if (showQualitySheet) {
-                    val streams = (playerData.translations.firstOrNull { it.isDefault }
-                        ?: playerData.translations.first()).streams.sortedBy { it.quality.toInt() }
-
                     ModalBottomSheet(
                         onDismissRequest = { showQualitySheet = false },
                         sheetState = rememberModalBottomSheetState()
@@ -610,11 +607,11 @@ fun MobilePlayerScreen(
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                 modifier = Modifier.padding(bottom = 12.dp)
                             )
-                            streams.forEach { stream ->
-                                val isSelected = stream.urls.contains(selectedSource)
+                            availableResolutions.forEach { resolution ->
+                                val isSelected = resolution.src == selectedSource
                                 Surface(
                                     onClick = {
-                                        selectedSource = stream.urls.first()
+                                        selectedSource = resolution.src
                                         showQualitySheet = false
                                     },
                                     modifier = Modifier.fillMaxWidth(),
@@ -622,7 +619,7 @@ fun MobilePlayerScreen(
                                     color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
                                 ) {
                                     Text(
-                                        text = "${stream.quality}p",
+                                        text = "${resolution.quality}p",
                                         modifier = Modifier.padding(14.dp),
                                         style = MaterialTheme.typography.bodyLarge.copy(
                                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
@@ -671,7 +668,7 @@ fun MobilePlayerScreen(
                                 )
                             }
 
-                            playerData.subtitles.forEach { subtitle ->
+                            availableSubtitles.forEach { subtitle ->
                                 val isSelected = subtitle.src == selectedSubtitles
                                 Surface(
                                     onClick = {
@@ -733,6 +730,5 @@ fun MobilePlayerScreen(
             }
         }
     }
-*/
 }
 

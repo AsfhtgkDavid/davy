@@ -94,7 +94,6 @@ fun TvPlayerScreen(
         }
 
         is PlayerScreenUiState.Success -> {
-            Log.d("STATE", uiState.toString())
             val availableResolutions = currentState.availableResolutions
             val availableSubtitles = currentState.availableSubtitles
             val animeTitle = currentState.animeTitle
