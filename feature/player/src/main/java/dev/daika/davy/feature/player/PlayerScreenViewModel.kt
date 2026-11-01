@@ -110,7 +110,10 @@ class PlayerScreenViewModel @Inject constructor(
             val currentEpisode = player?.episodes?.firstOrNull { it.videoId == episodeId }
                 ?: throw IllegalArgumentException("Episode not found")
 
-            val iframeUrl = "https:${currentEpisode.iframeUrl}"
+            val iframeUrl = if (currentEpisode.iframeUrl.startsWith("http"))
+                currentEpisode.iframeUrl
+            else
+                "https:${currentEpisode.iframeUrl}"
             val referer = "https://old.yummyani.me/catalog/item/${anime.url}"
 
             val interceptor = PlayerInterceptor()
@@ -128,7 +131,8 @@ class PlayerScreenViewModel @Inject constructor(
             interceptor.setPlayerData(playerData)
 
             _uiState.value = PlayerScreenUiState.Success(
-                availableResolutions = playerData.translations.first { it.isDefault }.streams.sortedBy { it.quality.toInt() }
+                availableResolutions = (playerData.translations.firstOrNull { it.isDefault }
+                    ?: playerData.translations.first()).streams.sortedBy { it.quality.toInt() }
                     .map {
                         Resolution(
                             "https://davy/video/${it.quality}/${
@@ -158,6 +162,7 @@ class PlayerScreenViewModel @Inject constructor(
         } catch (e: Exception) {
             closeCurrentParser()
             Log.e("PlayerScreenViewModel", "Error loading player data: ${e.message}", e)
+            Log.e("PlayerScreenViewModel", e.stackTraceToString())
             _uiState.value = PlayerScreenUiState.Error(e.message ?: "Unknown error")
         }
     }
