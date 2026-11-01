@@ -52,7 +52,8 @@ class PlayerInterceptor :
         val segments = pathSegments.drop(2)
         val type = pathSegments[0]
         val mirrors = if (type == "video")
-            playerData?.translations?.first { it.isDefault }?.streams?.first { it.quality == pathSegments[1] }?.urls?.map { it.toHttpUrl() }
+            (playerData?.translations?.firstOrNull { it.isDefault }
+                ?: playerData?.translations?.first())?.streams?.first { it.quality == pathSegments[1] }?.urls?.map { it.toHttpUrl() }
                 ?: throw IllegalArgumentException()
         else
             listOf(playerData?.subtitles?.first {
