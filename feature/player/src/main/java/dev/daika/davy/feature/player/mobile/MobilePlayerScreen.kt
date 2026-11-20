@@ -135,14 +135,15 @@ fun MobilePlayerScreen(
 
             var selectedSource by remember {
                 mutableStateOf(
-                    availableResolutions.last().src
+                    availableResolutions.last()
                 )
             }
             var selectedSubtitles by remember {
-                mutableStateOf(availableSubtitles.firstOrNull { it.default }?.src)
+                mutableStateOf(availableSubtitles.firstOrNull { it.default })
             }
 
             var playWhenReadyState by remember { mutableStateOf(true) }
+            var hasStartedPlayback by remember { mutableStateOf(false) }
             var subtitleText by remember { mutableStateOf("") }
             var currentTracks by remember { mutableStateOf(Tracks.EMPTY) }
 
@@ -210,7 +211,7 @@ fun MobilePlayerScreen(
                 }
 
                 val mediaItem = MediaItem.Builder()
-                    .setUri(selectedSource)
+                    .setUri(selectedSource.src)
                     .setSubtitleConfigurations(subtitleConfigs)
                     .build()
 
@@ -226,7 +227,7 @@ fun MobilePlayerScreen(
                     trackSelectionParameters.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
                     currentTracks.groups.find { trackGroup ->
                         trackGroup.mediaTrackGroup.getFormat(0).id?.split(":")?.drop(1)
-                            ?.joinToString(":") == selectedSubtitles
+                            ?.joinToString(":") == selectedSubtitles?.src
                     }?.let { textTrackGroup ->
                         trackSelectionParameters.setOverrideForType(
                             TrackSelectionOverride(textTrackGroup.mediaTrackGroup, 0)
@@ -241,6 +242,7 @@ fun MobilePlayerScreen(
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         if (playbackState == Player.STATE_READY) {
                             videoDuration = exoPlayer.contentDuration.coerceAtLeast(1L)
+                            hasStartedPlayback = true
                         } else if (playbackState == Player.STATE_ENDED) {
                             playerScreenViewModel.playNextEpisode()
                         }
@@ -248,6 +250,13 @@ fun MobilePlayerScreen(
 
                     override fun onIsPlayingChanged(isPlayingState: Boolean) {
                         isPlaying = isPlayingState
+                        if (hasStartedPlayback && exoPlayer.playbackState != Player.STATE_ENDED) {
+                            if (isPlayingState) {
+                                playerScreenViewModel.onResumed(exoPlayer.currentPosition * 1000)
+                            } else {
+                                playerScreenViewModel.onPaused(exoPlayer.currentPosition * 1000)
+                            }
+                        }
                     }
 
                     override fun onCues(cueGroup: CueGroup) {
@@ -432,6 +441,7 @@ fun MobilePlayerScreen(
                                         (exoPlayer.currentPosition - 10000L).coerceAtLeast(0L)
                                     exoPlayer.seekTo(newPos)
                                     currentPosition = newPos
+                                    playerScreenViewModel.onSeeked(newPos * 1000)
                                 }
                             ) {
                                 Icon(
@@ -477,6 +487,7 @@ fun MobilePlayerScreen(
                                     )
                                     exoPlayer.seekTo(newPos)
                                     currentPosition = newPos
+                                    playerScreenViewModel.onSeeked(newPos * 1000)
                                 }
                             ) {
                                 Icon(
@@ -528,6 +539,7 @@ fun MobilePlayerScreen(
                                     currentPosition = targetPosition
                                     isDraggingSlider = false
                                     userInteractionCount++
+                                    playerScreenViewModel.onSeeked(targetPosition * 1000)
                                 },
                                 colors = SliderDefaults.colors(
                                     thumbColor = MaterialTheme.colorScheme.primary,
@@ -608,10 +620,17 @@ fun MobilePlayerScreen(
                                 modifier = Modifier.padding(bottom = 12.dp)
                             )
                             availableResolutions.forEach { resolution ->
-                                val isSelected = resolution.src == selectedSource
+                                val isSelected = resolution == selectedSource
                                 Surface(
                                     onClick = {
-                                        selectedSource = resolution.src
+                                        if (!isSelected) {
+                                            selectedSource = resolution
+                                            playerScreenViewModel.onTrackChanged(
+                                                exoPlayer.currentPosition * 1000,
+                                                resolution.quality,
+                                                selectedSubtitles?.id ?: -1
+                                            )
+                                        }
                                         showQualitySheet = false
                                     },
                                     modifier = Modifier.fillMaxWidth(),
@@ -651,7 +670,14 @@ fun MobilePlayerScreen(
 
                             Surface(
                                 onClick = {
-                                    selectedSubtitles = null
+                                    if (selectedSubtitles != null) {
+                                        selectedSubtitles = null
+                                        playerScreenViewModel.onTrackChanged(
+                                            exoPlayer.currentPosition * 1000,
+                                            selectedSource.quality,
+                                            -1
+                                        )
+                                    }
                                     showSubtitleSheet = false
                                 },
                                 modifier = Modifier.fillMaxWidth(),
@@ -669,10 +695,17 @@ fun MobilePlayerScreen(
                             }
 
                             availableSubtitles.forEach { subtitle ->
-                                val isSelected = subtitle.src == selectedSubtitles
+                                val isSelected = subtitle == selectedSubtitles
                                 Surface(
                                     onClick = {
-                                        selectedSubtitles = subtitle.src
+                                        if (!isSelected) {
+                                            selectedSubtitles = subtitle
+                                            playerScreenViewModel.onTrackChanged(
+                                                exoPlayer.currentPosition * 1000,
+                                                selectedSource.quality,
+                                                subtitle.id
+                                            )
+                                        }
                                         showSubtitleSheet = false
                                     },
                                     modifier = Modifier.fillMaxWidth(),

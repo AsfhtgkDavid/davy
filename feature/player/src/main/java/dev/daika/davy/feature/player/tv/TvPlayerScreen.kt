@@ -110,14 +110,15 @@ fun TvPlayerScreen(
             var resetControlsTimer by remember { mutableIntStateOf(0) }
 
             var selectedSource by remember {
-                mutableStateOf(availableResolutions.last().src)
+                mutableStateOf(availableResolutions.last())
             }
             var selectedSubtitles by remember {
-                mutableStateOf(availableSubtitles.firstOrNull { it.default }?.src)
+                mutableStateOf(availableSubtitles.firstOrNull { it.default })
             }
             var savedPosition by remember { mutableLongStateOf(0L) }
             var videoDuration by remember { mutableLongStateOf(1L) }
             var playWhenReadyState by remember { mutableStateOf(true) }
+            var hasStartedPlayback by remember { mutableStateOf(false) }
             var subtitleText by remember { mutableStateOf("") }
             var currentTracks by remember { mutableStateOf(Tracks.EMPTY) }
 
@@ -179,7 +180,7 @@ fun TvPlayerScreen(
                 }
 
                 val mediaItem = MediaItem.Builder()
-                    .setUri(selectedSource)
+                    .setUri(selectedSource.src)
                     .setSubtitleConfigurations(subtitleConfigs)
                     .build()
 
@@ -197,7 +198,7 @@ fun TvPlayerScreen(
 
                     currentTracks.groups.find { trackGroup ->
                         trackGroup.mediaTrackGroup.getFormat(0).id?.split(":")?.drop(1)
-                            ?.joinToString(":") == selectedSubtitles
+                            ?.joinToString(":") == selectedSubtitles?.src
                     }?.let { textTrackGroup ->
                         trackSelectionParameters.setOverrideForType(
                             TrackSelectionOverride(textTrackGroup.mediaTrackGroup, 0)
@@ -213,6 +214,7 @@ fun TvPlayerScreen(
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         if (playbackState == Player.STATE_READY) {
                             videoDuration = exoPlayer.contentDuration.coerceAtLeast(1L)
+                            hasStartedPlayback = true
                         } else if (playbackState == Player.STATE_ENDED) {
                             playerScreenViewModel.playNextEpisode()
                         }
@@ -220,6 +222,13 @@ fun TvPlayerScreen(
 
                     override fun onIsPlayingChanged(isPlayingState: Boolean) {
                         isPlaying = isPlayingState
+                        if (hasStartedPlayback && exoPlayer.playbackState != Player.STATE_ENDED) {
+                            if (isPlayingState) {
+                                playerScreenViewModel.onResumed(exoPlayer.currentPosition * 1000)
+                            } else {
+                                playerScreenViewModel.onPaused(exoPlayer.currentPosition * 1000)
+                            }
+                        }
                     }
 
                     override fun onCues(cueGroup: CueGroup) {
@@ -340,12 +349,13 @@ fun TvPlayerScreen(
                         onSeek = { position ->
                             exoPlayer.seekTo(position)
                             currentPosition = position
+                            playerScreenViewModel.onSeeked(currentPosition * 1000)
                         },
-                        onQualitySelect = { url -> selectedSource = url },
-                        onSubtitleSelect = { url -> selectedSubtitles = url },
+                        onQualitySelect = { quality -> selectedSource = quality },
+                        onSubtitleSelect = { subtitle -> selectedSubtitles = subtitle },
                         onUserInteraction = { resetControlsTimer++ },
-                        currentQuality = selectedSource,
-                        currentSubtitles = selectedSubtitles
+                        currentQuality = selectedSource.src,
+                        currentSubtitles = selectedSubtitles?.src
                     )
                 }
             }
@@ -389,8 +399,8 @@ fun TvPlayerControls(
     onNextEpisode: () -> Unit,
     onPrevEpisode: () -> Unit,
     onSeek: (Long) -> Unit,
-    onQualitySelect: (String) -> Unit,
-    onSubtitleSelect: (String?) -> Unit,
+    onQualitySelect: (Resolution) -> Unit,
+    onSubtitleSelect: (Subtitle?) -> Unit,
     onUserInteraction: () -> Unit
 ) {
     var showQualityOptions by remember { mutableStateOf(false) }
@@ -519,7 +529,7 @@ fun TvPlayerControls(
                     options = qualityOptions,
                     selectedIndex = selectedIndex,
                     onSelect = { index ->
-                        onQualitySelect(availableResolutions[index].src)
+                        onQualitySelect(availableResolutions[index])
                         showQualityOptions = false
                     },
                     onDismiss = { showQualityOptions = false }
@@ -540,7 +550,7 @@ fun TvPlayerControls(
                         if (index == 0)
                             onSubtitleSelect(null)
                         else
-                            onSubtitleSelect(availableSubtitles[index - 1].src)
+                            onSubtitleSelect(availableSubtitles[index - 1])
                         showSubtitleOptions = false
                     },
                     onDismiss = { showSubtitleOptions = false }
