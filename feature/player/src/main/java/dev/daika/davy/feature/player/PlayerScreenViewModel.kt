@@ -39,6 +39,11 @@ class PlayerScreenViewModel @Inject constructor(
     private val animeId: Int = checkNotNull(savedStateHandle["animeId"])
     private var episodeId: Int = checkNotNull(savedStateHandle["episodeId"])
 
+    private val interceptor = PlayerInterceptor()
+    val dataSourceFactory = OkHttpDataSource.Factory(
+        okHttpClient.newBuilder().addInterceptor(interceptor).build()
+    )
+
     private var anime: Anime? = null
     private var player: AnimePlayer? = null
 
@@ -129,7 +134,12 @@ class PlayerScreenViewModel @Inject constructor(
     }
 
     private suspend fun fetchEpisodeData() {
-        _uiState.value = PlayerScreenUiState.Loading
+        val previousSuccess = _uiState.value as? PlayerScreenUiState.Success
+        if (previousSuccess != null) {
+            _uiState.value = previousSuccess.copy(isEpisodeLoading = true)
+        } else {
+            _uiState.value = PlayerScreenUiState.Loading
+        }
 
         closeCurrentParser()
 
@@ -143,8 +153,6 @@ class PlayerScreenViewModel @Inject constructor(
             else
                 "https:${currentEpisode.iframeUrl}"
             val referer = "https://old.yummyani.me/catalog/item/${anime.url}"
-
-            val interceptor = PlayerInterceptor()
 
             val parser = Parser.getParserForUrl(iframeUrl, parsers)
                 ?: throw IllegalArgumentException("No parser found for $iframeUrl")
@@ -161,6 +169,7 @@ class PlayerScreenViewModel @Inject constructor(
             val translation = (playerData.translations.firstOrNull { it.isDefault }
                 ?: playerData.translations.first())
             audioId = translation.id
+
             _uiState.value = PlayerScreenUiState.Success(
                 availableResolutions = translation.streams.sortedBy { it.quality.toInt() }
                     .map {
@@ -181,11 +190,9 @@ class PlayerScreenViewModel @Inject constructor(
                         track.isDefault
                     )
                 },
-                dataSourceFactory = OkHttpDataSource.Factory(
-                    okHttpClient.newBuilder().addInterceptor(interceptor).build()
-                ),
                 animeTitle = anime.title,
-                episodeNumber = currentEpisode.title
+                episodeNumber = currentEpisode.title,
+                isEpisodeLoading = false
             )
         } catch (e: CancellationException) {
             closeCurrentParser()
@@ -193,7 +200,6 @@ class PlayerScreenViewModel @Inject constructor(
         } catch (e: Exception) {
             closeCurrentParser()
             Log.e("PlayerScreenViewModel", "Error loading player data: ${e.message}", e)
-            Log.e("PlayerScreenViewModel", e.stackTraceToString())
             _uiState.value = PlayerScreenUiState.Error(e.message ?: "Unknown error")
         }
     }
@@ -204,9 +210,9 @@ sealed interface PlayerScreenUiState {
     data class Success(
         val availableResolutions: List<Resolution>,
         val availableSubtitles: List<Subtitle>,
-        val dataSourceFactory: DataSource.Factory,
         val animeTitle: String,
-        val episodeNumber: String
+        val episodeNumber: String,
+        val isEpisodeLoading: Boolean = false
     ) : PlayerScreenUiState
 
     data class Error(val message: String) : PlayerScreenUiState

@@ -40,6 +40,7 @@ fun DavyTvTheme(
     MaterialTheme(
         colorScheme = tvDarkScheme,
         typography = TvTypography,
-        content = content
-    )
+    ) {
+        DavyMobileTheme(content = content)
+    }
 }

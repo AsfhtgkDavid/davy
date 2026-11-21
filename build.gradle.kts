@@ -48,7 +48,7 @@ kover {
                 )
 
                 packages(
-                    "*.ui"
+                    "*.ui.*"
                 )
             }
         }
