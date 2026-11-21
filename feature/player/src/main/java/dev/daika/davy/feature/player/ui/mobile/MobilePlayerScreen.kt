@@ -1,5 +1,6 @@
 package dev.daika.davy.feature.player.ui.mobile
 
+import android.content.pm.ActivityInfo
 import androidx.activity.compose.BackHandler
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
@@ -8,6 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,9 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.media3.common.util.UnstableApi
+import dev.daika.davy.core.common.util.findActivity
 import dev.daika.davy.core.ui.component.ErrorView
 import dev.daika.davy.core.ui.component.HideBars
 import dev.daika.davy.core.ui.component.LoadingIndicator
@@ -38,6 +42,14 @@ fun MobilePlayerScreen(
     playerScreenViewModel: PlayerScreenViewModel = hiltViewModel()
 ) {
     val uiState by playerScreenViewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val activity = remember(context) { context.findActivity() }
+
+    DisposableEffect(activity) {
+        onDispose {
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
+    }
 
     when (val currentState = uiState) {
         is PlayerScreenUiState.Loading -> {

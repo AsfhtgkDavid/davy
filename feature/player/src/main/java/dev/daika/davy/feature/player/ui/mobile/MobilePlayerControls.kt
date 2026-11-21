@@ -48,6 +48,7 @@ fun MobilePlayerControls(
                 animeTitle = animeTitle,
                 episodeNumber = episodeNumber,
                 onBackPressed = onBackPressed,
+                onUserInteraction = onUserInteraction,
                 modifier = Modifier.align(Alignment.TopStart)
             )
 

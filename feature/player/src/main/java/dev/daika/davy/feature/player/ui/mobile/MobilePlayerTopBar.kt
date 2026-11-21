@@ -23,7 +23,8 @@ fun MobilePlayerTopBar(
     animeTitle: String,
     episodeNumber: String,
     onBackPressed: () -> Unit,
-    modifier: Modifier = Modifier
+    onUserInteraction: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -38,7 +39,9 @@ fun MobilePlayerTopBar(
                 tint = Color.White
             )
         }
-        Column(modifier = Modifier.weight(1f)) {
+        Column(modifier = Modifier
+            .weight(1f)
+            .padding(end = 8.dp)) {
             Text(
                 text = animeTitle,
                 color = Color.White,
@@ -52,5 +55,6 @@ fun MobilePlayerTopBar(
                 style = MaterialTheme.typography.bodySmall
             )
         }
+        PlayerOrientationButton(onUserInteraction = onUserInteraction)
     }
 }
