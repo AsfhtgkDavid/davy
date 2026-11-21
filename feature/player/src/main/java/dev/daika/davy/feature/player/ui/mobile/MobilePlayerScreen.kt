@@ -27,6 +27,7 @@ import androidx.media3.common.util.UnstableApi
 import dev.daika.davy.core.common.util.findActivity
 import dev.daika.davy.core.ui.component.ErrorView
 import dev.daika.davy.core.ui.component.HideBars
+import dev.daika.davy.core.ui.component.KeepScreenOn
 import dev.daika.davy.core.ui.component.LoadingIndicator
 import dev.daika.davy.feature.player.PlayerScreenUiState
 import dev.daika.davy.feature.player.PlayerScreenViewModel
@@ -89,6 +90,7 @@ fun MobilePlayerScreen(
             }
 
             HideBars()
+            KeepScreenOn(playerState.isPlaying)
 
             Box(
                 modifier = Modifier

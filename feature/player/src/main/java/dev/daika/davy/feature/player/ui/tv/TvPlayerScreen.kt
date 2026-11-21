@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.media3.common.util.UnstableApi
 import dev.daika.davy.core.ui.component.ErrorView
+import dev.daika.davy.core.ui.component.KeepScreenOn
 import dev.daika.davy.core.ui.component.LoadingIndicator
 import dev.daika.davy.feature.player.PlayerScreenUiState
 import dev.daika.davy.feature.player.PlayerScreenViewModel
@@ -62,6 +63,8 @@ fun TvPlayerScreen(
 
             var isControlsVisible by remember { mutableStateOf(true) }
             var resetControlsTimer by remember { mutableIntStateOf(0) }
+
+            KeepScreenOn(playerState.isPlaying)
 
             BackHandler(enabled = isControlsVisible) {
                 isControlsVisible = false
