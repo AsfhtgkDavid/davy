@@ -1,6 +1,7 @@
 package dev.daika.davy.feature.player
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModelStore
 import dev.daika.davy.core.domain.model.Anime
 import dev.daika.davy.core.domain.model.AnimeEpisode
 import dev.daika.davy.core.domain.model.AnimePlayer
@@ -427,10 +428,9 @@ class PlayerScreenViewModelTest {
             okHttpClient = okHttpClient
         )
 
-        val clearMethod =
-            androidx.lifecycle.ViewModel::class.java.getDeclaredMethod("clear\$lifecycle_viewmodel_release")
-                .apply { isAccessible = true }
-        clearMethod.invoke(activeViewModel)
+        val store = ViewModelStore()
+        store.put("PlayerScreenViewModel", activeViewModel)
+        store.clear()
 
         verify(exactly = 1) { workingParser.closeSession() }
     }
