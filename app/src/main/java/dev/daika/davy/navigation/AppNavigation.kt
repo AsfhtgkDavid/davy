@@ -13,18 +13,18 @@ import dev.daika.davy.core.common.preference.ModePreferences
 import dev.daika.davy.core.ui.theme.DavyMobileTheme
 import dev.daika.davy.core.ui.theme.DavyTvTheme
 import dev.daika.davy.feature.details.AnimeDetailsScreenDestination
-import dev.daika.davy.feature.details.mobile.MobileAnimeDetailsScreen
-import dev.daika.davy.feature.details.tv.TvAnimeDetailsScreen
+import dev.daika.davy.feature.details.ui.mobile.MobileAnimeDetailsScreen
+import dev.daika.davy.feature.details.ui.tv.TvAnimeDetailsScreen
 import dev.daika.davy.feature.home.HomeScreenDestination
-import dev.daika.davy.feature.home.mobile.MobileHomeScreen
-import dev.daika.davy.feature.home.tv.TvHomeScreen
-import dev.daika.davy.feature.modeselection.ModeSelectionScreen
+import dev.daika.davy.feature.home.ui.mobile.MobileHomeScreen
+import dev.daika.davy.feature.home.ui.tv.TvHomeScreen
+import dev.daika.davy.feature.modeselection.ui.ModeSelectionScreen
 import dev.daika.davy.feature.player.PlayerScreenDestination
-import dev.daika.davy.feature.player.mobile.MobilePlayerScreen
-import dev.daika.davy.feature.player.tv.TvPlayerScreen
+import dev.daika.davy.feature.player.ui.mobile.MobilePlayerScreen
+import dev.daika.davy.feature.player.ui.tv.TvPlayerScreen
 import dev.daika.davy.feature.search.SearchScreenDestination
-import dev.daika.davy.feature.search.mobile.MobileSearchScreen
-import dev.daika.davy.feature.search.tv.TvSearchScreen
+import dev.daika.davy.feature.search.ui.mobile.MobileSearchScreen
+import dev.daika.davy.feature.search.ui.tv.TvSearchScreen
 
 @Composable
 fun AppNavigation(
