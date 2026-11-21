@@ -252,9 +252,9 @@ fun MobilePlayerScreen(
                         isPlaying = isPlayingState
                         if (hasStartedPlayback && exoPlayer.playbackState != Player.STATE_ENDED) {
                             if (isPlayingState) {
-                                playerScreenViewModel.onResumed(exoPlayer.currentPosition * 1000)
+                                playerScreenViewModel.onResumed(exoPlayer.currentPosition / 1000)
                             } else {
-                                playerScreenViewModel.onPaused(exoPlayer.currentPosition * 1000)
+                                playerScreenViewModel.onPaused(exoPlayer.currentPosition / 1000)
                             }
                         }
                     }
