@@ -9,11 +9,7 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
-import java.net.URI
-import java.net.URLDecoder
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 class PlayerInterceptor :
     Interceptor {

@@ -25,12 +25,16 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient =
-        OkHttpClient.Builder().addInterceptor(UnwrappingInterceptor()).build()
+        OkHttpClient.Builder().build()
 
     @Provides
     @Singleton
     fun provideYummyApi(okHttpClient: OkHttpClient): YummyApi =
-        Retrofit.Builder().baseUrl("https://api.yani.tv/").client(okHttpClient)
+        Retrofit.Builder().baseUrl("https://api.yani.tv/").client(
+            okHttpClient.newBuilder().addInterceptor(
+                UnwrappingInterceptor()
+            ).build()
+        )
             .addConverterFactory(Json {
                 ignoreUnknownKeys = true
             }.asConverterFactory("application/json; charset=utf-8".toMediaType()))

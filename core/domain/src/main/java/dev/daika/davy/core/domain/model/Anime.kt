@@ -15,4 +15,13 @@ data class Anime(
     val translations: List<AnimeTranslation> = emptyList(),
 
     val viewingOrder: List<Anime> = emptyList()
-)
+) {
+    fun hasPlayableEpisodes(): Boolean {
+        return translations.any { it.availablePlayers.isNotEmpty() }
+    }
+
+    fun isSingleEpisodeTitle(): Boolean {
+        val allPlayers = translations.flatMap { it.availablePlayers }
+        return allPlayers.isNotEmpty() && allPlayers.all { it.episodes.size <= 1 } && status == AnimeStatus.RELEASED
+    }
+}
