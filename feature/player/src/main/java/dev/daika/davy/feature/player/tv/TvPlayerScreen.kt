@@ -351,8 +351,22 @@ fun TvPlayerScreen(
                             currentPosition = position
                             playerScreenViewModel.onSeeked(currentPosition * 1000)
                         },
-                        onQualitySelect = { quality -> selectedSource = quality },
-                        onSubtitleSelect = { subtitle -> selectedSubtitles = subtitle },
+                        onQualitySelect = { quality ->
+                            selectedSource = quality
+                            playerScreenViewModel.onTrackChanged(
+                                exoPlayer.currentPosition / 1000,
+                                quality.quality,
+                                selectedSubtitles?.id ?: -1
+                            )
+                        },
+                        onSubtitleSelect = { subtitle ->
+                            selectedSubtitles = subtitle
+                            playerScreenViewModel.onTrackChanged(
+                                exoPlayer.currentPosition / 1000,
+                                selectedSource.quality,
+                                subtitle?.id ?: -1
+                            )
+                        },
                         onUserInteraction = { resetControlsTimer++ },
                         currentQuality = selectedSource.src,
                         currentSubtitles = selectedSubtitles?.src
