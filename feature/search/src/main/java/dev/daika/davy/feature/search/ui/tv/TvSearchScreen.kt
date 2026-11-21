@@ -40,9 +40,16 @@ fun TvSearchScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TvSearchResultsGrid(
-            lazyPagingItems = lazyPagingItems,
-            onAnimeSelected = onAnimeSelected
-        )
+        val isInitial = searchQuery.length < 2 && !filterState.hasActiveFilters()
+
+        if (isInitial) {
+            TvSearchInitialView()
+        } else {
+            TvSearchResultsGrid(
+                lazyPagingItems = lazyPagingItems,
+                onAnimeSelected = onAnimeSelected
+            )
+        }
     }
 }
+

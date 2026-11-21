@@ -90,7 +90,7 @@ class VideoPlayerState(
         val target = positionMs.coerceIn(0L, videoDuration)
         exoPlayer.seekTo(target)
         currentPosition = target
-        onSeeked(target * 1000)
+        onSeeked(target / 1000)
     }
 
     fun selectSource(resolution: Resolution) {
@@ -98,7 +98,7 @@ class VideoPlayerState(
             preservePositionOnNextSourceChange = true
             selectedSource = resolution
             onTrackChanged(
-                exoPlayer.currentPosition * 1000,
+                exoPlayer.currentPosition / 1000,
                 resolution.quality,
                 selectedSubtitles?.id ?: -1
             )
@@ -109,7 +109,7 @@ class VideoPlayerState(
         if (subtitle != selectedSubtitles) {
             selectedSubtitles = subtitle
             onTrackChanged(
-                exoPlayer.currentPosition * 1000,
+                exoPlayer.currentPosition / 1000,
                 selectedSource.quality,
                 subtitle?.id ?: -1
             )
