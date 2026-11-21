@@ -12,6 +12,7 @@ import dev.daika.davy.core.domain.model.AnimePlayer
 import dev.daika.davy.core.domain.model.getPlayerByEpisodeId
 import dev.daika.davy.core.domain.usecase.YummyGetAnimeUseCase
 import dev.daika.davyparsers.Parser
+import dev.daika.davyparsers.ParserEvent
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,6 +44,7 @@ class PlayerScreenViewModel @Inject constructor(
 
     private var currentParser: Parser? = null
     private var fetchEpisodeJob: kotlinx.coroutines.Job? = null
+    private var audioId: String = "0"
 
     private var _uiState = MutableStateFlow<PlayerScreenUiState>(PlayerScreenUiState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -59,9 +61,35 @@ class PlayerScreenViewModel @Inject constructor(
     }
 
     private fun closeCurrentParser() {
-        runCatching { currentParser?.closeSession() }
-            .onFailure { Log.e("PlayerScreenViewModel", "Error closing parser", it) }
+        currentParser?.closeSession()
         currentParser = null
+    }
+
+    private fun sendParserEvent(event: ParserEvent) {
+        currentParser?.sendEvent(event)
+    }
+
+    fun onResumed(currentTime: Long) {
+        sendParserEvent(ParserEvent.RESUMED(currentTime))
+    }
+
+    fun onPaused(currentTime: Long) {
+        sendParserEvent(ParserEvent.PAUSED(currentTime))
+    }
+
+    fun onSeeked(currentTime: Long) {
+        sendParserEvent(ParserEvent.SEEKED(currentTime))
+    }
+
+    fun onTrackChanged(currentTime: Long, resolution: String, subtitleId: Int) {
+        sendParserEvent(
+            ParserEvent.TRACK_CHANGED(
+                currentTime = currentTime,
+                resolution = resolution,
+                audioId = audioId,
+                subtitleId = subtitleId
+            )
+        )
     }
 
     fun playNextEpisode() {
@@ -130,9 +158,11 @@ class PlayerScreenViewModel @Inject constructor(
 
             interceptor.setPlayerData(playerData)
 
+            val translation = (playerData.translations.firstOrNull { it.isDefault }
+                ?: playerData.translations.first())
+            audioId = translation.id
             _uiState.value = PlayerScreenUiState.Success(
-                availableResolutions = (playerData.translations.firstOrNull { it.isDefault }
-                    ?: playerData.translations.first()).streams.sortedBy { it.quality.toInt() }
+                availableResolutions = translation.streams.sortedBy { it.quality.toInt() }
                     .map {
                         Resolution(
                             "https://davy/video/${it.quality}/${
@@ -141,13 +171,14 @@ class PlayerScreenViewModel @Inject constructor(
                             it.quality
                         )
                     },
-                availableSubtitles = playerData.subtitles.map {
+                availableSubtitles = playerData.subtitles.mapIndexed { index, track ->
                     Subtitle(
-                        it.label,
+                        index,
+                        track.label,
                         "https://davy/sub/${
-                            URLEncoder.encode(it.label, "UTF-8").replace("+", "%20")
-                        }/${it.src.toHttpUrl().pathSegments.last()}",
-                        it.isDefault
+                            URLEncoder.encode(track.label, "UTF-8").replace("+", "%20")
+                        }/${track.src.toHttpUrl().pathSegments.last()}",
+                        track.isDefault
                     )
                 },
                 dataSourceFactory = OkHttpDataSource.Factory(
@@ -187,6 +218,7 @@ data class Resolution(
 )
 
 data class Subtitle(
+    val id: Int,
     val label: String,
     val src: String,
     val default: Boolean
