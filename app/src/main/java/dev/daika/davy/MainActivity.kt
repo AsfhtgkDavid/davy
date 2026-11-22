@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import dagger.hilt.android.AndroidEntryPoint
-import dev.daika.davy.core.data.preferences.ModePreferences
+import dev.daika.davy.core.data.preference.ModePreferences
 import dev.daika.davy.navigation.AppNavigation
 import javax.inject.Inject
 

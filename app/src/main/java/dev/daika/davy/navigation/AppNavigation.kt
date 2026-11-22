@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.daika.davy.core.domain.model.AppMode
-import dev.daika.davy.core.data.preferences.ModePreferences
+import dev.daika.davy.core.data.preference.ModePreferences
 import dev.daika.davy.core.ui.theme.DavyMobileTheme
 import dev.daika.davy.core.ui.theme.DavyTvTheme
 import dev.daika.davy.feature.details.AnimeDetailsScreenDestination
