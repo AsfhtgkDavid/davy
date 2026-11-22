@@ -8,8 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.daika.davy.core.common.preference.AppMode
-import dev.daika.davy.core.common.preference.ModePreferences
+import dev.daika.davy.core.domain.model.AppMode
+import dev.daika.davy.core.data.preference.ModePreferences
 import dev.daika.davy.core.ui.theme.DavyMobileTheme
 import dev.daika.davy.core.ui.theme.DavyTvTheme
 import dev.daika.davy.feature.details.AnimeDetailsScreenDestination
@@ -63,7 +63,6 @@ fun AppNavigation(
         null -> {
             DavyMobileTheme {
                 ModeSelectionScreen(
-                    modePreferences = modePreferences,
                     onModeConfirmed = { selectedMode ->
                         activeMode = selectedMode
                         modePreferences.setAppMode(selectedMode)

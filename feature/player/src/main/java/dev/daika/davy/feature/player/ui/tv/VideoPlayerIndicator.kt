@@ -20,7 +20,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
-import dev.daika.davy.core.common.util.handleDPadKeyEvents
+import dev.daika.davy.core.ui.util.handleDPadKeyEvents
 import kotlin.math.pow
 
 @Composable

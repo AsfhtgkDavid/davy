@@ -1,10 +1,11 @@
-package dev.daika.davy.core.common.preference
+package dev.daika.davy.core.data.preference
 
 import android.app.UiModeManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import dev.daika.davy.core.domain.model.AppMode
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -23,7 +24,12 @@ class ModePreferencesTest {
 
     @Before
     fun setup() {
-        every { context.getSharedPreferences("davy_mode_prefs", Context.MODE_PRIVATE) } returns sharedPreferences
+        every {
+            context.getSharedPreferences(
+                "davy_mode_prefs",
+                Context.MODE_PRIVATE
+            )
+        } returns sharedPreferences
         every { sharedPreferences.edit() } returns editor
         every { context.packageManager } returns packageManager
         every { context.getSystemService(Context.UI_MODE_SERVICE) } returns uiModeManager

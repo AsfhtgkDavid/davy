@@ -1,4 +1,4 @@
-package dev.daika.davy.core.common.util
+package dev.daika.davy.core.ui.util
 
 import android.app.Activity
 import android.content.Context

@@ -11,8 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.daika.davy.core.domain.model.Anime
+import dev.daika.davy.core.ui.R
 import dev.daika.davy.core.ui.component.ErrorView
 import dev.daika.davy.core.ui.component.LoadingIndicator
 import dev.daika.davy.feature.home.HomeScreenUiState
@@ -53,7 +55,7 @@ fun MobileHomeScreen(
 
                     is HomeScreenUiState.Error -> {
                         ErrorView(
-                            title = "Failed to load data",
+                            title = stringResource(R.string.error_failed_to_load_data),
                             message = currentState.message,
                             onRetry = { homeScreenViewModel.loadFeed() }
                         )

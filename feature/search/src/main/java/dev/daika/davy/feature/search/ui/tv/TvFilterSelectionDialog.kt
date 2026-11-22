@@ -37,6 +37,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -48,9 +49,11 @@ import androidx.tv.material3.IconButton
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
-import dev.daika.davy.core.common.util.handleDPadKeyEvents
-import dev.daika.davy.core.common.util.ifElse
+import dev.daika.davy.core.ui.util.handleDPadKeyEvents
+import dev.daika.davy.core.ui.util.ifElse
 import dev.daika.davy.core.domain.model.FilterOption
+import dev.daika.davy.core.ui.R
+import dev.daika.davy.core.ui.util.getDisplayTitle
 
 enum class ActiveFilterPopup {
     INCLUDE_GENRES,
@@ -131,7 +134,10 @@ fun FilterSelectionPopup(
                             )
                             if (isMultipleChoice && tempSelected.isNotEmpty()) {
                                 Text(
-                                    text = "Selected: ${tempSelected.size}",
+                                    text = stringResource(
+                                        R.string.filter_selected_count,
+                                        tempSelected.size
+                                    ),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -143,7 +149,7 @@ fun FilterSelectionPopup(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "Close",
+                                contentDescription = stringResource(R.string.cd_close),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -218,7 +224,7 @@ fun FilterSelectionPopup(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = item.title,
+                                        text = item.getDisplayTitle(),
                                         color = if (itemFocused) {
                                             MaterialTheme.colorScheme.onPrimary
                                         } else {
@@ -230,7 +236,7 @@ fun FilterSelectionPopup(
                                     if (isSelected) {
                                         Icon(
                                             imageVector = Icons.Default.Check,
-                                            contentDescription = "Selected",
+                                            contentDescription = stringResource(R.string.cd_selected),
                                             tint = if (itemFocused) {
                                                 MaterialTheme.colorScheme.onPrimary
                                             } else {
@@ -264,7 +270,7 @@ fun FilterSelectionPopup(
                                     )
                                 ) {
                                     Text(
-                                        text = "Reset",
+                                        text = stringResource(R.string.action_reset),
                                         color = MaterialTheme.colorScheme.error,
                                         style = MaterialTheme.typography.labelMedium,
                                         modifier = Modifier.padding(
@@ -289,7 +295,7 @@ fun FilterSelectionPopup(
                                 modifier = Modifier.focusRequester(bottomFocusRequester)
                             ) {
                                 Text(
-                                    text = "Apply",
+                                    text = stringResource(R.string.action_apply),
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,

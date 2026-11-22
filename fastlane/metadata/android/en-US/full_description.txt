@@ -1,13 +1,13 @@
-DAVY is a modern, lightweight open-source app for discovering and watching anime on phones, Android TV, and Google TV. Browse the current season, search for anime, explore detailed information, choose a translation and player, and watch episodes with the built-in video player.
+DAVY is a modern, lightweight open-source client for discovering and watching anime on phones, Android TV, and Google TV. Browse ongoing titles from the current season, search the catalog, explore detailed info, pick your preferred dub/sub and streaming source, and watch seamlessly in the built-in player.
 
-Content is currently available in Russian only.
-
-Built with Kotlin and Jetpack Compose, DAVY adapts its interface to the device you use. The mobile UI is designed for touch navigation, while the TV UI provides focus-based navigation optimized for remote controls and D-pads.
+Built with Kotlin and Jetpack Compose, DAVY adapts its layout to your screen. The mobile interface is crafted for smooth touch gestures, while the TV experience is tailored for D-pad and remote control navigation.
 
 Key Features:
 
-* Phone Support: Touch-friendly browsing, search, anime details, episode selection, and playback.
-* TV-Optimized: Focus-based navigation designed for remote controls and smart TVs.
-* Anime Discovery: Browse the current season and find titles with built-in search.
-* Flexible Playback: Choose from available translations and players.
-* Modern Player: Reliable video streaming powered by Media3 (ExoPlayer).
+* Phone & Tablet Support: Touch-friendly browsing, fast search, detailed anime pages, and episode tracking.
+* TV-Optimized Interface: Clean, responsive layout built specifically for Android TV / Google TV remotes.
+* Seasonal Catalog & Search: Stay up to date with the current anime season or find specific titles quickly.
+* Flexible Sources: Choose from multiple available translations (dubs/subs) and streaming sources.
+* Modern Video Playback: Smooth, reliable streaming powered by Media3 (ExoPlayer) with picture-in-picture and orientation controls.
+
+Note: Streaming sources currently provide content in Russian only.

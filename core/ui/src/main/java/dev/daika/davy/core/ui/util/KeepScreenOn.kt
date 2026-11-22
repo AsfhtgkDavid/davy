@@ -1,10 +1,9 @@
-package dev.daika.davy.core.ui.component
+package dev.daika.davy.core.ui.util
 
 import android.view.WindowManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
-import dev.daika.davy.core.common.util.findActivity
 
 @Composable
 fun KeepScreenOn(enabled: Boolean = true) {

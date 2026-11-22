@@ -6,9 +6,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import dev.daika.davy.core.ui.R
 
 @Composable
 fun TvPlayerTopBar(
@@ -24,7 +26,7 @@ fun TvPlayerTopBar(
     }
 
     Text(
-        text = "$displayTitle - ep $episodeNumber",
+        text = stringResource(R.string.tv_player_title_episode, displayTitle, episodeNumber),
         color = Color.White,
         style = MaterialTheme.typography.titleMedium,
         maxLines = 1,

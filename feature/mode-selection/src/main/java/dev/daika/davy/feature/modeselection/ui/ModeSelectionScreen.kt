@@ -38,21 +38,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.daika.davy.core.common.preference.AppMode
-import dev.daika.davy.core.common.preference.ModePreferences
-import kotlinx.serialization.Serializable
-
-@Serializable
-object ModeSelectionDestination
+import androidx.compose.ui.res.stringResource
+import dev.daika.davy.core.domain.model.AppMode
+import dev.daika.davy.core.ui.R
 
 @Composable
 fun ModeSelectionScreen(
-    modePreferences: ModePreferences,
     onModeConfirmed: (AppMode) -> Unit
 ) {
-    val detectedMode = remember { modePreferences.detectDefaultDeviceMode() }
-    val savedMode = remember { modePreferences.getSavedMode() }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -68,7 +61,7 @@ fun ModeSelectionScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Choose application interface",
+                text = stringResource(R.string.mode_selection_title),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
@@ -88,9 +81,9 @@ fun ModeSelectionScreen(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
-                    title = "Mobile",
-                    subtitle = "For smartphones and tablets",
-                    description = "• Touch controls\n• Mobile player with gestures\n• Seamless mobile navigation",
+                    title = stringResource(R.string.mode_mobile_title),
+                    subtitle = stringResource(R.string.mode_mobile_subtitle),
+                    description = stringResource(R.string.mode_mobile_description),
                     icon = Icons.Default.PhoneAndroid,
                     onClick = { onModeConfirmed(AppMode.MOBILE) }
                 )
@@ -99,9 +92,9 @@ fun ModeSelectionScreen(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
-                    title = "Android TV",
-                    subtitle = "For TVs and streaming boxes",
-                    description = "• Remote control navigation (D-Pad)\n• Large catalog cards\n• Leanback navigation",
+                    title = stringResource(R.string.mode_tv_title),
+                    subtitle = stringResource(R.string.mode_tv_subtitle),
+                    description = stringResource(R.string.mode_tv_description),
                     icon = Icons.Default.Tv,
                     onClick = { onModeConfirmed(AppMode.TV) }
                 )

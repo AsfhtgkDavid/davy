@@ -15,8 +15,10 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.daika.davy.core.ui.R
 import dev.daika.davy.feature.player.Resolution
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +39,7 @@ fun MobileQualitySheet(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Select video quality",
+                text = stringResource(R.string.player_select_video_quality),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(bottom = 12.dp)
             )
@@ -53,7 +55,7 @@ fun MobileQualitySheet(
                     color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
                 ) {
                     Text(
-                        text = "${resolution.quality}p",
+                        text = stringResource(R.string.player_quality_p, resolution.quality),
                         modifier = Modifier.padding(14.dp),
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal

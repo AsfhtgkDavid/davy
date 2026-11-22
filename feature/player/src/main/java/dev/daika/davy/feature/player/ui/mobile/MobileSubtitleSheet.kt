@@ -15,8 +15,10 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.daika.davy.core.ui.R
 import dev.daika.davy.feature.player.Subtitle
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +39,7 @@ fun MobileSubtitleSheet(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Subtitles",
+                text = stringResource(R.string.player_subtitles),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(bottom = 12.dp)
             )
@@ -52,7 +54,7 @@ fun MobileSubtitleSheet(
                 color = if (selectedSubtitles == null) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
             ) {
                 Text(
-                    text = "Off",
+                    text = stringResource(R.string.player_subtitles_off),
                     modifier = Modifier.padding(14.dp),
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = if (selectedSubtitles == null) FontWeight.Bold else FontWeight.Normal

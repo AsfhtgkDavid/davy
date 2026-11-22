@@ -1,1 +1,1 @@
-Open-source anime app for phones, Android TV, and Google TV.
+Open-source anime client for phones, Android TV & Google TV

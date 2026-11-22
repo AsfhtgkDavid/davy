@@ -22,7 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.daika.davy.core.ui.R
 
 @Composable
 fun MobilePlayerCenterControls(
@@ -42,7 +44,7 @@ fun MobilePlayerCenterControls(
         IconButton(onClick = onPrevEpisode) {
             Icon(
                 imageVector = Icons.Default.SkipPrevious,
-                contentDescription = "Previous episode",
+                contentDescription = stringResource(R.string.cd_previous_episode),
                 tint = Color.White,
                 modifier = Modifier.size(36.dp)
             )
@@ -51,7 +53,7 @@ fun MobilePlayerCenterControls(
         IconButton(onClick = onRewind10) {
             Icon(
                 imageVector = Icons.Default.Replay10,
-                contentDescription = "-10 sec",
+                contentDescription = stringResource(R.string.cd_rewind_10),
                 tint = Color.White,
                 modifier = Modifier.size(36.dp)
             )
@@ -70,7 +72,7 @@ fun MobilePlayerCenterControls(
             ) {
                 Icon(
                     imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                    contentDescription = if (isPlaying) "Pause" else "Play",
+                    contentDescription = if (isPlaying) stringResource(R.string.cd_pause) else stringResource(R.string.cd_play),
                     tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(36.dp)
                 )
@@ -80,7 +82,7 @@ fun MobilePlayerCenterControls(
         IconButton(onClick = onForward10) {
             Icon(
                 imageVector = Icons.Default.Forward10,
-                contentDescription = "+10 sec",
+                contentDescription = stringResource(R.string.cd_forward_10),
                 tint = Color.White,
                 modifier = Modifier.size(36.dp)
             )
@@ -89,7 +91,7 @@ fun MobilePlayerCenterControls(
         IconButton(onClick = onNextEpisode) {
             Icon(
                 imageVector = Icons.Default.SkipNext,
-                contentDescription = "Next episode",
+                contentDescription = stringResource(R.string.cd_next_episode),
                 tint = Color.White,
                 modifier = Modifier.size(36.dp)
             )

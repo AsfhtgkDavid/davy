@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import dev.daika.davy.core.common.util.ifElse
+import dev.daika.davy.core.ui.util.ifElse
 import dev.daika.davy.core.domain.model.Anime
 
 @Composable

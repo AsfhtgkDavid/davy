@@ -14,9 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import dev.daika.davy.core.ui.R
 
 @Composable
 fun MobilePlayerTopBar(
@@ -35,7 +37,7 @@ fun MobilePlayerTopBar(
         IconButton(onClick = onBackPressed) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.cd_back),
                 tint = Color.White
             )
         }
@@ -50,7 +52,7 @@ fun MobilePlayerTopBar(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = "Episode $episodeNumber",
+                text = stringResource(R.string.player_episode_number, episodeNumber),
                 color = Color.White.copy(alpha = 0.75f),
                 style = MaterialTheme.typography.bodySmall
             )

@@ -27,6 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -35,6 +37,7 @@ import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.daika.davy.core.domain.model.Anime
+import dev.daika.davy.core.ui.R
 import dev.daika.davy.core.ui.component.TvDropdown
 
 @Composable
@@ -43,6 +46,7 @@ fun TvPlaySelectionDialog(
     onDismiss: () -> Unit,
     onEpisodeSelected: (Int) -> Unit
 ) {
+    val context = LocalContext.current
     val isSingleEpisodeTitle = anime.isSingleEpisodeTitle()
 
     var selectedTranslation by remember { mutableStateOf(anime.translations.firstOrNull()) }
@@ -81,7 +85,7 @@ fun TvPlaySelectionDialog(
                             val maxEps = translation.availablePlayers.maxOfOrNull {
                                 it.episodes.size
                             } ?: 0
-                            "${translation.title} ($maxEps eps)"
+                            context.getString(R.string.details_translation_episodes_format, translation.title, maxEps)
                         }
                     )
                 } else {
@@ -104,7 +108,7 @@ fun TvPlaySelectionDialog(
                                 val maxEps = translation.availablePlayers.maxOfOrNull {
                                     it.episodes.size
                                 } ?: 0
-                                "${translation.title} ($maxEps eps)"
+                                context.getString(R.string.details_translation_episodes_format, translation.title, maxEps)
                             }
                         )
 
@@ -119,14 +123,14 @@ fun TvPlaySelectionDialog(
                                 if (it) isTranslationExpanded = false
                             },
                             itemText = { player ->
-                                "${player.player} (${player.episodes.size} eps)"
+                                context.getString(R.string.details_translation_episodes_format, player.player, player.episodes.size)
                             }
                         )
                     }
                 }
 
                 Text(
-                    text = if (isSingleEpisodeTitle) "Players" else "Episodes",
+                    text = if (isSingleEpisodeTitle) stringResource(R.string.details_players) else stringResource(R.string.details_episodes),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )

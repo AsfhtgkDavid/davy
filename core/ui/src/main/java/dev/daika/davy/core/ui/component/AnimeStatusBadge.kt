@@ -13,6 +13,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.daika.davy.core.domain.model.AnimeStatus
 
+import androidx.compose.ui.res.stringResource
+import dev.daika.davy.core.ui.R
+
 @Composable
 fun AnimeStatusBadge(
     status: AnimeStatus,
@@ -23,17 +26,17 @@ fun AnimeStatusBadge(
         AnimeStatus.RELEASED -> Triple(
             Color(0xFF2E7D32).copy(alpha = 0.2f),
             Color(0xFF81C784),
-            "Released"
+            stringResource(R.string.status_released)
         )
         AnimeStatus.ONGOING -> Triple(
             Color(0xFFE65100).copy(alpha = 0.2f),
             Color(0xFFFFB74D),
-            "Ongoing"
+            stringResource(R.string.status_ongoing)
         )
         AnimeStatus.ANNOUNCE -> Triple(
             Color(0xFF1565C0).copy(alpha = 0.2f),
             Color(0xFF90CAF9),
-            "Announced"
+            stringResource(R.string.status_announced)
         )
     }
 

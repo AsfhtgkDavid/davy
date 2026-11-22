@@ -1,4 +1,4 @@
-package dev.daika.davy.core.common.preference
+package dev.daika.davy.core.data.preference
 
 import android.app.UiModeManager
 import android.content.Context
@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.daika.davy.core.domain.model.AppMode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

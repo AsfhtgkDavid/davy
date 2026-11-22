@@ -28,10 +28,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.daika.davy.core.domain.model.AnimeTranslation
+import dev.daika.davy.core.ui.R
 
 @Composable
 fun MobileEpisodeSelector(
@@ -52,7 +54,7 @@ fun MobileEpisodeSelector(
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Voiceover & Episodes",
+            text = stringResource(R.string.details_voiceover_and_episodes),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -71,7 +73,7 @@ fun MobileEpisodeSelector(
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
-                        text = selectedTranslation?.title ?: "Select voiceover",
+                        text = selectedTranslation?.title ?: stringResource(R.string.details_select_voiceover),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
@@ -85,7 +87,13 @@ fun MobileEpisodeSelector(
                     translations.forEach { translation ->
                         DropdownMenuItem(
                             text = {
-                                Text("${translation.title} (${translation.availablePlayers.maxOfOrNull { it.episodes.size } ?: 0} eps)")
+                                Text(
+                                    stringResource(
+                                        R.string.details_translation_episodes_format,
+                                        translation.title,
+                                        translation.availablePlayers.maxOfOrNull { it.episodes.size } ?: 0
+                                    )
+                                )
                             },
                             onClick = {
                                 selectedTranslation = translation
@@ -105,7 +113,7 @@ fun MobileEpisodeSelector(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = selectedPlayer?.player ?: "Player",
+                            text = selectedPlayer?.player ?: stringResource(R.string.details_player),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f)

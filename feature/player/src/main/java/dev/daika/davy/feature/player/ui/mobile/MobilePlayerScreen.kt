@@ -21,13 +21,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.media3.common.util.UnstableApi
-import dev.daika.davy.core.common.util.findActivity
+import dev.daika.davy.core.ui.util.findActivity
+import dev.daika.davy.core.ui.R
 import dev.daika.davy.core.ui.component.ErrorView
-import dev.daika.davy.core.ui.component.HideBars
-import dev.daika.davy.core.ui.component.KeepScreenOn
+import dev.daika.davy.core.ui.util.HideBars
+import dev.daika.davy.core.ui.util.KeepScreenOn
 import dev.daika.davy.core.ui.component.LoadingIndicator
 import dev.daika.davy.feature.player.PlayerScreenUiState
 import dev.daika.davy.feature.player.PlayerScreenViewModel
@@ -150,7 +152,7 @@ fun MobilePlayerScreen(
 
         is PlayerScreenUiState.Error -> {
             ErrorView(
-                title = "Playback error",
+                title = stringResource(R.string.error_playback),
                 message = currentState.message,
                 onBackPressed = onBackPressed
             )

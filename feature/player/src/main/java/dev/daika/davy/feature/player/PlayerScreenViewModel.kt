@@ -10,6 +10,7 @@ import dev.daika.davy.core.domain.model.Anime
 import dev.daika.davy.core.domain.model.AnimePlayer
 import dev.daika.davy.core.domain.model.getPlayerByEpisodeId
 import dev.daika.davy.core.domain.usecase.YummyGetAnimeUseCase
+import dev.daika.davy.feature.player.network.PlayerInterceptor
 import dev.daika.davyparsers.Parser
 import dev.daika.davyparsers.ParserEvent
 import kotlinx.coroutines.CancellationException

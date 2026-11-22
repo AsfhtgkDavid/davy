@@ -20,6 +20,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import androidx.compose.ui.res.stringResource
+import dev.daika.davy.core.ui.R
+
 @Composable
 fun MobileAnimeDescription(
     description: String,
@@ -33,7 +36,7 @@ fun MobileAnimeDescription(
             .animateContentSize()
     ) {
         Text(
-            text = "Description",
+            text = stringResource(R.string.details_description_title),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -47,7 +50,7 @@ fun MobileAnimeDescription(
         )
         if (description.length > 200) {
             Text(
-                text = if (isDescriptionExpanded) "Show less" else "Read more...",
+                text = if (isDescriptionExpanded) stringResource(R.string.action_show_less) else stringResource(R.string.action_read_more),
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier

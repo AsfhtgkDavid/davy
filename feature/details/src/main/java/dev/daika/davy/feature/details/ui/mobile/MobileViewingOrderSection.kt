@@ -12,9 +12,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.daika.davy.core.domain.model.Anime
+import dev.daika.davy.core.ui.R
 import dev.daika.davy.core.ui.component.MobileAnimeCard
 
 @Composable
@@ -27,7 +29,7 @@ fun MobileViewingOrderSection(
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Viewing Order",
+            text = stringResource(R.string.details_viewing_order),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )

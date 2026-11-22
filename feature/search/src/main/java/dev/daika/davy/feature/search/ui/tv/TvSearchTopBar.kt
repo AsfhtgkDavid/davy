@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
@@ -23,6 +24,7 @@ import androidx.tv.material3.IconButton
 import androidx.tv.material3.MaterialTheme
 import dev.daika.davy.core.domain.model.AnimeFilterState
 import dev.daika.davy.core.domain.model.FilterOption
+import dev.daika.davy.core.ui.R
 
 @Composable
 fun TvSearchTopBar(
@@ -67,7 +69,7 @@ fun TvSearchTopBar(
             IconButton(onClick = { onQueryChange("") }) {
                 Icon(
                     imageVector = Icons.Default.Clear,
-                    contentDescription = "Clear search query"
+                    contentDescription = stringResource(R.string.cd_clear_search_query)
                 )
             }
         }
