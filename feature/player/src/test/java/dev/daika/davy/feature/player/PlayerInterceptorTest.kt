@@ -1,5 +1,6 @@
 package dev.daika.davy.feature.player
 
+import dev.daika.davy.feature.player.network.PlayerInterceptor
 import dev.daika.davyparsers.MediaStream
 import dev.daika.davyparsers.PlayerData
 import dev.daika.davyparsers.SubtitleTrack

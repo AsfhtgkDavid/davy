@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import dev.daika.davy.core.common.util.findActivity
+import androidx.compose.ui.res.stringResource
+import dev.daika.davy.core.ui.util.findActivity
+import dev.daika.davy.core.ui.R
 
 @Composable
 fun PlayerOrientationButton(
@@ -39,9 +41,9 @@ fun PlayerOrientationButton(
         Icon(
             imageVector = Icons.Rounded.ScreenRotation,
             contentDescription = if (isLandscape) {
-                "Switch to portrait mode"
+                stringResource(R.string.cd_switch_to_portrait)
             } else {
-                "Switch to landscape mode"
+                stringResource(R.string.cd_switch_to_landscape)
             },
             tint = Color.White
         )

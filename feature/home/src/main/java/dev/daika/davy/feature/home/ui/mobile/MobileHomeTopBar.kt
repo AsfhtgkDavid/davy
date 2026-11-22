@@ -11,6 +11,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import dev.daika.davy.core.ui.R
 
 @Composable
 fun MobileHomeTopBar(
@@ -25,14 +27,14 @@ fun MobileHomeTopBar(
         IconButton(onClick = onSwitchModeClicked) {
             Icon(
                 imageVector = Icons.Default.Tv,
-                contentDescription = "TV mode",
+                contentDescription = stringResource(R.string.cd_tv_mode),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         IconButton(onClick = onSearchClicked) {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search",
+                contentDescription = stringResource(R.string.cd_search),
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }

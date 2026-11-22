@@ -22,14 +22,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
+import androidx.compose.ui.res.stringResource
+import dev.daika.davy.core.ui.R
+
 @Composable
 fun ErrorView(
     message: String,
     modifier: Modifier = Modifier,
-    title: String = "Something went wrong",
+    title: String? = null,
     onRetry: (() -> Unit)? = null,
     onBackPressed: (() -> Unit)? = null
 ) {
+    val displayTitle = title ?: stringResource(R.string.error_something_went_wrong)
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -38,7 +43,7 @@ fun ErrorView(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = title,
+            text = displayTitle,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center
@@ -63,7 +68,7 @@ fun ErrorView(
                     contentDescription = null
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Retry")
+                Text(stringResource(R.string.action_retry))
             }
         }
         if (onBackPressed != null) {
@@ -71,7 +76,7 @@ fun ErrorView(
             IconButton(onClick = onBackPressed) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.cd_back),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }

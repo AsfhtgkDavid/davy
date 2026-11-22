@@ -1,4 +1,4 @@
-package dev.daika.davy.feature.player
+package dev.daika.davy.feature.player.network
 
 import android.util.Log
 import dev.daika.davyparsers.PlayerData

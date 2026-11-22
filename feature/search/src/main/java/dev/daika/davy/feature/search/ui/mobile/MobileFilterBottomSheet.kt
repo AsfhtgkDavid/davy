@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.daika.davy.core.domain.model.ALL_SORT_OPTIONS
@@ -35,6 +36,8 @@ import dev.daika.davy.core.domain.model.ALL_STATUSES
 import dev.daika.davy.core.domain.model.ALL_TYPES
 import dev.daika.davy.core.domain.model.AnimeFilterState
 import dev.daika.davy.core.domain.model.FilterOption
+import dev.daika.davy.core.ui.R
+import dev.daika.davy.core.ui.util.getDisplayTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,12 +65,12 @@ fun MobileFilterBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Filters",
+                    text = stringResource(R.string.filter_title),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 if (tempState.hasActiveFilters()) {
                     Text(
-                        text = "Reset all",
+                        text = stringResource(R.string.filter_reset_all),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
@@ -80,7 +83,7 @@ fun MobileFilterBottomSheet(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Sort by",
+                text = stringResource(R.string.filter_sort_by),
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -97,7 +100,7 @@ fun MobileFilterBottomSheet(
                                 selectedSort = if (sort.id == "none") null else sort.id
                             )
                         },
-                        label = { Text(sort.title) },
+                        label = { Text(sort.getDisplayTitle()) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -109,7 +112,7 @@ fun MobileFilterBottomSheet(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Anime status",
+                text = stringResource(R.string.filter_anime_status),
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -129,7 +132,7 @@ fun MobileFilterBottomSheet(
                             }
                             tempState = tempState.copy(selectedStatuses = newSet)
                         },
-                        label = { Text(status.title) },
+                        label = { Text(status.getDisplayTitle()) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -141,7 +144,7 @@ fun MobileFilterBottomSheet(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Anime type",
+                text = stringResource(R.string.filter_anime_type),
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -161,7 +164,7 @@ fun MobileFilterBottomSheet(
                             }
                             tempState = tempState.copy(selectedTypes = newSet)
                         },
-                        label = { Text(type.title) },
+                        label = { Text(type.getDisplayTitle()) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -174,7 +177,7 @@ fun MobileFilterBottomSheet(
 
             if (genreOptions.isNotEmpty()) {
                 Text(
-                    text = "Genres",
+                    text = stringResource(R.string.filter_genres),
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -194,7 +197,7 @@ fun MobileFilterBottomSheet(
                                 }
                                 tempState = tempState.copy(selectedGenres = newSet)
                             },
-                            label = { Text(genre.title) },
+                            label = { Text(genre.getDisplayTitle()) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                                 selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -221,7 +224,7 @@ fun MobileFilterBottomSheet(
                 )
             ) {
                 Text(
-                    text = "Apply filters",
+                    text = stringResource(R.string.filter_apply_filters),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                 )
             }

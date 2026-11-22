@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import dev.daika.davy.core.domain.model.Anime
 import dev.daika.davy.core.domain.model.Feed
 import dev.daika.davy.core.ui.component.MobileAnimeCard
+import dev.daika.davy.core.ui.util.getDisplaySeasonTitle
 
 @Composable
 fun MobileFeedGrid(
@@ -33,7 +34,7 @@ fun MobileFeedGrid(
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Text(
-                text = feed.getSeasonTitle(),
+                text = feed.getDisplaySeasonTitle(),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(vertical = 4.dp)

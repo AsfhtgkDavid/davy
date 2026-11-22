@@ -33,6 +33,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -50,7 +51,8 @@ import dev.daika.davy.core.domain.model.ALL_YEARS
 import dev.daika.davy.core.domain.model.AnimeFilterState
 import dev.daika.davy.core.domain.model.FilterOption
 import dev.daika.davy.core.ui.R
-import dev.daika.davy.core.ui.component.formatSelectionHint
+import dev.daika.davy.core.ui.util.formatSelectionHint
+import dev.daika.davy.core.ui.util.getDisplayTitle
 
 @Composable
 fun AnimeFilterPanel(
@@ -81,13 +83,13 @@ fun AnimeFilterPanel(
         ) {
             Icon(
                 painter = painterResource(R.drawable.baseline_filter_alt_24),
-                contentDescription = "Filters",
+                contentDescription = stringResource(R.string.cd_filters),
                 tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "Filters",
+                text = stringResource(R.string.filter_title),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleMedium
             )
@@ -143,13 +145,13 @@ fun AnimeFilterPanel(
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.baseline_filter_alt_24),
-                                contentDescription = "Collapse filters",
+                                contentDescription = stringResource(R.string.cd_collapse_filters),
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
                         Text(
-                            text = "FILTERS",
+                            text = stringResource(R.string.filter_title_uppercase),
                             color = MaterialTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
@@ -160,7 +162,7 @@ fun AnimeFilterPanel(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
-                                    contentDescription = "Reset all",
+                                    contentDescription = stringResource(R.string.filter_reset_all),
                                     tint = MaterialTheme.colorScheme.error,
                                     modifier = Modifier.size(20.dp)
                                 )
@@ -171,41 +173,37 @@ fun AnimeFilterPanel(
                     }
 
                     FilterSection(
-                        title = "Include genres",
-                        hint = formatSelectionHint(
+                        title = stringResource(R.string.filter_include_genres),
+                        hint = genreOptions.formatSelectionHint(
                             selectedIds = filterState.selectedGenres,
-                            options = genreOptions,
-                            defaultHint = "Select genres to include"
+                            defaultHint = stringResource(R.string.filter_hint_include_genres)
                         ),
                         icon = { FilterIcon(Icons.Default.Add) },
                         onClick = { activePopup = ActiveFilterPopup.INCLUDE_GENRES }
                     )
                     FilterSection(
-                        title = "Exclude genres",
-                        hint = formatSelectionHint(
+                        title = stringResource(R.string.filter_exclude_genres),
+                        hint = genreOptions.formatSelectionHint(
                             selectedIds = filterState.excludedGenres,
-                            options = genreOptions,
-                            defaultHint = "Select genres to exclude"
+                            defaultHint = stringResource(R.string.filter_hint_exclude_genres)
                         ),
                         icon = { FilterIcon(Icons.Default.Add) },
                         onClick = { activePopup = ActiveFilterPopup.EXCLUDE_GENRES }
                     )
                     FilterSection(
-                        title = "Anime type",
-                        hint = formatSelectionHint(
+                        title = stringResource(R.string.filter_anime_type),
+                        hint = ALL_TYPES.formatSelectionHint(
                             selectedIds = filterState.selectedTypes,
-                            options = ALL_TYPES,
-                            defaultHint = "Select anime type"
+                            defaultHint = stringResource(R.string.filter_hint_anime_type)
                         ),
                         icon = { FilterIcon(Icons.Default.Add) },
                         onClick = { activePopup = ActiveFilterPopup.TYPE }
                     )
                     FilterSection(
-                        title = "Anime status",
-                        hint = formatSelectionHint(
+                        title = stringResource(R.string.filter_anime_status),
+                        hint = ALL_STATUSES.formatSelectionHint(
                             selectedIds = filterState.selectedStatuses,
-                            options = ALL_STATUSES,
-                            defaultHint = "Select anime status"
+                            defaultHint = stringResource(R.string.filter_hint_anime_status)
                         ),
                         icon = { FilterIcon(Icons.Default.Add) },
                         onClick = { activePopup = ActiveFilterPopup.STATUS }
@@ -213,18 +211,28 @@ fun AnimeFilterPanel(
 
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(
-                            text = "Year",
+                            text = stringResource(R.string.filter_year),
                             color = MaterialTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             FilterInputField(
-                                hint = filterState.yearFrom?.let { "from $it" } ?: "from",
+                                hint = filterState.yearFrom?.let {
+                                    stringResource(
+                                        R.string.filter_year_from_value,
+                                        it
+                                    )
+                                } ?: stringResource(R.string.filter_year_from),
                                 modifier = Modifier.weight(1f),
                                 onClick = { activePopup = ActiveFilterPopup.YEAR_FROM }
                             )
                             FilterInputField(
-                                hint = filterState.yearTo?.let { "to $it" } ?: "to",
+                                hint = filterState.yearTo?.let {
+                                    stringResource(
+                                        R.string.filter_year_to_value,
+                                        it
+                                    )
+                                } ?: stringResource(R.string.filter_year_to),
                                 modifier = Modifier.weight(1f),
                                 onClick = { activePopup = ActiveFilterPopup.YEAR_TO }
                             )
@@ -232,9 +240,10 @@ fun AnimeFilterPanel(
                     }
 
                     FilterSection(
-                        title = "Sort by",
-                        hint = ALL_SORT_OPTIONS.find { it.id == filterState.selectedSort }?.title
-                            ?: "Relevance",
+                        title = stringResource(R.string.filter_sort_by),
+                        hint = ALL_SORT_OPTIONS.find { it.id == filterState.selectedSort }
+                            ?.getDisplayTitle()
+                            ?: stringResource(R.string.sort_relevance),
                         icon = { FilterIcon(painterResource(R.drawable.outline_sort_24)) },
                         onClick = { activePopup = ActiveFilterPopup.SORT }
                     )
@@ -246,7 +255,7 @@ fun AnimeFilterPanel(
             when (popupType) {
                 ActiveFilterPopup.INCLUDE_GENRES -> {
                     FilterSelectionPopup(
-                        title = "Include genres",
+                        title = stringResource(R.string.filter_include_genres),
                         items = genreOptions,
                         selectedIds = filterState.selectedGenres,
                         isMultipleChoice = true,
@@ -257,7 +266,7 @@ fun AnimeFilterPanel(
 
                 ActiveFilterPopup.EXCLUDE_GENRES -> {
                     FilterSelectionPopup(
-                        title = "Exclude genres",
+                        title = stringResource(R.string.filter_exclude_genres),
                         items = genreOptions,
                         selectedIds = filterState.excludedGenres,
                         isMultipleChoice = true,
@@ -268,7 +277,7 @@ fun AnimeFilterPanel(
 
                 ActiveFilterPopup.TYPE -> {
                     FilterSelectionPopup(
-                        title = "Anime type",
+                        title = stringResource(R.string.filter_anime_type),
                         items = ALL_TYPES,
                         selectedIds = filterState.selectedTypes,
                         isMultipleChoice = true,
@@ -279,7 +288,7 @@ fun AnimeFilterPanel(
 
                 ActiveFilterPopup.STATUS -> {
                     FilterSelectionPopup(
-                        title = "Anime status",
+                        title = stringResource(R.string.filter_anime_status),
                         items = ALL_STATUSES,
                         selectedIds = filterState.selectedStatuses,
                         isMultipleChoice = true,
@@ -290,7 +299,7 @@ fun AnimeFilterPanel(
 
                 ActiveFilterPopup.YEAR_FROM -> {
                     FilterSelectionPopup(
-                        title = "Year from",
+                        title = stringResource(R.string.filter_year_from_title),
                         items = ALL_YEARS,
                         selectedIds = filterState.yearFrom?.let { setOf(it.toString()) }
                             ?: emptySet(),
@@ -306,7 +315,7 @@ fun AnimeFilterPanel(
 
                 ActiveFilterPopup.YEAR_TO -> {
                     FilterSelectionPopup(
-                        title = "Year to",
+                        title = stringResource(R.string.filter_year_to_title),
                         items = ALL_YEARS,
                         selectedIds = filterState.yearTo?.let { setOf(it.toString()) }
                             ?: emptySet(),
@@ -322,7 +331,7 @@ fun AnimeFilterPanel(
 
                 ActiveFilterPopup.SORT -> {
                     FilterSelectionPopup(
-                        title = "Sort by",
+                        title = stringResource(R.string.filter_sort_by),
                         items = ALL_SORT_OPTIONS,
                         selectedIds = setOf(filterState.selectedSort ?: "none"),
                         isMultipleChoice = false,

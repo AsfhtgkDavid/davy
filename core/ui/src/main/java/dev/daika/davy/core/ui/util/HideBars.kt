@@ -1,4 +1,4 @@
-package dev.daika.davy.core.ui.component
+package dev.daika.davy.core.ui.util
 
 import android.app.Activity
 import androidx.compose.runtime.Composable

@@ -21,6 +21,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
@@ -109,7 +110,7 @@ fun TvPlayerControls(
                 }) {
                     Icon(
                         painterResource(R.drawable.baseline_skip_previous_24),
-                        contentDescription = "Previous Episode"
+                        contentDescription = stringResource(R.string.cd_previous_episode)
                     )
                 }
 
@@ -121,7 +122,7 @@ fun TvPlayerControls(
                         if (playerState.isPlaying) painterResource(R.drawable.baseline_pause_24) else painterResource(
                             R.drawable.baseline_play_arrow_24
                         ),
-                        contentDescription = if (playerState.isPlaying) "Pause" else "Play"
+                        contentDescription = if (playerState.isPlaying) stringResource(R.string.cd_pause) else stringResource(R.string.cd_play)
                     )
                 }
 
@@ -131,7 +132,7 @@ fun TvPlayerControls(
                 }) {
                     Icon(
                         painterResource(R.drawable.baseline_skip_next_24),
-                        contentDescription = "Next Episode"
+                        contentDescription = stringResource(R.string.cd_next_episode)
                     )
                 }
 
@@ -141,7 +142,7 @@ fun TvPlayerControls(
                 }) {
                     Icon(
                         painterResource(R.drawable.outline_high_quality_24),
-                        contentDescription = "Quality Settings"
+                        contentDescription = stringResource(R.string.cd_quality_settings)
                     )
                 }
 
@@ -152,7 +153,7 @@ fun TvPlayerControls(
                     }) {
                         Icon(
                             painterResource(R.drawable.outline_subtitles_24),
-                            contentDescription = "Subtitles Settings"
+                            contentDescription = stringResource(R.string.cd_subtitles_settings)
                         )
                     }
                 }
@@ -165,7 +166,7 @@ fun TvPlayerControls(
                 }.coerceAtLeast(0)
 
                 SelectionMenuPopup(
-                    title = "Select Quality",
+                    title = stringResource(R.string.player_select_quality),
                     options = qualityOptions,
                     selectedIndex = selectedIndex,
                     onSelect = { index ->
@@ -186,10 +187,10 @@ fun TvPlayerControls(
                 val selectedIndex = playerState.availableSubtitles.indexOfFirst {
                     it.src == playerState.selectedSubtitles?.src
                 } + 1
-                subtitleOptions.add(0, "Turn Off")
+                subtitleOptions.add(0, stringResource(R.string.player_turn_off_subtitles))
 
                 SelectionMenuPopup(
-                    title = "Select Subtitles",
+                    title = stringResource(R.string.player_select_subtitles),
                     options = subtitleOptions,
                     selectedIndex = selectedIndex,
                     onSelect = { index ->

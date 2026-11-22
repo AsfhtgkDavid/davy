@@ -26,8 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import dev.daika.davy.core.ui.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +51,7 @@ fun MobileSearchTopBar(
                 onValueChange = onQueryChange,
                 placeholder = {
                     Text(
-                        "Search anime...",
+                        stringResource(R.string.search_placeholder),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
@@ -71,7 +73,7 @@ fun MobileSearchTopBar(
                         IconButton(onClick = { onQueryChange("") }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear",
+                                contentDescription = stringResource(R.string.cd_clear),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -95,7 +97,7 @@ fun MobileSearchTopBar(
             IconButton(onClick = onBackPressed) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = stringResource(R.string.cd_back)
                 )
             }
         },
@@ -115,7 +117,7 @@ fun MobileSearchTopBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.FilterList,
-                        contentDescription = "Filters",
+                        contentDescription = stringResource(R.string.cd_filters),
                         tint = if (activeFiltersCount > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                 }

@@ -32,11 +32,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.daika.davy.core.domain.model.Anime
+import dev.daika.davy.core.ui.R
 import dev.daika.davy.core.ui.component.AnimeGenreChip
 import dev.daika.davy.core.ui.component.ErrorView
 import dev.daika.davy.core.ui.component.LoadingIndicator
@@ -72,7 +74,7 @@ fun MobileAnimeDetailsScreen(
                     IconButton(onClick = onBackPressed) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.cd_back)
                         )
                     }
                 },
@@ -129,7 +131,7 @@ fun MobileAnimeDetailsScreen(
                             Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Watch online",
+                                text = stringResource(R.string.action_watch_online),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                             )
                         }

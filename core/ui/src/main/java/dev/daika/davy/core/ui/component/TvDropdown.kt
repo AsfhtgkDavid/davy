@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import androidx.compose.ui.res.stringResource
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
@@ -44,7 +45,8 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
-import dev.daika.davy.core.common.util.ifElse
+import dev.daika.davy.core.ui.util.ifElse
+import dev.daika.davy.core.ui.R
 
 @Composable
 fun <T> TvDropdown(
@@ -88,8 +90,10 @@ fun <T> TvDropdown(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
                 Text(
-                    text = selectedItem?.let { itemText(it) } ?: "Select an item",
+                    text = selectedItem?.let { itemText(it) }
+                        ?: stringResource(R.string.dropdown_select_item),
                     maxLines = 1,
                     modifier = Modifier
                         .weight(1f)

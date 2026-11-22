@@ -15,6 +15,7 @@ import dev.daika.davy.core.domain.model.Anime
 import dev.daika.davy.core.ui.component.ErrorView
 import dev.daika.davy.core.ui.component.LoadingIndicator
 import dev.daika.davy.core.ui.component.TvAnimeRow
+import dev.daika.davy.core.ui.util.getDisplaySeasonTitle
 import dev.daika.davy.feature.home.HomeScreenUiState
 import dev.daika.davy.feature.home.HomeScreenViewModel
 
@@ -54,7 +55,7 @@ fun TvHomeScreen(
                     TvAnimeRow(
                         modifier = Modifier.padding(top = 8.dp),
                         animeList = currentState.feed.items,
-                        title = currentState.feed.getSeasonTitle(),
+                        title = currentState.feed.getDisplaySeasonTitle(),
                         onAnimeSelected = onAnimeSelected
                     )
                 }

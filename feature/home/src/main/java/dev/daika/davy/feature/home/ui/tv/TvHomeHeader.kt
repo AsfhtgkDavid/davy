@@ -24,6 +24,9 @@ import androidx.tv.material3.IconButton
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 
+import androidx.compose.ui.res.stringResource
+import dev.daika.davy.core.ui.R
+
 @Composable
 fun TvHomeHeader(
     onSearchClicked: () -> Unit,
@@ -46,7 +49,7 @@ fun TvHomeHeader(
         ) {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search"
+                contentDescription = stringResource(R.string.cd_search)
             )
         }
 
@@ -66,7 +69,7 @@ fun TvHomeHeader(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "Interface mode")
+                Text(text = stringResource(R.string.home_interface_mode))
             }
         }
     }

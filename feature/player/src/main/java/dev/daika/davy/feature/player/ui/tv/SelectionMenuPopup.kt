@@ -24,7 +24,7 @@ import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
-import dev.daika.davy.core.common.util.ifElse
+import dev.daika.davy.core.ui.util.ifElse
 
 @Composable
 fun SelectionMenuPopup(

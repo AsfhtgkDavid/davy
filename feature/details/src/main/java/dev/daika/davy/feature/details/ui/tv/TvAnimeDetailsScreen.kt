@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.tv.material3.Button
@@ -31,6 +32,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.daika.davy.core.domain.model.Anime
+import dev.daika.davy.core.ui.R
 import dev.daika.davy.core.ui.component.ErrorView
 import dev.daika.davy.core.ui.component.LoadingIndicator
 import dev.daika.davy.core.ui.component.PosterImage
@@ -72,11 +74,11 @@ fun TvAnimeDetailsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "Play",
+                            contentDescription = stringResource(R.string.cd_play),
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Play")
+                        Text(text = stringResource(R.string.action_play))
                     }
                 }
 

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App & General -->
+    <string name="app_name">DAVY</string>
+    <string name="playback_attribution">This app plays anime</string>
+    <string name="empty" />
+
+    <!-- Common / Actions -->
+    <string name="action_retry">Retry</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_apply">Apply</string>
+    <string name="action_play">Play</string>
+    <string name="action_watch_online">Watch online</string>
+    <string name="action_read_more">Read more…</string>
+    <string name="action_show_less">Show less</string>
+
+    <!-- Content Descriptions (Accessibility) -->
+    <string name="cd_back">Back</string>
+    <string name="cd_close">Close</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_clear">Clear</string>
+    <string name="cd_clear_search_query">Clear search query</string>
+    <string name="cd_tv_mode">TV mode</string>
+    <string name="cd_play">Play</string>
+    <string name="cd_pause">Pause</string>
+    <string name="cd_previous_episode">Previous episode</string>
+    <string name="cd_next_episode">Next episode</string>
+    <string name="cd_rewind_10">-10 sec</string>
+    <string name="cd_forward_10">+10 sec</string>
+    <string name="cd_quality">Quality</string>
+    <string name="cd_subtitles">Subtitles</string>
+    <string name="cd_quality_settings">Quality Settings</string>
+    <string name="cd_subtitles_settings">Subtitles Settings</string>
+    <string name="cd_switch_to_portrait">Switch to portrait mode</string>
+    <string name="cd_switch_to_landscape">Switch to landscape mode</string>
+    <string name="cd_filters">Filters</string>
+    <string name="cd_collapse_filters">Collapse filters</string>
+    <string name="cd_selected">Selected</string>
+    <string name="cd_anime_poster">%1$s poster</string>
+
+    <!-- Errors -->
+    <string name="error_something_went_wrong">Something went wrong</string>
+    <string name="error_failed_to_load_data">Failed to load data</string>
+    <string name="error_playback">Playback error</string>
+    <string name="error_unable_to_load_player">Unable to load player</string>
+    <string name="error_unknown">Unknown error</string>
+
+    <!-- Mode Selection -->
+    <string name="mode_selection_title">Choose application interface</string>
+    <string name="mode_mobile_title">Mobile</string>
+    <string name="mode_mobile_subtitle">For smartphones and tablets</string>
+    <string name="mode_mobile_description">• Touch controls\n• Mobile player with gestures\n• Seamless mobile navigation</string>
+    <string name="mode_tv_title">Android TV</string>
+    <string name="mode_tv_subtitle">For TVs and streaming boxes</string>
+    <string name="mode_tv_description">• Remote control navigation (D-Pad)\n• Large catalog cards\n• Leanback navigation</string>
+
+    <!-- Home -->
+    <string name="home_interface_mode">Interface mode</string>
+    <string name="feed_season_title">%1$s\'s 20%2$02d Anime</string>
+    <string name="season_winter">Winter</string>
+    <string name="season_spring">Spring</string>
+    <string name="season_summer">Summer</string>
+    <string name="season_autumn">Autumn</string>
+
+    <!-- Details -->
+    <string name="details_description_title">Description</string>
+    <string name="details_voiceover_and_episodes">Voiceover &amp; Episodes</string>
+    <string name="details_select_voiceover">Select voiceover</string>
+    <string name="details_player">Player</string>
+    <string name="details_players">Players</string>
+    <string name="details_episodes">Episodes</string>
+    <string name="details_viewing_order">Viewing Order</string>
+    <string name="details_translation_episodes_format">%1$s (%2$d eps)</string>
+
+    <!-- Player -->
+    <string name="player_episode_number">Episode %1$s</string>
+    <string name="tv_player_title_episode">%1$s - ep %2$s</string>
+    <string name="player_select_video_quality">Select video quality</string>
+    <string name="player_quality_p">%1$sp</string>
+    <string name="player_subtitles">Subtitles</string>
+    <string name="player_subtitles_off">Off</string>
+    <string name="player_select_quality">Select Quality</string>
+    <string name="player_select_subtitles">Select Subtitles</string>
+    <string name="player_turn_off_subtitles">Turn Off</string>
+
+    <!-- Search & Filters -->
+    <string name="search_placeholder">Search anime…</string>
+    <string name="search_catalog_title">Catalog search</string>
+    <string name="search_catalog_subtitle">Enter anime title or configure filters to search</string>
+    <string name="search_open_filters">Open filters</string>
+    <string name="search_no_results_title">No results found</string>
+    <string name="search_no_results_subtitle">Try changing your query or resetting filters</string>
+    <string name="filter_title">Filters</string>
+    <string name="filter_title_uppercase">FILTERS</string>
+    <string name="filter_reset_all">Reset all</string>
+    <string name="filter_sort_by">Sort by</string>
+    <string name="filter_anime_status">Anime status</string>
+    <string name="filter_anime_type">Anime type</string>
+    <string name="filter_genres">Genres</string>
+    <string name="filter_include_genres">Include genres</string>
+    <string name="filter_exclude_genres">Exclude genres</string>
+    <string name="filter_hint_include_genres">Select genres to include</string>
+    <string name="filter_hint_exclude_genres">Select genres to exclude</string>
+    <string name="filter_hint_anime_type">Select anime type</string>
+    <string name="filter_hint_anime_status">Select anime status</string>
+    <string name="filter_year">Year</string>
+    <string name="filter_year_from">from</string>
+    <string name="filter_year_to">to</string>
+    <string name="filter_year_from_value">from %1$d</string>
+    <string name="filter_year_to_value">to %1$d</string>
+    <string name="filter_year_from_title">Year from</string>
+    <string name="filter_year_to_title">Year to</string>
+    <string name="filter_apply_filters">Apply filters</string>
+    <string name="filter_selected_count">Selected: %1$d</string>
+    <string name="filter_selection_hint_more">%1$s (+%2$d)</string>
+    <string name="filter_year_any">Any</string>
+
+    <!-- Filter Option Values -->
+    <!-- Statuses -->
+    <string name="status_released">Released</string>
+    <string name="status_ongoing">Ongoing</string>
+    <string name="status_announced">Announced</string>
+    <string name="status_announcement">Announcement</string>
+
+    <!-- Types -->
+    <string name="type_tv">TV Series</string>
+    <string name="type_movie">Movie</string>
+    <string name="type_ova">OVA</string>
+    <string name="type_ona">ONA</string>
+    <string name="type_special">Special</string>
+    <string name="type_shortfilm">Short Film</string>
+    <string name="type_shorttv">Short TV</string>
+
+    <!-- Sorts -->
+    <string name="sort_relevance">Relevance</string>
+    <string name="sort_rating">Rating</string>
+    <string name="sort_rating_count">Rating Count</string>
+    <string name="sort_views">Views</string>
+    <string name="sort_year">Year</string>
+    <string name="sort_title">Title</string>
+    <string name="sort_top">Top</string>
+
+    <!-- Dropdown / Components -->
+    <string name="dropdown_select_item">Select an item</string>
+</resources>

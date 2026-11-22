@@ -1,4 +1,4 @@
-package dev.daika.davy.core.common.preference
+package dev.daika.davy.core.data.preference
 
 import android.app.UiModeManager
 import android.content.Context

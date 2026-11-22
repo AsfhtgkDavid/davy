@@ -18,9 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.daika.davy.core.common.util.formatTime
+import dev.daika.davy.core.ui.R
 
 @Composable
 fun MobilePlayerBottomBar(
@@ -81,7 +83,7 @@ fun MobilePlayerBottomBar(
                 IconButton(onClick = onQualityClick) {
                     Icon(
                         imageVector = Icons.Default.HighQuality,
-                        contentDescription = "Quality",
+                        contentDescription = stringResource(R.string.cd_quality),
                         tint = Color.White
                     )
                 }
@@ -90,7 +92,7 @@ fun MobilePlayerBottomBar(
                     IconButton(onClick = onSubtitlesClick) {
                         Icon(
                             imageVector = Icons.Default.Subtitles,
-                            contentDescription = "Subtitles",
+                            contentDescription = stringResource(R.string.cd_subtitles),
                             tint = if (hasActiveSubtitles) MaterialTheme.colorScheme.primary else Color.White
                         )
                     }

@@ -1,4 +1,4 @@
-package dev.daika.davy.core.common.util
+package dev.daika.davy.core.ui.util
 
 import android.view.KeyEvent
 import androidx.compose.ui.Modifier
