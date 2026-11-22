@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App & General -->
+    <string name="app_name">DAVY</string>
+    <string name="playback_attribution">Цей застосунок відтворює аніме</string>
+
+    <!-- Common / Actions -->
+    <string name="action_retry">Повторити</string>
+    <string name="action_reset">Скинути</string>
+    <string name="action_apply">Застосувати</string>
+    <string name="action_play">Дивитися</string>
+    <string name="action_watch_online">Дивитися онлайн</string>
+    <string name="action_read_more">Читати далі…</string>
+    <string name="action_show_less">Згорнути</string>
+
+    <!-- Content Descriptions (Accessibility) -->
+    <string name="cd_back">Назад</string>
+    <string name="cd_close">Закрити</string>
+    <string name="cd_search">Пошук</string>
+    <string name="cd_clear">Очистити</string>
+    <string name="cd_clear_search_query">Очистити пошуковий запит</string>
+    <string name="cd_tv_mode">Режим ТБ</string>
+    <string name="cd_play">Відтворити</string>
+    <string name="cd_pause">Пауза</string>
+    <string name="cd_previous_episode">Попередня серія</string>
+    <string name="cd_next_episode">Наступна серія</string>
+    <string name="cd_rewind_10">-10 сек</string>
+    <string name="cd_forward_10">+10 сек</string>
+    <string name="cd_quality">Якість</string>
+    <string name="cd_subtitles">Субтитри</string>
+    <string name="cd_quality_settings">Налаштування якості</string>
+    <string name="cd_subtitles_settings">Налаштування субтитрів</string>
+    <string name="cd_switch_to_portrait">Перемкнути в портретний режим</string>
+    <string name="cd_switch_to_landscape">Перемкнути в альбомний режим</string>
+    <string name="cd_filters">Фільтри</string>
+    <string name="cd_collapse_filters">Згорнути фільтри</string>
+    <string name="cd_selected">Вибрано</string>
+    <string name="cd_anime_poster">Постер %1$s</string>
+
+    <!-- Errors -->
+    <string name="error_something_went_wrong">Щось пішло не так</string>
+    <string name="error_failed_to_load_data">Не вдалося завантажити дані</string>
+    <string name="error_playback">Помилка відтворення</string>
+    <string name="error_unable_to_load_player">Не вдалося завантажити плеєр</string>
+    <string name="error_unknown">Невідома помилка</string>
+
+    <!-- Mode Selection -->
+    <string name="mode_selection_title">Виберіть інтерфейс застосунку</string>
+    <string name="mode_mobile_title">Мобільний</string>
+    <string name="mode_mobile_subtitle">Для смартфонів і планшетів</string>
+    <string name="mode_mobile_description">• Сенсорне керування\n• Мобільний плеєр із жестами\n• Зручна мобільна навігація</string>
+    <string name="mode_tv_title">Android TV</string>
+    <string name="mode_tv_subtitle">Для телевізорів і ТВ-приставок</string>
+    <string name="mode_tv_description">• Керування з пульта (D-Pad)\n• Великі картки каталогу\n• Інтерфейс Leanback</string>
+
+    <!-- Home -->
+    <string name="home_interface_mode">Режим інтерфейсу</string>
+    <string name="feed_season_title">Аніме: %1$s 20%2$02d</string>
+    <string name="season_winter">Зима</string>
+    <string name="season_spring">Весна</string>
+    <string name="season_summer">Літо</string>
+    <string name="season_autumn">Осінь</string>
+
+    <!-- Details -->
+    <string name="details_description_title">Опис</string>
+    <string name="details_voiceover_and_episodes">Озвучення та серії</string>
+    <string name="details_select_voiceover">Виберіть озвучення</string>
+    <string name="details_player">Плеєр</string>
+    <string name="details_players">Плеєри</string>
+    <string name="details_episodes">Серії</string>
+    <string name="details_viewing_order">Порядок перегляду</string>
+    <string name="details_translation_episodes_format">%1$s (%2$d сер.)</string>
+
+    <!-- Player -->
+    <string name="player_episode_number">Серія %1$s</string>
+    <string name="tv_player_title_episode">%1$s - серія %2$s</string>
+    <string name="player_select_video_quality">Виберіть якість відео</string>
+    <string name="player_quality_p">%1$sp</string>
+    <string name="player_subtitles">Субтитри</string>
+    <string name="player_subtitles_off">Вимк.</string>
+    <string name="player_select_quality">Вибір якості</string>
+    <string name="player_select_subtitles">Вибір субтитрів</string>
+    <string name="player_turn_off_subtitles">Вимкнути</string>
+
+    <!-- Search & Filters -->
+    <string name="search_placeholder">Пошук аніме…</string>
+    <string name="search_catalog_title">Пошук у каталозі</string>
+    <string name="search_catalog_subtitle">Введіть назву аніме або налаштуйте фільтри для пошуку</string>
+    <string name="search_open_filters">Відкрити фільтри</string>
+    <string name="search_no_results_title">Нічого не знайдено</string>
+    <string name="search_no_results_subtitle">Спробуйте змінити запит або скинути фільтри</string>
+    <string name="filter_title">Фільтри</string>
+    <string name="filter_title_uppercase">ФІЛЬТРИ</string>
+    <string name="filter_reset_all">Скинути все</string>
+    <string name="filter_sort_by">Сортування</string>
+    <string name="filter_anime_status">Статус аніме</string>
+    <string name="filter_anime_type">Тип аніме</string>
+    <string name="filter_genres">Жанри</string>
+    <string name="filter_include_genres">Включити жанри</string>
+    <string name="filter_exclude_genres">Виключити жанри</string>
+    <string name="filter_hint_include_genres">Виберіть жанри для включення</string>
+    <string name="filter_hint_exclude_genres">Виберіть жанри для виключення</string>
+    <string name="filter_hint_anime_type">Виберіть тип аніме</string>
+    <string name="filter_hint_anime_status">Виберіть статус аніме</string>
+    <string name="filter_year">Рік</string>
+    <string name="filter_year_from">від</string>
+    <string name="filter_year_to">до</string>
+    <string name="filter_year_from_value">від %1$d</string>
+    <string name="filter_year_to_value">до %1$d</string>
+    <string name="filter_year_from_title">Рік від</string>
+    <string name="filter_year_to_title">Рік до</string>
+    <string name="filter_apply_filters">Застосувати фільтри</string>
+    <string name="filter_selected_count">Вибрано: %1$d</string>
+    <string name="filter_selection_hint_more">%1$s (+%2$d)</string>
+    <string name="filter_year_any">Будь-який</string>
+
+    <!-- Filter Option Values -->
+    <!-- Statuses -->
+    <string name="status_released">Вийшов</string>
+    <string name="status_ongoing">Онґоїнґ</string>
+    <string name="status_announced">Анонсовано</string>
+    <string name="status_announcement">Анонс</string>
+
+    <!-- Types -->
+    <string name="type_tv">ТБ-серіал</string>
+    <string name="type_movie">Фільм</string>
+    <string name="type_ova">OVA</string>
+    <string name="type_ona">ONA</string>
+    <string name="type_special">Спешл</string>
+    <string name="type_shortfilm">Короткометражний фільм</string>
+    <string name="type_shorttv">Короткометражний ТБ-серіал</string>
+
+    <!-- Sorts -->
+    <string name="sort_relevance">За релевантністю</string>
+    <string name="sort_rating">За рейтингом</string>
+    <string name="sort_rating_count">За кількістю оцінок</string>
+    <string name="sort_views">За переглядами</string>
+    <string name="sort_year">За роком</string>
+    <string name="sort_title">За назвою</string>
+    <string name="sort_top">За топом</string>
+
+    <!-- Dropdown / Components -->
+    <string name="dropdown_select_item">Виберіть елемент</string>
+</resources>

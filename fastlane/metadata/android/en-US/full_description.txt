@@ -7,7 +7,7 @@ Key Features:
 * Phone & Tablet Support: Touch-friendly browsing, fast search, detailed anime pages, and episode tracking.
 * TV-Optimized Interface: Clean, responsive layout built specifically for Android TV / Google TV remotes.
 * Seasonal Catalog & Search: Stay up to date with the current anime season or find specific titles quickly.
-* Flexible Sources: Choose from multiple available translations (dubs/subs) and streaming sources.
+* Flexible Sources: Choose from multiple available translations (dubs/subs), original audio tracks, and streaming sources.
 * Modern Video Playback: Smooth, reliable streaming powered by Media3 (ExoPlayer) with picture-in-picture and orientation controls.
 
-Note: Streaming sources currently provide content in Russian only.
+Note: Streaming sources primarily provide content in Russian, though some titles are available in their original audio with multi-language subtitles.
