@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import dev.daika.davy.feature.player.ui.component.VideoPlayerState
+import dev.daika.davy.feature.player.state.VideoPlayerState
 
 @Composable
 fun MobilePlayerControls(

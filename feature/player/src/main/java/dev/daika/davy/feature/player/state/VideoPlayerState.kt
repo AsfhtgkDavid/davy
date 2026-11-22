@@ -1,4 +1,4 @@
-package dev.daika.davy.feature.player.ui.component
+package dev.daika.davy.feature.player.state
 
 import android.os.Build
 import android.util.Log

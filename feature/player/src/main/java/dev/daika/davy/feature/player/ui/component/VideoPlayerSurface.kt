@@ -19,6 +19,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import dev.daika.davy.core.ui.component.SubtitleOverlay
+import dev.daika.davy.feature.player.state.VideoPlayerState
 
 @OptIn(UnstableApi::class)
 @Composable
