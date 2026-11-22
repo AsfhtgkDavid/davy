@@ -34,7 +34,7 @@ import dev.daika.davy.core.ui.component.LoadingIndicator
 import dev.daika.davy.feature.player.PlayerScreenUiState
 import dev.daika.davy.feature.player.PlayerScreenViewModel
 import dev.daika.davy.feature.player.ui.component.VideoPlayerSurface
-import dev.daika.davy.feature.player.ui.component.rememberVideoPlayerState
+import dev.daika.davy.feature.player.state.rememberVideoPlayerState
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 

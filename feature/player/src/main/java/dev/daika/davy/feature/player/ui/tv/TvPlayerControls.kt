@@ -29,7 +29,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.daika.davy.core.common.util.formatTime
 import dev.daika.davy.core.ui.R
-import dev.daika.davy.feature.player.ui.component.VideoPlayerState
+import dev.daika.davy.feature.player.state.VideoPlayerState
 
 @Composable
 fun TvPlayerControls(
@@ -122,7 +122,9 @@ fun TvPlayerControls(
                         if (playerState.isPlaying) painterResource(R.drawable.baseline_pause_24) else painterResource(
                             R.drawable.baseline_play_arrow_24
                         ),
-                        contentDescription = if (playerState.isPlaying) stringResource(R.string.cd_pause) else stringResource(R.string.cd_play)
+                        contentDescription = if (playerState.isPlaying) stringResource(R.string.cd_pause) else stringResource(
+                            R.string.cd_play
+                        )
                     )
                 }
 
