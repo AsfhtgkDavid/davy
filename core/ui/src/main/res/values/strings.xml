@@ -3,7 +3,7 @@
     <!-- App & General -->
     <string name="app_name">DAVY</string>
     <string name="playback_attribution">This app plays anime</string>
-    <string name="empty" />
+    <string name="empty" translatable="false" />
 
     <!-- Common / Actions -->
     <string name="action_retry">Retry</string>
