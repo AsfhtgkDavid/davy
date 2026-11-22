@@ -1,0 +1,11 @@
+Added:
+- Added a manual screen rotation toggle button to the mobile video player.
+- Prevented the device screen from turning off automatically during video playback.
+- Added internationalization (i18n) infrastructure and localization support.
+- Expanded automated test coverage.
+
+Changed:
+- Refactored the underlying application architecture and state management.
+
+Fixed:
+- Fixed Alloha player integration and resolved playback issues for specific anime titles (including Sword Art Online; special thanks to Jake).

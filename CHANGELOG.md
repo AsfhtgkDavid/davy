@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-11-22
+
+### Added
+
+- Manual screen rotation toggle button in the mobile player interface.
+- Screen wake-lock during active video playback to prevent automatic screen timeout.
+- Internationalization (i18n) support for UI localization.
+- Additional unit and integration tests for improved code coverage.
+
+### Changed
+
+- Refactored application architecture and modular boundaries for better maintainability.
+
+### Fixed
+
+- Fixed Alloha player parsing and streaming issues affecting specific anime titles (e.g., *Sword Art
+  Online*; credits to Jake).
+
 ## [1.4.0] - 2026-10-24
 
 ### Added
