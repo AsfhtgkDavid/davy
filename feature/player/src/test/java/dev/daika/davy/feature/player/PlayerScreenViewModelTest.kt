@@ -25,12 +25,14 @@ import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
+import okhttp3.Protocol.HTTP_1_1
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import java.net.InetAddress
 
 class PlayerScreenViewModelTest {
     @get:Rule
@@ -486,31 +488,44 @@ class PlayerScreenViewModelTest {
         )
 
         val requestedHosts = mutableListOf<String>()
-        val clientWithMockNetwork = OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val req = chain.request()
-                requestedHosts.add(req.url.host)
-                if (req.url.host == "stale.example.com") {
-                    okhttp3.Response.Builder()
-                        .request(req)
-                        .protocol(okhttp3.Protocol.HTTP_1_1)
-                        .code(403)
-                        .message("Forbidden")
-                        .body(ByteArray(0).toResponseBody())
-                        .build()
-                } else {
-                    okhttp3.Response.Builder()
-                        .request(req)
-                        .protocol(okhttp3.Protocol.HTTP_1_1)
-                        .code(200)
-                        .message("OK")
-                        .body(
-                            "playlist".toResponseBody()
-                        )
-                        .build()
+        val addedInterceptors = mutableListOf<okhttp3.Interceptor>()
+        val mockBuilder = mockk<OkHttpClient.Builder>()
+        every { mockBuilder.addInterceptor(any<okhttp3.Interceptor>()) } answers {
+            addedInterceptors.add(firstArg())
+            mockBuilder
+        }
+        every { mockBuilder.build() } answers {
+            OkHttpClient.Builder().apply {
+                addedInterceptors.forEach { addInterceptor(it) }
+                addInterceptor { chain ->
+                    val req = chain.request()
+                    requestedHosts.add(req.url.host)
+                    if (req.url.host == "stale.example.com") {
+                        okhttp3.Response.Builder()
+                            .request(req)
+                            .protocol(HTTP_1_1)
+                            .code(403)
+                            .message("Forbidden")
+                            .body(ByteArray(0).toResponseBody())
+                            .build()
+                    } else {
+                        val payload = "playlist".toByteArray()
+                        okhttp3.Response.Builder()
+                            .request(req)
+                            .protocol(HTTP_1_1)
+                            .code(200)
+                            .message("OK")
+                            .header("Content-Length", payload.size.toString())
+                            .header("Content-Range", "bytes 0-${payload.size - 1}/${payload.size}")
+                            .body(payload.toResponseBody(null))
+                            .build()
+                    }
                 }
-            }
-            .build()
+            }.build()
+        }
+
+        val clientWithMockNetwork = mockk<OkHttpClient>()
+        every { clientWithMockNetwork.newBuilder() } returns mockBuilder
 
         val viewModel = PlayerScreenViewModel(
             savedStateHandle = SavedStateHandle(mapOf("animeId" to 1, "episodeId" to 10)),
@@ -520,7 +535,13 @@ class PlayerScreenViewModelTest {
         )
 
         val dataSource = viewModel.dataSourceFactory.createDataSource()
-        val dataSpec = DataSpec(Uri.parse("https://davy/video/1080p/index.m3u8"))
+        val mockUri = mockk<Uri>(relaxed = true)
+        every { mockUri.toString() } returns "https://davy/video/1080p/index.m3u8"
+        every { mockUri.path } returns "/video/1080p/index.m3u8"
+        every { mockUri.host } returns "davy"
+        every { mockUri.scheme } returns "https"
+
+        val dataSpec = DataSpec(mockUri)
 
         val length = dataSource.open(dataSpec)
         val buffer = ByteArray(length.toInt())
