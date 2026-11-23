@@ -1,7 +1,9 @@
 package dev.daika.davy.feature.player
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStore
+import androidx.media3.datasource.DataSpec
 import dev.daika.davy.core.domain.model.Anime
 import dev.daika.davy.core.domain.model.AnimeEpisode
 import dev.daika.davy.core.domain.model.AnimePlayer
@@ -23,11 +25,14 @@ import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
+import okhttp3.Protocol.HTTP_1_1
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import java.net.InetAddress
 
 class PlayerScreenViewModelTest {
     @get:Rule
@@ -432,5 +437,119 @@ class PlayerScreenViewModelTest {
         store.clear()
 
         verify(exactly = 1) { workingParser.closeSession() }
+    }
+
+    @Test
+    fun `dataSourceFactory refreshes playerData via parser when initial mirror fails`() = runTest {
+        coEvery { yummyGetAnimeUseCase(1, true) } returns testAnime
+
+        val staleData = PlayerData(
+            headers = mapOf("X-Token" to "stale"),
+            translations = listOf(
+                Translation(
+                    id = "Default",
+                    name = "Default",
+                    isDefault = true,
+                    streams = listOf(
+                        MediaStream(
+                            quality = "1080p",
+                            urls = listOf("https://stale.example.com/video/1080/index.m3u8")
+                        )
+                    )
+                )
+            ),
+            subtitles = emptyList()
+        )
+
+        val freshData = PlayerData(
+            headers = mapOf("X-Token" to "fresh"),
+            translations = listOf(
+                Translation(
+                    id = "Default",
+                    name = "Default",
+                    isDefault = true,
+                    streams = listOf(
+                        MediaStream(
+                            quality = "1080p",
+                            urls = listOf("https://fresh.example.com/video/1080/index.m3u8")
+                        )
+                    )
+                )
+            ),
+            subtitles = emptyList()
+        )
+
+        val mockParser = mockk<Parser>(relaxed = true)
+        mockkObject(Parser)
+        every { Parser.getParserForUrl("https://player/10", any()) } returns mockParser
+        coEvery { mockParser.parse(eq("https://player/10"), any(), any()) } returnsMany listOf(
+            staleData,
+            freshData
+        )
+
+        val requestedHosts = mutableListOf<String>()
+        val addedInterceptors = mutableListOf<okhttp3.Interceptor>()
+        val mockBuilder = mockk<OkHttpClient.Builder>()
+        every { mockBuilder.addInterceptor(any<okhttp3.Interceptor>()) } answers {
+            addedInterceptors.add(firstArg())
+            mockBuilder
+        }
+        every { mockBuilder.build() } answers {
+            OkHttpClient.Builder().apply {
+                addedInterceptors.forEach { addInterceptor(it) }
+                addInterceptor { chain ->
+                    val req = chain.request()
+                    requestedHosts.add(req.url.host)
+                    if (req.url.host == "stale.example.com") {
+                        okhttp3.Response.Builder()
+                            .request(req)
+                            .protocol(HTTP_1_1)
+                            .code(403)
+                            .message("Forbidden")
+                            .body(ByteArray(0).toResponseBody())
+                            .build()
+                    } else {
+                        val payload = "playlist".toByteArray()
+                        okhttp3.Response.Builder()
+                            .request(req)
+                            .protocol(HTTP_1_1)
+                            .code(200)
+                            .message("OK")
+                            .header("Content-Length", payload.size.toString())
+                            .header("Content-Range", "bytes 0-${payload.size - 1}/${payload.size}")
+                            .body(payload.toResponseBody(null))
+                            .build()
+                    }
+                }
+            }.build()
+        }
+
+        val clientWithMockNetwork = mockk<OkHttpClient>()
+        every { clientWithMockNetwork.newBuilder() } returns mockBuilder
+
+        val viewModel = PlayerScreenViewModel(
+            savedStateHandle = SavedStateHandle(mapOf("animeId" to 1, "episodeId" to 10)),
+            yummyGetAnimeUseCase = yummyGetAnimeUseCase,
+            parsers = listOf(mockParser),
+            okHttpClient = clientWithMockNetwork
+        )
+
+        val dataSource = viewModel.dataSourceFactory.createDataSource()
+        val mockUri = mockk<Uri>(relaxed = true)
+        every { mockUri.toString() } returns "https://davy/video/1080p/index.m3u8"
+        every { mockUri.path } returns "/video/1080p/index.m3u8"
+        every { mockUri.host } returns "davy"
+        every { mockUri.scheme } returns "https"
+
+        val dataSpec = DataSpec(mockUri)
+
+        val length = dataSource.open(dataSpec)
+        val buffer = ByteArray(length.toInt())
+        dataSource.read(buffer, 0, buffer.size)
+        dataSource.close()
+
+        assertEquals("playlist", String(buffer))
+        assertEquals(listOf("stale.example.com", "fresh.example.com"), requestedHosts)
+        verify(exactly = 1) { mockParser.closeSession() }
     }
 }
