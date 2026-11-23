@@ -11,7 +11,7 @@ import okhttp3.Response
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicInteger
 
-class PlayerInterceptor :
+class PlayerInterceptor(private val updateData: () -> PlayerData) :
     Interceptor {
     @Volatile
     private var playerData: PlayerData? = null
@@ -22,9 +22,8 @@ class PlayerInterceptor :
     private val activeIndex = AtomicInteger(0)
 
     private fun getActiveMirror(mirrors: List<HttpUrl>): HttpUrl {
-        val currentMirrors = mirrors
-        val idx = (activeIndex.get() and Int.MAX_VALUE) % currentMirrors.size
-        return currentMirrors[idx]
+        val idx = (activeIndex.get() and Int.MAX_VALUE) % mirrors.size
+        return mirrors[idx]
     }
 
     private fun switchMirror(mirrors: List<HttpUrl>, failedMirror: HttpUrl) {
@@ -42,38 +41,91 @@ class PlayerInterceptor :
             Log.w("PlayerInterceptor", "Request to ${origRequest.url.host}")
             return chain.proceed(origRequest.newBuilder().headers(headers).build())
         }
-        var request = origRequest
-        var response: Response? = null
-        val pathSegments = request.url.pathSegments
-        val segments = pathSegments.drop(2)
+
+        val pathSegments = origRequest.url.pathSegments
         val type = pathSegments[0]
-        val mirrors = if (type == "video")
-            (playerData?.translations?.firstOrNull { it.isDefault }
-                ?: playerData?.translations?.first())?.streams?.first { it.quality == pathSegments[1] }?.urls?.map { it.toHttpUrl() }
-                ?: throw IllegalArgumentException()
-        else
-            listOf(playerData?.subtitles?.first {
-                it.label == pathSegments[1]
-            }?.src?.toHttpUrl() ?: throw IllegalArgumentException())
+        val qualityOrLabel = pathSegments[1]
+        val segments = pathSegments.drop(2)
+
+        val currentData = playerData ?: refreshPlayerData(null)
+        val initialMirrors = resolveMirrors(currentData, type, qualityOrLabel)
+
+        val firstAttempt = tryMirrors(chain, origRequest, segments, initialMirrors)
+        if (firstAttempt.response?.isSuccessful == true) {
+            return firstAttempt.response
+        }
+
+        firstAttempt.response?.close()
+
+        val updatedData = refreshPlayerData(currentData)
+        val updatedMirrors = resolveMirrors(updatedData, type, qualityOrLabel)
+
+        val fallbackAttempt = tryMirrors(chain, origRequest, segments, updatedMirrors)
+        if (fallbackAttempt.response != null) {
+            return fallbackAttempt.response
+        }
+
+        throw fallbackAttempt.lastException ?: IOException("All mirrors failed after data update")
+    }
+
+    private fun resolveMirrors(
+        data: PlayerData,
+        type: String,
+        qualityOrLabel: String
+    ): List<HttpUrl> {
+        return if (type == "video") {
+            (data.translations.firstOrNull { it.isDefault }
+                ?: data.translations.first()).streams.first { it.quality == qualityOrLabel }.urls.map { it.toHttpUrl() }
+        } else {
+            listOf(
+                data.subtitles.first { it.label == qualityOrLabel }.src.toHttpUrl()
+            )
+        }
+    }
+
+    private fun tryMirrors(
+        chain: Interceptor.Chain,
+        origRequest: Request,
+        segments: List<String>,
+        mirrors: List<HttpUrl>
+    ): AttemptResult {
         var attempts = 0
         var currentTarget = getActiveMirror(mirrors)
+        var lastResponse: Response? = null
+        var lastException: IOException? = null
+
         while (attempts < mirrors.size) {
             attempts++
-            request = buildRequest(segments, currentTarget)
+            val request = buildRequest(segments, currentTarget)
             try {
-                response = chain.proceed(request)
-                response = response.newBuilder().request(origRequest).build()
-                if (response.isSuccessful)
-                    return response
-                if (attempts < mirrors.size)
-                    response.close()
+                lastResponse?.close()
+                val response = chain.proceed(request)
+                lastResponse = response.newBuilder().request(origRequest).build()
+                if (lastResponse.isSuccessful) {
+                    return AttemptResult(lastResponse, null)
+                }
             } catch (e: IOException) {
-                if (attempts >= mirrors.size) throw e
+                lastException = e
+                lastResponse = null
             }
             switchMirror(mirrors, currentTarget)
             currentTarget = getActiveMirror(mirrors)
         }
-        return response ?: chain.proceed(origRequest)
+
+        return AttemptResult(lastResponse, lastException)
+    }
+
+    private fun refreshPlayerData(staleData: PlayerData?): PlayerData {
+        synchronized(this) {
+            val current = playerData
+            if (current != null && current !== staleData) {
+                return current
+            }
+            val newData = updateData()
+            setPlayerData(newData)
+            activeIndex.set(0)
+            return newData
+        }
     }
 
     private fun buildRequest(segments: List<String>, url: HttpUrl): Request =
@@ -86,7 +138,7 @@ class PlayerInterceptor :
 
     fun updateHeaders(headers: Map<String, String>) {
         synchronized(this) {
-            val builder = this.headers.newBuilder();
+            val builder = this.headers.newBuilder()
             headers.forEach { (name, value) ->
                 builder[name] = value
             }
@@ -97,7 +149,7 @@ class PlayerInterceptor :
     fun setPlayerData(playerData: PlayerData) {
         synchronized(this) {
             this.playerData = playerData
-            val builder = headers.newBuilder();
+            val builder = headers.newBuilder()
             playerData.headers.forEach { (name, value) ->
                 if (builder[name] == null)
                     builder[name] = value
@@ -105,4 +157,9 @@ class PlayerInterceptor :
             headers = builder.build()
         }
     }
+
+    private data class AttemptResult(
+        val response: Response?,
+        val lastException: IOException?
+    )
 }

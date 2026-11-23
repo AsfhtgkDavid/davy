@@ -13,13 +13,16 @@ import dev.daika.davy.core.domain.usecase.YummyGetAnimeUseCase
 import dev.daika.davy.feature.player.network.PlayerInterceptor
 import dev.daika.davyparsers.Parser
 import dev.daika.davyparsers.ParserEvent
+import dev.daika.davyparsers.PlayerData
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
+import java.io.IOException
 import java.net.URLEncoder
 import javax.inject.Inject
 
@@ -34,12 +37,23 @@ class PlayerScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val yummyGetAnimeUseCase: YummyGetAnimeUseCase,
     private val parsers: List<@JvmSuppressWildcards Parser>,
-    private val okHttpClient: OkHttpClient
+    okHttpClient: OkHttpClient
 ) : ViewModel() {
     private val animeId: Int = checkNotNull(savedStateHandle["animeId"])
     private var episodeId: Int = checkNotNull(savedStateHandle["episodeId"])
 
-    private val interceptor = PlayerInterceptor()
+    private val interceptor = PlayerInterceptor {
+        runBlocking {
+            try {
+                parseCurrentEpisode().first
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                throw IOException("Failed to refresh player data", e)
+            }
+        }
+    }
+
     val dataSourceFactory = OkHttpDataSource.Factory(
         okHttpClient.newBuilder().addInterceptor(interceptor).build()
     )
@@ -133,6 +147,32 @@ class PlayerScreenViewModel @Inject constructor(
         }
     }
 
+    private suspend fun parseCurrentEpisode(): Pair<PlayerData, String> {
+        closeCurrentParser()
+
+        val anime = anime ?: throw IllegalArgumentException("Anime not found")
+        val currentEpisode = player?.episodes?.firstOrNull { it.videoId == episodeId }
+            ?: throw IllegalArgumentException("Episode not found")
+
+        val iframeUrl = if (currentEpisode.iframeUrl.startsWith("http"))
+            currentEpisode.iframeUrl
+        else
+            "https:${currentEpisode.iframeUrl}"
+        val referer = "https://old.yummyani.me/catalog/item/${anime.url}"
+
+        val parser = Parser.getParserForUrl(iframeUrl, parsers)
+            ?: throw IllegalArgumentException("No parser found for $iframeUrl")
+
+        currentParser = parser
+
+        val playerData = parser.parse(
+            iframeUrl,
+            referer
+        ) { interceptor.updateHeaders(it) }
+
+        return playerData to currentEpisode.title
+    }
+
     private suspend fun fetchEpisodeData() {
         val previousSuccess = _uiState.value as? PlayerScreenUiState.Success
         if (previousSuccess != null) {
@@ -141,31 +181,12 @@ class PlayerScreenViewModel @Inject constructor(
             _uiState.value = PlayerScreenUiState.Loading
         }
 
-        closeCurrentParser()
-
         try {
             val anime = anime ?: throw IllegalArgumentException("Anime not found")
-            val currentEpisode = player?.episodes?.firstOrNull { it.videoId == episodeId }
-                ?: throw IllegalArgumentException("Episode not found")
-
-            val iframeUrl = if (currentEpisode.iframeUrl.startsWith("http"))
-                currentEpisode.iframeUrl
-            else
-                "https:${currentEpisode.iframeUrl}"
-            val referer = "https://old.yummyani.me/catalog/item/${anime.url}"
-
-            val parser = Parser.getParserForUrl(iframeUrl, parsers)
-                ?: throw IllegalArgumentException("No parser found for $iframeUrl")
-
-            currentParser = parser
-
-            val playerData = parser.parse(
-                iframeUrl,
-                referer
-            ) { interceptor.updateHeaders(it) }
+            val (playerData, episodeTitle) = parseCurrentEpisode()
 
             interceptor.setPlayerData(playerData)
-
+            
             val translation = (playerData.translations.firstOrNull { it.isDefault }
                 ?: playerData.translations.first())
             audioId = translation.id
@@ -191,7 +212,7 @@ class PlayerScreenViewModel @Inject constructor(
                     )
                 },
                 animeTitle = anime.title,
-                episodeNumber = currentEpisode.title,
+                episodeNumber = episodeTitle,
                 isEpisodeLoading = false
             )
         } catch (e: CancellationException) {
