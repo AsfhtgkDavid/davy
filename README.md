@@ -5,71 +5,53 @@
 [![F-Droid Version](https://img.shields.io/f-droid/v/dev.daika.davy)](https://f-droid.org/packages/dev.daika.davy/)
 [![codecov](https://codecov.io/github/AsfhtgkDavid/davy/graph/badge.svg?token=1UMXGQ37KS)](https://codecov.io/github/AsfhtgkDavid/davy)
 
-DAVY is a modern Android anime app for discovering and watching anime from the current season. It is
-designed to feel lightweight and approachable while still offering a polished experience for
-browsing, selecting episodes, and playing videos.
+DAVY is a modern, lightweight, and ad-free Android app for discovering and watching anime on phones,
+tablets, Android TV, and Google TV. Designed to feel fast and approachable, it helps you go straight
+from browsing the current season to watching episodes without clutter.
 
-## Description
+## Highlights
 
-DAVY is built with Kotlin and Jetpack Compose, with interfaces adapted for both phones and TV
-devices, and a built-in media player. The app pulls anime data from the Yummy API and helps users
-move quickly from discovery to playback.
+- **Adaptive Experience**: Switch between a touch-friendly mobile layout and a focus-driven TV
+  interface optimized for D-pad and remote controls. You can pick your preferred mode right at
+  startup.
+- **Seasonal Lineup & Fast Search**: Stay up to date with ongoing titles from the current anime
+  season or search the catalog for specific shows.
+- **Detailed Anime Pages**: View synopses, genres, ratings, watch order, and organized
+  episode lists in one place.
+- **Flexible Sources & Audio**: Choose between multiple dubbing studios, original audio, subtitles,
+  and video sources.
+- **Smart Built-in Player**:
+    - Automatic mirror failover for uninterrupted playback
+    - Quick screen orientation toggle on mobile devices
+    - Smart screen wake-lock so your display never dims while watching
+- **Multi-Language Interface**: Available in English, Russian, and Ukrainian.
+- **Open Source & Private**: No ads, no tracking, and no unnecessary permissions.
 
-On phones, DAVY provides a touch-friendly mobile interface for browsing, searching, viewing anime
-details, selecting episodes, and watching videos. On TV platforms (Android TV / Google TV), the app
-uses focus-based navigation and remote-friendly controls. The initial mode can be selected when the
-app starts.
-
-## Architecture
-
-DAVY uses a modular architecture that separates shared infrastructure, business logic, UI, and
-feature flows:
-
-- `app` — application entry point, dependency injection, and navigation
-- `core:common` — shared utilities and preferences
-- `core:domain` — domain models, repository contracts, and use cases
-- `core:data` — Yummy API integration, DTOs, and repository implementations
-- `core:ui` — shared Compose components and mobile/TV themes
-- `feature:*` — isolated feature modules for mode selection, home, anime details, player, and search
-
-Feature modules reuse the shared domain and data layers while providing separate `mobile` and `tv`
-composables where the interaction model differs.
-
-## Tech stack
-
-- Kotlin
-- Jetpack Compose (Compose for TV)
-- ExoPlayer (media playback)
-- AndroidX TV
-- Yummy API (data source)
-- Coroutines (asynchronous work)
-- Retrofit & OkHttp (networking)
-
-## Features
-
-- Browse the current season's anime lineup
-- Open detailed anime pages with synopsis, genres, ratings, and alternative titles
-- Choose between available translations and players
-- Select episodes directly from the anime details flow
-- Watch videos with a built-in player powered by ExoPlayer
-- Mobile UI for phones with touch-friendly navigation
-- TV-friendly layout with focus-based navigation
-
-## Roadmap
-
-- [x] Current season anime browsing
-- [x] Built-in player
-- [x] Search ([#3](https://github.com/AsfhtgkDavid/davy/issues/3))
-- [x] Phone support with a dedicated mobile UI
-- [ ] Local watch history
-- [ ] Integration with MyAnimeList and other watchlists
-- [ ] Integration with other anime aggregators
+> **Note:** Streaming sources primarily provide content in Russian, though many titles can be
+> watched in their original audio with subtitles.
 
 ## Screenshots
 
 ![HomeScreen.png](fastlane/metadata/android/en-US/images/tvScreenshots/HomeScreen.png)
 
 ![DetailView.png](fastlane/metadata/android/en-US/images/tvScreenshots/DetailView.png)
+
+![Player.png](fastlane/metadata/android/en-US/images/tvScreenshots/Player.png)
+
+![HomeScreen.png](fastlane/metadata/android/en-US/images/phoneScreenshots/HomeScreen.png)
+![DetailView.png](fastlane/metadata/android/en-US/images/phoneScreenshots/DetailView.png)
+![Player.png](fastlane/metadata/android/en-US/images/phoneScreenshots/Player.png)
+
+## Roadmap
+
+- [x] Current season anime browsing
+- [x] Built-in player with mirror failover & orientation controls
+- [x] Search ([#3](https://github.com/AsfhtgkDavid/davy/issues/3))
+- [x] Dedicated mobile & Android TV interfaces
+- [x] Multi-language support (EN / RU / UK)
+- [ ] Local watch history
+- [ ] Integration with MyAnimeList and other watchlists
+- [ ] Support for additional anime aggregators
 
 ## Donate
 
@@ -85,14 +67,15 @@ Every contribution helps keep the project alive and funded!
 
 ## Contributing
 
-Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for the full development
-workflow, coding guidelines, and pull request process.
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for the development
+workflow, architecture overview, and pull request guidelines.
 
-If you want to add support for new player parsers, please work in the separate parser repository:
+If you want to add support for new player parsers, please contribute to the standalone parser
+library:
 
-- https://github.com/AsfhtgkDavid/davy-parsers
+- [davy-parsers](https://github.com/AsfhtgkDavid/davy-parsers)
 
-Before submitting, make sure the project still builds:
+Before submitting a pull request, make sure the project builds cleanly:
 
 ```bash
 ./gradlew assembleDebug
@@ -101,4 +84,4 @@ Before submitting, make sure the project still builds:
 ## License
 
 This project is licensed under the GNU Affero General Public License v3.0. See
-the [LICENSE](LICENSE) file for more information.
+the [LICENSE](LICENSE) file for details.

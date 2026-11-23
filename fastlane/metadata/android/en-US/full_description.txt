@@ -1,13 +1,14 @@
-DAVY is a modern, lightweight open-source client for discovering and watching anime on phones, Android TV, and Google TV. Browse ongoing titles from the current season, search the catalog, explore detailed info, pick your preferred dub/sub and streaming source, and watch seamlessly in the built-in player.
+DAVY is a modern, lightweight, and ad-free open-source app for discovering and watching anime on phones, tablets, Android TV, and Google TV. Browse ongoing titles from the current season, search the catalog, explore detailed info, pick your preferred dub or subtitles, and enjoy smooth playback in the built-in video player.
 
-Built with Kotlin and Jetpack Compose, DAVY adapts its layout to your screen. The mobile interface is crafted for smooth touch gestures, while the TV experience is tailored for D-pad and remote control navigation.
+Whether you are watching on the go or from your couch, DAVY adapts to your screen. Choose between a touch-friendly mobile layout or a TV interface designed specifically for D-pad and remote control navigation.
 
 Key Features:
 
-* Phone & Tablet Support: Touch-friendly browsing, fast search, detailed anime pages, and episode tracking.
-* TV-Optimized Interface: Clean, responsive layout built specifically for Android TV / Google TV remotes.
-* Seasonal Catalog & Search: Stay up to date with the current anime season or find specific titles quickly.
-* Flexible Sources: Choose from multiple available translations (dubs/subs), original audio tracks, and streaming sources.
-* Modern Video Playback: Smooth, reliable streaming powered by Media3 (ExoPlayer) with picture-in-picture and orientation controls.
+* Made for Phones & TVs: Seamless touch gestures on mobile devices and intuitive remote-friendly navigation on Android TV / Google TV. You can easily switch your preferred interface mode right at startup.
+* Seasonal Lineup & Fast Search: Keep up with the latest releases of the current anime season or quickly find specific titles in the catalog.
+* Rich Anime Details: Check synopses, genres, ratings, alternative titles, and episode lists before you start watching.
+* Flexible Audio & Sources: Switch effortlessly between multiple dubbing studios, original Japanese audio, subtitles, and streaming sources.
+* Smart Built-in Player: Enjoy uninterrupted playback with automatic mirror failover, quick screen orientation toggle on mobile, and smart screen wake-lock so your display never dims while watching.
+* Privacy-Respecting & Open Source: Completely free with no ads, trackers, or unnecessary permissions. Available in different UI language.
 
-Note: Streaming sources primarily provide content in Russian, though some titles are available in their original audio with multi-language subtitles.
+Note: Streaming sources primarily provide content in Russian, though many titles are available in their original audio with multi-language subtitles.
