@@ -43,22 +43,29 @@ class PlayerInterceptor(private val updateData: () -> PlayerData) :
         }
 
         val pathSegments = origRequest.url.pathSegments
+        if (pathSegments.size < 2) {
+            throw IOException("Invalid internal davy URL: ${origRequest.url}")
+        }
         val type = pathSegments[0]
         val qualityOrLabel = pathSegments[1]
         val segments = pathSegments.drop(2)
 
         val currentData = playerData ?: refreshPlayerData(null)
         val initialMirrors = resolveMirrors(currentData, type, qualityOrLabel)
+        if (initialMirrors.isNotEmpty()) {
+            val firstAttempt = tryMirrors(chain, origRequest, segments, initialMirrors)
+            if (firstAttempt.response?.isSuccessful == true) {
+                return firstAttempt.response
+            }
 
-        val firstAttempt = tryMirrors(chain, origRequest, segments, initialMirrors)
-        if (firstAttempt.response?.isSuccessful == true) {
-            return firstAttempt.response
+            firstAttempt.response?.close()
         }
-
-        firstAttempt.response?.close()
 
         val updatedData = refreshPlayerData(currentData)
         val updatedMirrors = resolveMirrors(updatedData, type, qualityOrLabel)
+        if (updatedMirrors.isEmpty()) {
+            throw IOException("No mirrors found for $type / $qualityOrLabel after refresh")
+        }
 
         val fallbackAttempt = tryMirrors(chain, origRequest, segments, updatedMirrors)
         if (fallbackAttempt.response != null) {
@@ -74,12 +81,17 @@ class PlayerInterceptor(private val updateData: () -> PlayerData) :
         qualityOrLabel: String
     ): List<HttpUrl> {
         return if (type == "video") {
-            (data.translations.firstOrNull { it.isDefault }
-                ?: data.translations.first()).streams.first { it.quality == qualityOrLabel }.urls.map { it.toHttpUrl() }
+            val translation = data.translations.firstOrNull { it.isDefault }
+                ?: data.translations.firstOrNull()
+                ?: return emptyList()
+            val stream = translation.streams.firstOrNull { it.quality == qualityOrLabel }
+                ?: translation.streams.firstOrNull()
+                ?: return emptyList()
+            stream.urls.map { it.toHttpUrl() }
         } else {
-            listOf(
-                data.subtitles.first { it.label == qualityOrLabel }.src.toHttpUrl()
-            )
+            val subtitle = data.subtitles.firstOrNull { it.label == qualityOrLabel }
+                ?: return emptyList()
+            listOf(subtitle.src.toHttpUrl())
         }
     }
 
@@ -89,6 +101,7 @@ class PlayerInterceptor(private val updateData: () -> PlayerData) :
         segments: List<String>,
         mirrors: List<HttpUrl>
     ): AttemptResult {
+        if (mirrors.isEmpty()) return AttemptResult(null, IOException("Mirrors list is empty"))
         var attempts = 0
         var currentTarget = getActiveMirror(mirrors)
         var lastResponse: Response? = null
