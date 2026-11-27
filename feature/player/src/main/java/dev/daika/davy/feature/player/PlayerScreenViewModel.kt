@@ -15,6 +15,7 @@ import dev.daika.davyparsers.Parser
 import dev.daika.davyparsers.ParserEvent
 import dev.daika.davyparsers.PlayerData
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -62,7 +63,7 @@ class PlayerScreenViewModel @Inject constructor(
     private var player: AnimePlayer? = null
 
     private var currentParser: Parser? = null
-    private var fetchEpisodeJob: kotlinx.coroutines.Job? = null
+    private var fetchEpisodeJob: Job? = null
     private var audioId: String = "0"
 
     private var _uiState = MutableStateFlow<PlayerScreenUiState>(PlayerScreenUiState.Loading)
@@ -112,7 +113,9 @@ class PlayerScreenViewModel @Inject constructor(
     }
 
     fun playNextEpisode() {
-        val nextEpisode = player?.episodes?.firstOrNull { it.videoId > episodeId }
+        val episodes = player?.episodes ?: return
+        val currentIndex = episodes.indexOfFirst { it.videoId == episodeId }
+        val nextEpisode = if (currentIndex != -1) episodes.getOrNull(currentIndex + 1) else null
         if (nextEpisode != null) {
             episodeId = nextEpisode.videoId
             reloadEpisode()
@@ -122,7 +125,9 @@ class PlayerScreenViewModel @Inject constructor(
     }
 
     fun playPreviousEpisode() {
-        val previousEpisode = player?.episodes?.lastOrNull { it.videoId < episodeId }
+        val episodes = player?.episodes ?: return
+        val currentIndex = episodes.indexOfFirst { it.videoId == episodeId }
+        val previousEpisode = if (currentIndex > 0) episodes.getOrNull(currentIndex - 1) else null
         if (previousEpisode != null) {
             episodeId = previousEpisode.videoId
             reloadEpisode()
@@ -142,6 +147,8 @@ class PlayerScreenViewModel @Inject constructor(
         try {
             anime = yummyGetAnimeUseCase(animeId, true)
             player = anime?.translations?.getPlayerByEpisodeId(episodeId)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e("PlayerScreenViewModel", "Error fetching anime data: ${e.message}", e)
         }
@@ -186,29 +193,38 @@ class PlayerScreenViewModel @Inject constructor(
             val (playerData, episodeTitle) = parseCurrentEpisode()
 
             interceptor.setPlayerData(playerData)
-            
-            val translation = (playerData.translations.firstOrNull { it.isDefault }
-                ?: playerData.translations.first())
+            val translation = playerData.translations.firstOrNull { it.isDefault }
+                ?: playerData.translations.firstOrNull()
+                ?: throw IllegalStateException("No video translations available")
             audioId = translation.id
 
+            val sortedResolutions = translation.streams
+                .sortedBy { stream ->
+                    stream.quality.filter(Char::isDigit).toIntOrNull() ?: 0
+                }
+                .map {
+                    Resolution(
+                        src = "https://davy/video/${it.quality}/${
+                            it.urls.first().toHttpUrl().pathSegments.last()
+                        }",
+                        quality = it.quality
+                    )
+                }
+
+            if (sortedResolutions.isEmpty()) {
+                throw IllegalStateException("No video streams available")
+            }
+
             _uiState.value = PlayerScreenUiState.Success(
-                availableResolutions = translation.streams.sortedBy { it.quality.toInt() }
-                    .map {
-                        Resolution(
-                            "https://davy/video/${it.quality}/${
-                                it.urls.first().toHttpUrl().pathSegments.last()
-                            }",
-                            it.quality
-                        )
-                    },
+                availableResolutions = sortedResolutions,
                 availableSubtitles = playerData.subtitles.mapIndexed { index, track ->
                     Subtitle(
-                        index,
-                        track.label,
-                        "https://davy/sub/${
+                        id = index,
+                        label = track.label,
+                        src = "https://davy/sub/${
                             URLEncoder.encode(track.label, "UTF-8").replace("+", "%20")
                         }/${track.src.toHttpUrl().pathSegments.last()}",
-                        track.isDefault
+                        default = track.isDefault
                     )
                 },
                 animeTitle = anime.title,
